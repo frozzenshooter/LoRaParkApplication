@@ -1,31 +1,24 @@
 package de.uniulm.loraparkapplication;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+public class SensorOverviewActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        setContentView(R.layout.activity_sensor_overview);
+
+        //Set the toolbar as the activity's app bar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.sensor_overview_toolbar);
         setSupportActionBar(toolbar);
-    }
-
-    public void openSensorOverviewMap(View view) {
-        Intent intent = new Intent(MainActivity.this, SensorOverviewActivity.class);
-        MainActivity.this.startActivity(intent);
-    }
-
-    public void openRules(View view) {
-        Intent intent = new Intent(MainActivity.this, RuleOverviewActivity.class);
-        MainActivity.this.startActivity(intent);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">LoRaPark</string>
+    <string name="button_open_sensor_overview_map">Open sensor overview</string>
+    <string name="button_open_rules">Open rules</string>
+    <string name="label_sensor_overview">Sensor overview</string>
+    <string name="label_rule_overview">Rule overview</string>
 </resources>

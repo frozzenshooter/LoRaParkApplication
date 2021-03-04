@@ -9,6 +9,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LoRaPark">
+
+        <activity android:name=".SensorOverviewActivity"
+                  android:label="@string/label_sensor_overview"
+                  android:parentActivityName=".MainActivity"/>
+
+        <activity android:name=".RuleOverviewActivity"
+                  android:label="@string/label_rule_overview"
+                  android:parentActivityName=".MainActivity"/>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
