@@ -7,4 +7,6 @@
     <string name="label_storage_access">Storage permission is required to store map tiles to reduce data usage and for offline usage.</string>
     <string name="label_location_access">Location permission is required to show the user\'s location on map.</string>
 
+    <!--TODO: save API URLs in a different file-->
+    <string name="API_URL_Sensor_Description">https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/osmdroid_integration/sensor_descriptions/sensors.json</string>
 </resources>

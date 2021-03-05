@@ -1,22 +1,32 @@
 package de.uniulm.loraparkapplication;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -29,17 +39,28 @@ import org.osmdroid.views.overlay.ItemizedOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniulm.loraparkapplication.models.Location;
+import de.uniulm.loraparkapplication.models.SensorDescription;
+import de.uniulm.loraparkapplication.viewmodels.SensorOverviewViewModel;
+
 public class SensorOverviewActivity extends AppCompatActivity {
 
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
 
+    protected SensorOverviewViewModel mSensorOverviewViewModel;
     private MapView map;
 
+    //region Overrides
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +78,15 @@ public class SensorOverviewActivity extends AppCompatActivity {
         this.map = (MapView) findViewById(R.id.map);
         setupMapView();
 
-        createPin(this.map);
+        mSensorOverviewViewModel = new ViewModelProvider(this).get(SensorOverviewViewModel.class);
+        mSensorOverviewViewModel.init();
+
+        mSensorOverviewViewModel.getSensorDescriptions().observe(this, new Observer<List<SensorDescription>>() {
+            @Override
+            public void onChanged(@Nullable List<SensorDescription> sensorDescriptions) {
+                updateMarkersOnMap(sensorDescriptions);
+            }
+        });
     }
 
     @Override
@@ -116,7 +145,9 @@ public class SensorOverviewActivity extends AppCompatActivity {
         }
     }
 
-    //region Internal functionalities
+    //endregion
+
+    //region Activity setup
 
     private void checkPermissions() {
 
@@ -136,37 +167,6 @@ public class SensorOverviewActivity extends AppCompatActivity {
             requestPermissions(params, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
 
         } // else: We already have permissions, so handle as normal
-    }
-
-    private void createPin(MapView mMapView){
-        GeoPoint geoPoint = new GeoPoint(48.396426, 9.990453);
-
-        OverlayItem overlayItem = new OverlayItem("San Fransisco", "California", geoPoint);
-        Drawable markerDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.marker_default);
-        overlayItem.setMarker(markerDrawable);
-
-        ArrayList<OverlayItem> overlayItemArrayList = new ArrayList<>();
-        overlayItemArrayList.add(overlayItem);
-        ItemizedOverlay<OverlayItem> locationOverlay = new ItemizedIconOverlay<>(overlayItemArrayList, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-            @Override
-            public boolean onItemSingleTapUp(int i, OverlayItem overlayItem) {
-
-                Toast.makeText(SensorOverviewActivity.this, "Item's Title : "+overlayItem.getTitle() +"\nItem's Desc : "+overlayItem.getSnippet(), Toast.LENGTH_SHORT).show();
-                return true; // Handled this event.
-            }
-
-            @Override
-            public boolean onItemLongPress(int i, OverlayItem overlayItem) {
-                return false;
-            }
-        }, getApplicationContext());
-
-        mMapView.getOverlays().add(locationOverlay);
-
-        MyLocationNewOverlay myLocationoverlay = new MyLocationNewOverlay(this.map);
-        myLocationoverlay.enableMyLocation();
-
-        mMapView.getOverlays().add(myLocationoverlay);
     }
 
     private void setupMapView(){
@@ -190,4 +190,50 @@ public class SensorOverviewActivity extends AppCompatActivity {
     }
 
     //endregion
+
+    //region Marker creation
+
+    private void updateMarkersOnMap(List<SensorDescription> sensorDescriptions) {
+
+        // Remove previous markers
+        this.map.getOverlays().clear();
+
+        for(SensorDescription sd : sensorDescriptions){
+            createSensorMarker(sd);
+        }
+
+        // Force the refresh of the view
+        this.map.invalidate();
+    }
+
+    private void createSensorMarker(SensorDescription sensorDescription){
+        Location loc = sensorDescription.getLocation();
+        GeoPoint geoPoint = new GeoPoint(loc.getLatitude(), loc.getLongitude());
+
+        OverlayItem overlayItem = new OverlayItem(sensorDescription.getName(), sensorDescription.getDescription(), geoPoint);
+        Drawable markerDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.marker_default);
+        overlayItem.setMarker(markerDrawable);
+
+        ArrayList<OverlayItem> overlayItemArrayList = new ArrayList<>();
+        overlayItemArrayList.add(overlayItem);
+
+        ItemizedOverlay<OverlayItem> locationOverlay = new ItemizedIconOverlay<>(overlayItemArrayList, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+            @Override
+            public boolean onItemSingleTapUp(int i, OverlayItem overlayItem) {
+
+                Toast.makeText(SensorOverviewActivity.this, "Item's Title : "+overlayItem.getTitle() +"\nItem's Desc : "+overlayItem.getSnippet(), Toast.LENGTH_SHORT).show();
+                return true; // Handled this event.
+            }
+
+            @Override
+            public boolean onItemLongPress(int i, OverlayItem overlayItem) {
+                return false;
+            }
+        }, getApplicationContext());
+
+        this.map.getOverlays().add(locationOverlay);
+    }
+
+    //endregion
+
 }
