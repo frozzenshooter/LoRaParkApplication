@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -216,7 +218,7 @@ public class SensorOverviewActivity extends AppCompatActivity {
         this.map.invalidate();
     }
 
-    private void createSensorMarker(SensorDescription sensorDescription){
+    private void createSensorMarker(@NotNull SensorDescription sensorDescription){
         Location loc = sensorDescription.getLocation();
         GeoPoint geoPoint = new GeoPoint(loc.getLatitude(), loc.getLongitude());
 
@@ -231,7 +233,14 @@ public class SensorOverviewActivity extends AppCompatActivity {
             @Override
             public boolean onItemSingleTapUp(int i, OverlayItem overlayItem) {
 
-                Toast.makeText(SensorOverviewActivity.this, "Item's Title : "+overlayItem.getTitle() +"\nItem's Desc : "+overlayItem.getSnippet(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(SensorOverviewActivity.this, SensorDetailActivity.class);
+                
+                intent.putExtra(SensorDetailActivity.ID_EXTRA, sensorDescription.getId());
+                intent.putExtra(SensorDetailActivity.NAME_EXTRA, sensorDescription.getName());
+                intent.putExtra(SensorDetailActivity.DESCRIPTION_EXTRA, sensorDescription.getDescription());
+
+                SensorOverviewActivity.this.startActivity(intent);
+
                 return true; // Handled this event.
             }
 

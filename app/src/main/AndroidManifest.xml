@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.uniulm.loraparkapplication">
+    <!-- Permissions for the OSM Map in the sensor overview -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -9,15 +16,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LoRaPark">
-
-        <activity android:name=".SensorOverviewActivity"
-                  android:label="@string/label_sensor_overview"
-                  android:parentActivityName=".MainActivity"/>
-
-        <activity android:name=".RuleOverviewActivity"
-                  android:label="@string/label_rule_overview"
-                  android:parentActivityName=".MainActivity"/>
-
+        <activity android:name=".SensorDetailActivity"
+            android:label="@string/label_sensor_details"
+            android:parentActivityName=".SensorOverviewActivity"/>
+        <activity
+            android:name=".SensorOverviewActivity"
+            android:label="@string/label_sensor_overview"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".RuleOverviewActivity"
+            android:label="@string/label_rule_overview"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,13 +35,5 @@
             </intent-filter>
         </activity>
     </application>
-
-    <!-- Permissions for the OSM Map in the sensor overview-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>

@@ -6,9 +6,9 @@
     <string name="label_rule_overview">Rule overview</string>
     <string name="label_storage_access">Storage permission is required to store map tiles to reduce data usage and for offline usage.</string>
     <string name="label_location_access">Location permission is required to show the user\'s location on map.</string>
+    <string name="label_sensor_details">Sensor details</string>
 
     <!--Error messages-->
     <string name="error_sensor_descriptions_not_loaded">An error occurred retrieving the sensor data</string>
-
 
 </resources>
