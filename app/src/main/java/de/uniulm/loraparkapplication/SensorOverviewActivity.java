@@ -196,6 +196,8 @@ public class SensorOverviewActivity extends AppCompatActivity {
         int MAP_DEFAULT_ZOOM = 19;
         this.map.getController().setZoom(MAP_DEFAULT_ZOOM);
 
+        //TODO: SET THE STARTPOINT OF THE MAP TO THE CENTER OF THE SENSORS -> OTHER COORDINATES
+
         // Default start point in the center of Ulm
         GeoPoint startPoint = new GeoPoint(48.396426, 9.990453);
         this.map.getController().setCenter(startPoint);
@@ -234,7 +236,7 @@ public class SensorOverviewActivity extends AppCompatActivity {
             public boolean onItemSingleTapUp(int i, OverlayItem overlayItem) {
 
                 Intent intent = new Intent(SensorOverviewActivity.this, SensorDetailActivity.class);
-                
+
                 intent.putExtra(SensorDetailActivity.ID_EXTRA, sensorDescription.getId());
                 intent.putExtra(SensorDetailActivity.NAME_EXTRA, sensorDescription.getName());
                 intent.putExtra(SensorDetailActivity.DESCRIPTION_EXTRA, sensorDescription.getDescription());

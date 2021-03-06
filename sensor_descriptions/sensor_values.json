@@ -1,0 +1,23 @@
+[
+    {
+        "id": "davis-01",
+        "name": "O2",
+        "type": 1,
+        "value": 1234,
+        "timestamp": "2013-10-21T13:28:06.419Z"
+    },
+    {
+        "id": "davis-02",
+        "name": "CO2",
+        "type": 1,
+        "value": 433,
+        "timestamp": "2013-10-21T13:28:06.419Z"
+    },
+    {
+        "id": "davis-03",
+        "name": "NOX",
+        "type": 0,
+        "value": "123",
+        "timestamp": "2013-10-21T13:28:06.419Z"
+    }
+]

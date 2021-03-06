@@ -24,7 +24,6 @@ import okhttp3.Response;
 
 /**
  * Handles the retrieval of the descriptions of the sensors
- *
  */
 public class SensorDescriptionRepository {
 
