@@ -3,6 +3,9 @@ package de.uniulm.loraparkapplication.network;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
+/**
+ * Allows to connect and retrieve HTTP resources
+ */
 public class HttpClient {
 
     private final static String sensorDescriptionsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/osmdroid_integration/sensor_descriptions/sensors.json";

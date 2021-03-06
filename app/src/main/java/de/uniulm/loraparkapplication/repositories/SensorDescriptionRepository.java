@@ -22,10 +22,13 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+/**
+ * Handles the retrieval of the descriptions of the sensors
+ *
+ */
 public class SensorDescriptionRepository {
 
     private static SensorDescriptionRepository instance;
-    private final ArrayList<SensorDescription> dataSet = new ArrayList<>();
 
     public static SensorDescriptionRepository getInstance() {
         if(instance == null){
@@ -35,25 +38,33 @@ public class SensorDescriptionRepository {
     }
 
 
-    public MutableLiveData<List<SensorDescription>> getSensorDescriptions() {
+    public MutableLiveData<Resource<List<SensorDescription>>> getSensorDescriptions() {
 
-        MutableLiveData<List<SensorDescription>> data = new MutableLiveData<>();
+        MutableLiveData<Resource<List<SensorDescription>>> data = new MutableLiveData<>();
+
+        data.setValue(Resource.loading(null));
 
         HttpClient.getInstance().newCall(HttpClient.getSensorDescriptionsRequest()).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                //TODO: HANDLE THE EXCEPTION AND HAND IT OVER TO THE UI by using the .models.Resource class
-                Log.e("OKHTTP FAILURE", "COULDNT RETRIEVE THE DATA");
+
+                data.postValue(Resource.error("Retrieval failed", null));
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
 
-                // parse the data using Gson
-                Gson gson = new Gson();
-                SensorDescription[] sensorDescriptions = gson.fromJson(response.body().charStream(), SensorDescription[].class);
+                try {
+                    // parse the data using Gson
+                    Gson gson = new Gson();
+                    SensorDescription[] sensorDescriptions = gson.fromJson(response.body().charStream(), SensorDescription[].class);
 
-                data.postValue(Arrays.asList(sensorDescriptions));
+                    data.postValue(Resource.success(Arrays.asList(sensorDescriptions)));
+
+                }catch(Exception ex){
+
+                    data.postValue(Resource.error("Parsing failed", null));
+                }
             }
         });
 

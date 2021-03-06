@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
-* Use this class to later introduce exception handling in the viewmodels/repositories: hand over the resource containing the data
+* Used for the status handling of resources (e.g. data from APIs and their status)
  */
 public class Resource<T> {
 

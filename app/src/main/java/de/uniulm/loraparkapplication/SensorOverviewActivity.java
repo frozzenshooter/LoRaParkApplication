@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniulm.loraparkapplication.models.Location;
+import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.SensorDescription;
 import de.uniulm.loraparkapplication.viewmodels.SensorOverviewViewModel;
 
@@ -81,10 +82,19 @@ public class SensorOverviewActivity extends AppCompatActivity {
         mSensorOverviewViewModel = new ViewModelProvider(this).get(SensorOverviewViewModel.class);
         mSensorOverviewViewModel.init();
 
-        mSensorOverviewViewModel.getSensorDescriptions().observe(this, new Observer<List<SensorDescription>>() {
+        mSensorOverviewViewModel.getSensorDescriptions().observe(this, new Observer<Resource<List<SensorDescription>>>() {
             @Override
-            public void onChanged(@Nullable List<SensorDescription> sensorDescriptions) {
-                updateMarkersOnMap(sensorDescriptions);
+            public void onChanged(@Nullable Resource<List<SensorDescription>> sensorDescriptionsResource) {
+                if(sensorDescriptionsResource.status == Resource.Status.SUCCESS) {
+                    // all correct -> update the markers for the sensors
+                    updateMarkersOnMap(sensorDescriptionsResource.data);
+                }else if (sensorDescriptionsResource.status == Resource.Status.ERROR){
+                    // Failure to retrieve or parse the data
+                    String message = getResources().getString(R.string.error_sensor_descriptions_not_loaded) + " ("+ sensorDescriptionsResource.message +")";
+                    Toast.makeText(SensorOverviewActivity.this, message, Toast.LENGTH_LONG).show();
+                }else{
+                   // Data loading: future TODO: add loading animation
+                }
             }
         });
     }
