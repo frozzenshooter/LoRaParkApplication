@@ -1,13 +1,19 @@
 package de.uniulm.loraparkapplication.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Location {
 
+    @SerializedName("latitude")
+    @Expose
     private Double latitude;
+    @SerializedName("longitude")
+    @Expose
     private Double longitude;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     public Double getLatitude() {
         return latitude;
@@ -23,13 +29,5 @@ public class Location {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
-    }
-
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 }

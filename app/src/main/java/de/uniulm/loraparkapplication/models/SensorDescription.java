@@ -1,16 +1,31 @@
 package de.uniulm.loraparkapplication.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class SensorDescription {
 
+    @SerializedName("id")
+    @Expose
     private String id;
+    @SerializedName("name")
+    @Expose
     private String name;
+    @SerializedName("description")
+    @Expose
     private String description;
+    @SerializedName("location")
+    @Expose
     private Location location;
+    @SerializedName("address")
+    @Expose
     private String address;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    @SerializedName("type")
+    @Expose
+    private Integer type;
 
     public String getId() {
         return id;
@@ -52,12 +67,11 @@ public class SensorDescription {
         this.address = address;
     }
 
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
+    public Integer getType() {
+        return type;
     }
 
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
+    public void setType(Integer type) {
+        this.type = type;
     }
-
 }

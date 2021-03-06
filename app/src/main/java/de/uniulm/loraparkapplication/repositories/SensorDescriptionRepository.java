@@ -1,13 +1,26 @@
 package de.uniulm.loraparkapplication.repositories;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.uniulm.loraparkapplication.BuildConfig;
 import de.uniulm.loraparkapplication.models.Location;
+import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.SensorDescription;
+import de.uniulm.loraparkapplication.network.HttpClient;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class SensorDescriptionRepository {
 
@@ -23,35 +36,27 @@ public class SensorDescriptionRepository {
 
 
     public MutableLiveData<List<SensorDescription>> getSensorDescriptions() {
-        createTestData();
+
         MutableLiveData<List<SensorDescription>> data = new MutableLiveData<>();
-        data.setValue(dataSet);
+
+        HttpClient.getInstance().newCall(HttpClient.getSensorDescriptionsRequest()).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                //TODO: HANDLE THE EXCEPTION AND HAND IT OVER TO THE UI by using the .models.Resource class
+                Log.e("OKHTTP FAILURE", "COULDNT RETRIEVE THE DATA");
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+
+                // parse the data using Gson
+                Gson gson = new Gson();
+                SensorDescription[] sensorDescriptions = gson.fromJson(response.body().charStream(), SensorDescription[].class);
+
+                data.postValue(Arrays.asList(sensorDescriptions));
+            }
+        });
+
         return data;
-    }
-
-    private void createTestData() {
-
-        SensorDescription sd1 = new SensorDescription();
-        sd1.setId("01");
-        sd1.setDescription("Test sensor 01");
-        sd1.setAddress("Test address 01");
-        sd1.setName("Test sensor 01");
-        Location l1 = new Location();
-        l1.setLatitude(48.396426);
-        l1.setLongitude(9.990453);
-        sd1.setLocation(l1);
-        dataSet.add(sd1);
-
-        SensorDescription sd2 = new SensorDescription();
-        sd2.setId("02");
-        sd2.setDescription("Test sensor 02");
-        sd2.setAddress("Test address 02");
-        sd2.setName("Test sensor 02");
-        Location l2 = new Location();
-        l2.setLatitude(48.397206);
-        l2.setLongitude(9.991628);
-        sd2.setLocation(l2);
-
-        dataSet.add(sd2);
     }
 }
