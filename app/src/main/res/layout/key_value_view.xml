@@ -13,7 +13,7 @@
             android:id="@+id/key_value_view_key"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:text="Key"
             android:textSize="14sp"
@@ -24,7 +24,7 @@
             android:id="@+id/key_value_view_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="8dp"
             android:text="Value"
@@ -33,13 +33,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/key_value_view_unit"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/key_value_view_key"/>
+            app:layout_constraintTop_toBottomOf="@+id/key_value_view_key" />
 
         <TextView
             android:id="@+id/key_value_view_unit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:text="Unit"
             android:textSize="24sp"

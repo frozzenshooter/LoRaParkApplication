@@ -1,5 +1,6 @@
 package de.uniulm.loraparkapplication;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,17 +11,14 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 import de.uniulm.loraparkapplication.models.Resource;
-import de.uniulm.loraparkapplication.models.SensorDescription;
 import de.uniulm.loraparkapplication.models.SensorValue;
-import de.uniulm.loraparkapplication.network.HttpClient;
 import de.uniulm.loraparkapplication.viewmodels.SensorDetailViewModel;
-import de.uniulm.loraparkapplication.viewmodels.SensorOverviewViewModel;
 import de.uniulm.loraparkapplication.views.KeyValueView;
 
 public class SensorDetailActivity extends AppCompatActivity {
@@ -29,6 +27,7 @@ public class SensorDetailActivity extends AppCompatActivity {
     public final static String NAME_EXTRA = "NAME_EXTRA";
     public final static String ID_EXTRA = "ID_EXTRA";
 
+    private final static float REDUCED_TEXT_SIZE = 14;
     private static final String SENSOR_DETAIL_ACTIVITY_CLASSNAME = SensorDetailActivity.class.getName();
 
     protected SensorDetailViewModel mSensorDetailViewModel;
@@ -61,20 +60,7 @@ public class SensorDetailActivity extends AppCompatActivity {
             message = "Id: "+id+"\nName: "+name+"\nDescription: "+description;
         }
 
-        TextView detailstextview = (TextView)findViewById(R.id.detailstextview);
-        detailstextview.setText(message);
-
-        KeyValueView kvView = findViewById(R.id.keyValueView01);
-        kvView.setValues("Temperature", "25", "°C");
-
-        KeyValueView kvView2 = findViewById(R.id.keyValueView02);
-        kvView2.setValues("Description", "The Donaubad, the largest adventure pool in the region, with its flow channel, relaxation pool or the 36 degree warm thermal water pool also relies on LoRaWAN and IoT applications. In addition to the water temperature, the amount of heat and the CO2 value of the room air are also monitored.", null);
-        kvView2.setValueTextSize(14);
-
-
-        KeyValueView kvView3 = findViewById(R.id.keyValueView03);
-        kvView3.setValues("KEY", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu vulputate metus. Cras commodo rhoncus nisi, a sodales purus rhoncus eget. Praesent finibus dignissim euismod. Cras sollicitudin tincidunt lectus id vestibulum. Aliquam id nisl mattis, fermentum tellus quis, euismod libero. Phasellus venenatis est sit amet gravida pulvinar. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed sit amet felis eget ipsum vulputate ornare. Morbi id elit mi. Donec a maximus eros. Duis sit amet leo in odio tristique vulputate.", "UNIT");
-        kvView3.setValueTextSize(10);
+        this.createDetails();
 
         if(this.id != null){
             // sensor has an id and therefore there should be sensor values which can be displayed
@@ -86,7 +72,6 @@ public class SensorDetailActivity extends AppCompatActivity {
                 @Override
                 public void onChanged(@Nullable Resource<List<SensorValue>> sensorDescriptionsResource) {
                     Log.i(SENSOR_DETAIL_ACTIVITY_CLASSNAME, "Data changed");
-                    detailstextview.append("\nData changed");
                 }
             });
 
@@ -108,4 +93,41 @@ public class SensorDetailActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    //region Detail creation
+
+    private void createDetails(){
+
+        LinearLayout layout = this.findViewById(R.id.details_view);
+
+        if(this.name != null && !this.name.isEmpty() && !this.name.equals("null")){
+            KeyValueView kv = createKeyValueView("Name", this.name, null, false);
+            layout.addView(kv);
+        }
+
+        if(this.description != null && !this.description.isEmpty() && !this.description.equals("null")){
+            KeyValueView kv = createKeyValueView("Description", this.description, null, true);
+            layout.addView(kv);
+        }
+
+        //TODO: REMOVE EXAMPLES LATER
+        KeyValueView example = createKeyValueView("Temperature", "25", "°C", false);
+        layout.addView(example);
+
+        KeyValueView example2 = createKeyValueView("CO2", "250", "ppm", false);
+        layout.addView(example2);
+    }
+
+    private KeyValueView createKeyValueView(@NonNull String key,@NonNull String value,@Nullable String unit, boolean reduceTextSize){
+
+        KeyValueView kv = new KeyValueView(this);
+        kv.setValues(key, value, unit);
+        if(reduceTextSize){
+            kv.setValueTextSize(REDUCED_TEXT_SIZE);
+        }
+
+        return kv;
+    }
+
+    //endregion
 }
