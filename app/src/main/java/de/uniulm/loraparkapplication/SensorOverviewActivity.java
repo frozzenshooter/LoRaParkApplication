@@ -225,7 +225,7 @@ public class SensorOverviewActivity extends AppCompatActivity {
         GeoPoint geoPoint = new GeoPoint(loc.getLatitude(), loc.getLongitude());
 
         OverlayItem overlayItem = new OverlayItem(sensorDescription.getName(), sensorDescription.getDescription(), geoPoint);
-        Drawable markerDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.marker_default);
+        Drawable markerDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_room_black_36);
         overlayItem.setMarker(markerDrawable);
 
         ArrayList<OverlayItem> overlayItemArrayList = new ArrayList<>();
