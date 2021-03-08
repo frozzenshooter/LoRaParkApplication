@@ -30,7 +30,6 @@ public class SensorDetailActivity extends AppCompatActivity {
     private static final String SENSOR_DETAIL_ACTIVITY_CLASSNAME = SensorDetailActivity.class.getName();
 
     protected SensorDetailViewModel mSensorDetailViewModel;
-    private String id;
 
     private LinearLayout layout;
 
@@ -52,13 +51,13 @@ public class SensorDetailActivity extends AppCompatActivity {
 
         if(extras!=null)
         {
-            this.id = (String) extras.get(ID_EXTRA);
+            String id = (String) extras.get(ID_EXTRA);
             String name = (String) extras.get(NAME_EXTRA);
             String description = (String) extras.get(DESCRIPTION_EXTRA);
 
             this.addSensorDescription(name, description);
 
-            if(this.id != null){
+            if(id != null){
                 // sensor has an id and therefore there should be sensor values which can be displayed
 
                 mSensorDetailViewModel = new ViewModelProvider(this).get(SensorDetailViewModel.class);
