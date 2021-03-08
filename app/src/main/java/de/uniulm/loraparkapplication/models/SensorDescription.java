@@ -3,6 +3,8 @@ package de.uniulm.loraparkapplication.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class SensorDescription {
 
     @SerializedName("id")
@@ -11,18 +13,15 @@ public class SensorDescription {
     @SerializedName("name")
     @Expose
     private String name;
+    @SerializedName("domains")
+    @Expose
+    private List<String> domains = null;
     @SerializedName("description")
     @Expose
     private String description;
     @SerializedName("location")
     @Expose
     private Location location;
-    @SerializedName("address")
-    @Expose
-    private String address;
-    @SerializedName("type")
-    @Expose
-    private Integer type;
 
     public String getId() {
         return id;
@@ -40,6 +39,14 @@ public class SensorDescription {
         this.name = name;
     }
 
+    public List<String> getDomains() {
+        return domains;
+    }
+
+    public void setDomains(List<String> domains) {
+        this.domains = domains;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -54,21 +61,5 @@ public class SensorDescription {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
     }
 }
