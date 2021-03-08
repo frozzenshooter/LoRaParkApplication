@@ -10,6 +10,7 @@
 
     <!--Error messages-->
     <string name="error_sensor_descriptions_not_loaded">An error occurred retrieving the sensor data</string>
+    <string name="error_sensor_values_not_loaded">An error occurred retrieving the sensor values</string>
 
     <!-- Key labels -->
     <string name="label_key_id">Id</string>

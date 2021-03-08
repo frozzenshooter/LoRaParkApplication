@@ -9,10 +9,10 @@ import androidx.annotation.StringRes;
 
 import de.uniulm.loraparkapplication.R;
 
-public class KeyResolver {
+public class SensorValueResolver {
 
-    private static KeyResolver instance;
-    private static final String KEY_RESOLVER_CLASSNAME = KeyResolver.class.getName();
+    private static SensorValueResolver instance;
+    private static final String KEY_RESOLVER_CLASSNAME = SensorValueResolver.class.getName();
 
     //region Available keys
 
@@ -22,9 +22,9 @@ public class KeyResolver {
 
     //endregion
 
-    public static KeyResolver getInstance(){
+    public static SensorValueResolver getInstance(){
         if(instance == null){
-            instance = new KeyResolver();
+            instance = new SensorValueResolver();
         }
         return instance;
     }
@@ -79,5 +79,32 @@ public class KeyResolver {
         }
 
         return label;
+    }
+
+    public String resolveUnit(String key){
+
+        String unit = null;
+
+        if(key != null && !key.isEmpty() && !key.equals("null")) {
+
+            key = key.toLowerCase();
+
+            switch (key) {
+                case KEY_ID:
+                    unit = null;
+                    break;
+                case KEY_NAME:
+                    unit = null;
+                    break;
+                case KEY_DESCRIPTION:
+                    unit = null;
+                    break;
+                default:
+                    unit = null;
+                    break;
+            }
+        }
+
+        return unit;
     }
 }
