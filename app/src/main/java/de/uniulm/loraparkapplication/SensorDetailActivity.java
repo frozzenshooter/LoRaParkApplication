@@ -18,6 +18,7 @@ import java.util.List;
 
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.SensorValue;
+import de.uniulm.loraparkapplication.util.KeyResolver;
 import de.uniulm.loraparkapplication.viewmodels.SensorDetailViewModel;
 import de.uniulm.loraparkapplication.views.KeyValueView;
 
@@ -100,13 +101,15 @@ public class SensorDetailActivity extends AppCompatActivity {
 
         LinearLayout layout = this.findViewById(R.id.details_view);
 
+        KeyResolver keyResolver = KeyResolver.getInstance();
+
         if(this.name != null && !this.name.isEmpty() && !this.name.equals("null")){
-            KeyValueView kv = createKeyValueView("Name", this.name, null, false);
+            KeyValueView kv = createKeyValueView(keyResolver.resolveKey(this, "name"), this.name, null, false);
             layout.addView(kv);
         }
 
         if(this.description != null && !this.description.isEmpty() && !this.description.equals("null")){
-            KeyValueView kv = createKeyValueView("Description", this.description, null, true);
+            KeyValueView kv = createKeyValueView(keyResolver.resolveKey(this, "description"), this.description, null, true);
             layout.addView(kv);
         }
 
