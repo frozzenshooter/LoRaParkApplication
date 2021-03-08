@@ -13,7 +13,7 @@ import java.util.List;
 
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.SensorDescription;
-import de.uniulm.loraparkapplication.models.SensorValue;
+import de.uniulm.loraparkapplication.models.SensorDetail;
 import de.uniulm.loraparkapplication.network.HttpClient;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,34 +33,34 @@ public class SensorDataRepository {
         return instance;
     }
 
-    public MutableLiveData<Resource<List<SensorValue>>> getSensorValues(@NonNull String sensorId) {
-        MutableLiveData<Resource<List<SensorValue>>> data = new MutableLiveData<>();
+    public MutableLiveData<Resource<List<SensorDetail>>> getSensorDetails(@NonNull String sensorId) {
+        MutableLiveData<Resource<List<SensorDetail>>> data = new MutableLiveData<>();
 
-        data.setValue(Resource.error("Not implemented yet.", null));
+        data.setValue(Resource.loading(null));
 
-//        HttpClient.getInstance().newCall(HttpClient.getSensorDetailRequest(sensorId)).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-//
-//                data.postValue(Resource.error("Retrieval failed", null));
-//            }
-//
-//            @Override
-//            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-//
-//                try {
-//                    // parse the data using Gson
-//                    Gson gson = new Gson();
-//                    SensorDescription[] sensorDescriptions = gson.fromJson(response.body().charStream(), SensorDescription[].class);
-//
-//                    data.postValue(Resource.success(Arrays.asList(sensorDescriptions)));
-//
-//                }catch(Exception ex){
-//
-//                    data.postValue(Resource.error("Parsing failed", null));
-//                }
-//            }
-//        });
+        HttpClient.getInstance().newCall(HttpClient.getSensorDetailRequest(sensorId)).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+                data.postValue(Resource.error("Retrieval failed", null));
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+
+                try {
+                    // parse the data using Gson
+                    Gson gson = new Gson();
+                    SensorDetail[] sensorDetails = gson.fromJson(response.body().charStream(), SensorDetail[].class);
+
+                    data.postValue(Resource.success(Arrays.asList(sensorDetails)));
+
+                }catch(Exception ex){
+
+                    data.postValue(Resource.error("Parsing failed", null));
+                }
+            }
+        });
 
         return data;
     }

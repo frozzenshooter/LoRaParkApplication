@@ -15,6 +15,7 @@ public class HttpClient {
     private static final String HTTP_CLIENT_CLASSNAME = HttpClient.class.getName();
 
     private final static String sensorDescriptionsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/osmdroid_integration/sensor_descriptions/sensors.json";
+    private final static String sensorDetailsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/osmdroid_integration/sensor_descriptions/sensors.json";
 
     private static OkHttpClient instance;
 

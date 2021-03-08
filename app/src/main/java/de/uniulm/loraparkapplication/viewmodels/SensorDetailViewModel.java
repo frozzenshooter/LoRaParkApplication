@@ -8,12 +8,12 @@ import androidx.lifecycle.ViewModel;
 import java.util.List;
 
 import de.uniulm.loraparkapplication.models.Resource;
-import de.uniulm.loraparkapplication.models.SensorValue;
+import de.uniulm.loraparkapplication.models.SensorDetail;
 import de.uniulm.loraparkapplication.repositories.SensorDataRepository;
 
 public class SensorDetailViewModel extends ViewModel {
 
-    private MutableLiveData<Resource<List<SensorValue>>> mSensorValues;
+    private MutableLiveData<Resource<List<SensorDetail>>> mSensorValues;
     private SensorDataRepository mSensorDataRepository;
 
     public void init(@NonNull String sensorId) {
@@ -21,10 +21,10 @@ public class SensorDetailViewModel extends ViewModel {
             return;
         }
         mSensorDataRepository = SensorDataRepository.getInstance();
-        mSensorValues = mSensorDataRepository.getSensorValues(sensorId);
+        mSensorValues = mSensorDataRepository.getSensorDetails(sensorId);
     }
 
-    public LiveData<Resource<List<SensorValue>>> getSensorValues(){
+    public LiveData<Resource<List<SensorDetail>>> getSensorValues(){
         return mSensorValues;
     }
 }

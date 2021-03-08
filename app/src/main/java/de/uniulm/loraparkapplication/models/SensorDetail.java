@@ -3,31 +3,20 @@ package de.uniulm.loraparkapplication.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SensorValue {
+public class SensorDetail {
 
-    @SerializedName("id")
-    @Expose
-    private String id;
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("type")
-    @Expose
-    private Integer type;
     @SerializedName("value")
     @Expose
     private String value;
+    @SerializedName("unit")
+    @Expose
+    private String unit;
     @SerializedName("timestamp")
     @Expose
     private String timestamp;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -37,20 +26,20 @@ public class SensorValue {
         this.name = name;
     }
 
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
     public String getValue() {
         return value;
     }
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
     public String getTimestamp() {

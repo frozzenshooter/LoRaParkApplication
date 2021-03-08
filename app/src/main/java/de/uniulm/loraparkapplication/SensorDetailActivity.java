@@ -16,8 +16,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import de.uniulm.loraparkapplication.models.Resource;
-import de.uniulm.loraparkapplication.models.SensorValue;
-import de.uniulm.loraparkapplication.util.SensorValueResolver;
+import de.uniulm.loraparkapplication.models.SensorDetail;
 import de.uniulm.loraparkapplication.viewmodels.SensorDetailViewModel;
 import de.uniulm.loraparkapplication.views.KeyValueView;
 
@@ -34,7 +33,6 @@ public class SensorDetailActivity extends AppCompatActivity {
     private String id;
 
     private LinearLayout layout;
-    private SensorValueResolver sensorValueResolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +49,6 @@ public class SensorDetailActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
 
         this.layout = this.findViewById(R.id.details_view);
-        this.sensorValueResolver = SensorValueResolver.getInstance();
 
         if(extras!=null)
         {
@@ -59,7 +56,7 @@ public class SensorDetailActivity extends AppCompatActivity {
             String name = (String) extras.get(NAME_EXTRA);
             String description = (String) extras.get(DESCRIPTION_EXTRA);
 
-            this.addSensorDetails(name, description);
+            this.addSensorDescription(name, description);
 
             if(this.id != null){
                 // sensor has an id and therefore there should be sensor values which can be displayed
@@ -67,20 +64,20 @@ public class SensorDetailActivity extends AppCompatActivity {
                 mSensorDetailViewModel = new ViewModelProvider(this).get(SensorDetailViewModel.class);
                 mSensorDetailViewModel.init(id);
 
-                mSensorDetailViewModel.getSensorValues().observe(this, new Observer<Resource<List<SensorValue>>>() {
+                mSensorDetailViewModel.getSensorValues().observe(this, new Observer<Resource<List<SensorDetail>>>() {
 
                     @Override
-                    public void onChanged(@Nullable Resource<List<SensorValue>> sensorValuesResource) {
+                    public void onChanged(@Nullable Resource<List<SensorDetail>> sensorDetailsResource) {
 
-                        if(sensorValuesResource.status == Resource.Status.SUCCESS) {
+                        if(sensorDetailsResource.status == Resource.Status.SUCCESS) {
 
                             // all correct -> add the values to the GUI
-                            addSensorValues(sensorValuesResource.data);
+                            addSensorDetails(sensorDetailsResource.data);
 
-                        }else if (sensorValuesResource.status == Resource.Status.ERROR){
+                        }else if (sensorDetailsResource.status == Resource.Status.ERROR){
 
                             // Failure to retrieve or parse the data
-                            String message = getResources().getString(R.string.error_sensor_values_not_loaded) + " ("+ sensorValuesResource.message +")";
+                            String message = getResources().getString(R.string.error_sensor_values_not_loaded) + " ("+ sensorDetailsResource.message +")";
                             Toast.makeText(SensorDetailActivity.this, message, Toast.LENGTH_LONG).show();
 
                         }else{
@@ -107,33 +104,33 @@ public class SensorDetailActivity extends AppCompatActivity {
 
     //region Detail creation
 
-    private void addSensorDetails(String name, String description){
+    private void addSensorDescription(String name, String description){
 
         if(name != null && !name.isEmpty() && !name.equals("null")){
-            KeyValueView kv = createKeyValueView(this.sensorValueResolver.resolveKey(this, "name"), name, null, false);
+            KeyValueView kv = createKeyValueView("Name", name, null, false);
             this.layout.addView(kv);
         }
 
         if(description != null && !description.isEmpty() && !description.equals("null")){
-            KeyValueView kv = createKeyValueView(this.sensorValueResolver.resolveKey(this, "description"), description, null, true);
+            KeyValueView kv = createKeyValueView("Description", description, null, true);
             this.layout.addView(kv);
         }
     }
 
-    private void addSensorValues(@Nullable List<SensorValue> sensorValues){
-        if(sensorValues != null){
-            for(SensorValue sv: sensorValues){
-                this.addSensorValue(sv);
+    private void addSensorDetails(@Nullable List<SensorDetail> sensorDetails){
+        if(sensorDetails != null){
+            for(SensorDetail sv: sensorDetails){
+                this.addSensorDetail(sv);
             }
         }
     }
 
-    private void addSensorValue(SensorValue sensorValue){
-        String key = sensorValue.getName();
-        String value = sensorValue.getValue();
+    private void addSensorDetail(SensorDetail sensorDetail){
+        String name = sensorDetail.getName();
+        String value = sensorDetail.getValue();
 
-        if(value != null && !value.isEmpty() && !value.equals("null")){
-            KeyValueView kv = createKeyValueView(this.sensorValueResolver.resolveKey(this, key), value, this.sensorValueResolver.resolveUnit(key), false);
+        if(value != null && !value.isEmpty() && !value.equals("null") && name != null && !name.isEmpty() && !name.equals("null")){
+            KeyValueView kv = createKeyValueView(name, value, sensorDetail.getUnit(), false);
             this.layout.addView(kv);
         }
     }

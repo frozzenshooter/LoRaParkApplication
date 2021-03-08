@@ -2,22 +2,22 @@
     {
         "id": "davis-013d4d",
         "name": "Weather Station",
+        "domains": [ "domain1", "domain2"],
         "description": "This station is a combination of different sensors. The temperature, humidity, air pressure, amount of rain, condensation point, wind speed and direction, solar radiation and the number of particles of various sizes in the air (fine dust) are measured. The weather station is operated independently using a solar module. The measured results are periodically sent via the local LoRaWAN network to our backend, which processes the data for display. This sensor is part of the LoRaPark at Weinhof. Data and visualization are presented on the local display or at lorapark.de. The sensor data are also made freely available to the public on the Ulm data platform under a CC-0 license.",
         "location": {
             "latitude": 48.396426,
             "longitude": 9.990453
-        },
-        "address": "Verschwörhaus"
+        }
     },
     {
         "id": "dl-ac-001-70b3d57ba0000fc9",
         "name": "Air Quality",
         "description": "This device contains sensors for measuring temperature and humidity and four electrochemical gas sensors. In this case the gases nitrogen dioxide (NO2), carbon monoxide (CO), ozone (O) and sulfur dioxide (SO2) are measured. This allows conclusions to be drawn about the air quality. The measurement results are periodically sent to our backend via the local LoRaWAN network and processed there for display.",
+        "domains": ["domain1"],
         "location": {
             "latitude": 48.397206,
             "longitude": 9.991628
-        },
-        "address": "Rathaus"
+        }
     },
     {
         "id": "iotsoundsensor-deadbeef13374326",
@@ -26,8 +26,7 @@
         "location": {
             "latitude": 48.397206,
             "longitude": 9.991628
-        },
-        "address": "Rathaus"
+        }
     },
     {
         "id": "71191",
@@ -36,8 +35,7 @@
         "location": {
             "latitude": 48.396395,
             "longitude": 9.991161
-        },
-        "address": "Weinhof"
+        }
     },
     {
         "id": "pbg-r27-19282d",
@@ -46,8 +44,7 @@
         "location": {
             "latitude": 48.397354,
             "longitude": 9.993039
-        },
-        "address": "Parkhaus at Rathaus"
+        }
     },
     {
         "name": "Water Temperature",
@@ -72,8 +69,7 @@
         "location": {
             "longitude": 9.995969,
             "latitude": 48.396016
-        },
-        "address": "Herdbrücke"
+        }
     },
     {
         "id": "soil_283d7a28b8ee0567",
@@ -82,8 +78,7 @@
         "location": {
             "longitude": 9.99096,
             "latitude": 48.39677
-        },
-        "address": "Weinhof"
+        }
     },
     {
         "id": "ttgo-paxcounter01",
@@ -92,8 +87,7 @@
         "location": {
             "longitude": 9.990453,
             "latitude": 48.396426
-        },
-        "address": "Verschwörhaus"
+        }
     },
     {
         "id": "elsysems-a81758fffe04887a",
@@ -102,8 +96,7 @@
         "location": {
             "longitude": 9.990208,
             "latitude": 48.396607
-        },
-        "address": "Weinhof"
+        }
     },
     {
         "id": "node1",
@@ -112,8 +105,7 @@
         "location": {
             "latitude": 48.396472,
             "longitude": 9.99047
-        },
-        "address": "Verschwörhaus"
+        }
     },
     {
         "type": 12,
@@ -122,8 +114,7 @@
         "location": {
             "latitude": 48.396425,
             "longitude": 9.990268
-        },
-        "address": "Verschwörhaus"
+        }
     },
     {
         "id": "feather01",
@@ -132,8 +123,7 @@
         "location": {
             "latitude": 48.39863,
             "longitude": 9.992465
-        },
-        "address": "Ulmer Münster"
+        }
     },
     {
         "id": "000003",
@@ -142,8 +132,7 @@
         "location": {
             "latitude": 48.386126,
             "longitude": 9.986219
-        },
-        "address": "Donaubad"
+        }
     },
     {
         "name": "Smart Bench",
@@ -151,8 +140,7 @@
         "location": {
             "latitude": 48.396867,
             "longitude": 9.990939
-        },
-        "address": "Weinhof"
+        }
     },
     {
         "name": "Display",
@@ -160,7 +148,6 @@
         "location": {
             "latitude": 48.396736,
             "longitude": 9.991055
-        },
-        "address": "Weinhof"
+        }
     }
 ]
