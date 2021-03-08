@@ -69,6 +69,8 @@ public class KeyValueView extends LinearLayout {
 
     private void setupView(){
 
+        //TODO: ONCLICK Listener to show timestamp (has to be also added in set values as optional parameter)
+
         if(this.mKeyString != null){
             this.mKeyTextView.setVisibility(VISIBLE);
             this.mKeyTextView.setText(this.mKeyString);

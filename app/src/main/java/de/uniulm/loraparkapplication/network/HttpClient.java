@@ -15,7 +15,7 @@ public class HttpClient {
     private static final String HTTP_CLIENT_CLASSNAME = HttpClient.class.getName();
 
     private final static String sensorDescriptionsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/osmdroid_integration/sensor_descriptions/sensors.json";
-    private final static String sensorDetailsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/osmdroid_integration/sensor_descriptions/sensors.json";
+    private final static String sensorDetailsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/osmdroid_integration/sensor_descriptions/sensor_values.json";
 
     private static OkHttpClient instance;
 
@@ -36,8 +36,7 @@ public class HttpClient {
     public static Request getSensorDetailRequest(@NonNull String sensorId){
         Log.i(HTTP_CLIENT_CLASSNAME,"Creation of request for sensorId: " + sensorId + "started.");
 
-        //TODO: implement correct request for API
-        Request req = new Request.Builder().url(HttpClient.sensorDescriptionsURL).build();
+        Request req = new Request.Builder().url(HttpClient.sensorDetailsURL).build();
         return req;
     }
 }
