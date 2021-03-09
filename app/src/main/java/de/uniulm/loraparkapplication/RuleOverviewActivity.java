@@ -13,7 +13,14 @@ import android.view.MenuItem;
 
 import com.google.android.material.tabs.TabLayout;
 
+import de.uniulm.loraparkapplication.fragments.AllRulesFragment;
+
 public class RuleOverviewActivity extends AppCompatActivity {
+
+    public final static int ACTIVE_RULE_TAB_INDEX = 0;
+    public final static int INACTIVE_RULE_TAB_INDEX = 1;
+    public final static int ALL_RULE_TAB_INDEX = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,18 +62,18 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 4;
+            return 3;
         }
 
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0:
-                    //TODO ;
-                case 1:
-                    //TODO:;
-                case 2:
-                    //TODO: ;
+                case ACTIVE_RULE_TAB_INDEX:
+                    return new AllRulesFragment();
+                case INACTIVE_RULE_TAB_INDEX:
+                    return new AllRulesFragment();
+                case ALL_RULE_TAB_INDEX:
+                    return new AllRulesFragment();
             }
             return null;
         }
@@ -74,11 +81,11 @@ public class RuleOverviewActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 0:
+                case ACTIVE_RULE_TAB_INDEX:
                     return getResources().getText(R.string.label_tab_active_rules);
-                case 1:
+                case INACTIVE_RULE_TAB_INDEX:
                     return getResources().getText(R.string.label_tab_inactive_rules);
-                case 2:
+                case ALL_RULE_TAB_INDEX:
                     return getResources().getText(R.string.label_tab_all_rules);
             }
             return null;

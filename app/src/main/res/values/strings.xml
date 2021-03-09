@@ -16,6 +16,8 @@
     <string name="label_tab_active_rules">Active</string>
     <string name="label_tab_inactive_rules">Inactive</string>
     <string name="label_tab_all_rules">All</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
