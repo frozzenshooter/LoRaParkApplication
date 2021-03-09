@@ -13,7 +13,9 @@ import android.view.MenuItem;
 
 import com.google.android.material.tabs.TabLayout;
 
+import de.uniulm.loraparkapplication.fragments.ActiveRulesFragment;
 import de.uniulm.loraparkapplication.fragments.AllRulesFragment;
+import de.uniulm.loraparkapplication.fragments.InactiveRulesFragment;
 
 public class RuleOverviewActivity extends AppCompatActivity {
 
@@ -69,9 +71,9 @@ public class RuleOverviewActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case ACTIVE_RULE_TAB_INDEX:
-                    return new AllRulesFragment();
+                    return new ActiveRulesFragment();
                 case INACTIVE_RULE_TAB_INDEX:
-                    return new AllRulesFragment();
+                    return new InactiveRulesFragment();
                 case ALL_RULE_TAB_INDEX:
                     return new AllRulesFragment();
             }
