@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context=".fragments.ActiveRulesFragment">
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.recyclerview.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/active_rules_recycler"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-
-    <TextView
-        android:id="@+id/textview_active_rules"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ACTIVE RULES" />
-
-</LinearLayout>
-</androidx.core.widget.NestedScrollView>
+    android:scrollbars="vertical" />

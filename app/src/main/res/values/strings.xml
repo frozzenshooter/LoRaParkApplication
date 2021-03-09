@@ -16,6 +16,8 @@
     <string name="label_tab_active_rules">Active</string>
     <string name="label_tab_inactive_rules">Inactive</string>
     <string name="label_tab_all_rules">All</string>
+    <string name="label_rule_name">Name</string>
+    <string name="label_is_active">active</string>
 
 
 </resources>

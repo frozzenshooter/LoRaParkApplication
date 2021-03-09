@@ -24,10 +24,12 @@ public class Rule {
     private List<Geofence> geofences = null;
     @SerializedName("condition")
     @Expose
-    private JsonObject condition;
+    private String condition;
     @SerializedName("actions")
     @Expose
     private List<Action> actions = null;
+
+    private boolean isActive;
 
     public String getId() {
         return id;
@@ -69,11 +71,11 @@ public class Rule {
         this.geofences = geofences;
     }
 
-    public JsonObject getCondition() {
+    public String getCondition() {
         return condition;
     }
 
-    public void setCondition(JsonObject condition) {
+    public void setCondition(String condition) {
         this.condition = condition;
     }
 
@@ -85,4 +87,11 @@ public class Rule {
         this.actions = actions;
     }
 
+    public void setIsActive(boolean isActive){
+        this.isActive = isActive;
+    }
+
+    public boolean getIsActive(){
+        return this.isActive;
+    }
 }
