@@ -13,4 +13,9 @@
     <string name="error_sensor_values_not_loaded">An error occurred retrieving the sensor values</string>
 
 
+    <string name="label_tab_active_rules">Active</string>
+    <string name="label_tab_inactive_rules">Inactive</string>
+    <string name="label_tab_all_rules">All</string>
+
+
 </resources>
