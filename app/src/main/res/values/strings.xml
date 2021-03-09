@@ -18,6 +18,8 @@
     <string name="label_tab_all_rules">All</string>
     <string name="label_rule_name">Name</string>
     <string name="label_is_active">active</string>
+    <string name="label_add_rule">Add rule</string>
+    <string name="label_download_rule">Download rule</string>
 
 
 </resources>

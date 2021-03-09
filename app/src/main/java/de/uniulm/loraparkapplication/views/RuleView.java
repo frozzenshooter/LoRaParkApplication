@@ -43,13 +43,11 @@ public class RuleView extends ConstraintLayout {
 
         this.mRuleNameTextView = findViewById(R.id.text_view_rule_name);
         this.mIsActiveRuleCheckBox = findViewById(R.id.checkbox_rule_is_active);
-
     }
 
     public void setValues(@NonNull String ruleName, @NonNull boolean isActive){
 
         this.mRuleNameTextView.setText(ruleName);
         this.mIsActiveRuleCheckBox.setChecked(isActive);
-
     }
 }

@@ -16,9 +16,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LoRaPark">
-        <activity android:name=".SensorDetailActivity"
+        <activity android:name=".DownloadRuleActivity"
+            android:label="@string/label_download_rule"
+            android:parentActivityName=".RuleOverviewActivity"/>
+        <activity
+            android:name=".SensorDetailActivity"
             android:label="@string/label_sensor_details"
-            android:parentActivityName=".SensorOverviewActivity"/>
+            android:parentActivityName=".SensorOverviewActivity" />
         <activity
             android:name=".SensorOverviewActivity"
             android:label="@string/label_sensor_overview"
@@ -27,6 +31,7 @@
             android:name=".RuleOverviewActivity"
             android:label="@string/label_rule_overview"
             android:parentActivityName=".MainActivity" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -14,8 +14,6 @@ import de.uniulm.loraparkapplication.views.RuleView;
 public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> {
 
     private Rule[] rules;
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private RuleView ruleView;
 
