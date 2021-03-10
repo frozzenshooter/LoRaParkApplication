@@ -11,7 +11,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.jetbrains.annotations.NotNull;
 
-@Entity(foreignKeys = {@ForeignKey(entity = Rule.class,
+@Entity(tableName = "action_table",
+        foreignKeys = {@ForeignKey(entity = Rule.class,
         parentColumns = "id",
         childColumns = "rule_id",
         onDelete = ForeignKey.CASCADE)

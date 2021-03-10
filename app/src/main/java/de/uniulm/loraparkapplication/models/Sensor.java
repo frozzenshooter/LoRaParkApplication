@@ -8,7 +8,8 @@ import androidx.room.PrimaryKey;
 
 import org.jetbrains.annotations.NotNull;
 
-@Entity(foreignKeys = {@ForeignKey(entity = Rule.class,
+@Entity(tableName = "sensor_table",
+        foreignKeys = {@ForeignKey(entity = Rule.class,
         parentColumns = "id",
         childColumns = "rule_id",
         onDelete = ForeignKey.CASCADE)

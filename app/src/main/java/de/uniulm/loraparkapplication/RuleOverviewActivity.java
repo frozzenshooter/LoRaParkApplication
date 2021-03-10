@@ -8,6 +8,7 @@ import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
@@ -19,9 +20,14 @@ import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.Random;
+
 import de.uniulm.loraparkapplication.fragments.ActiveRulesFragment;
 import de.uniulm.loraparkapplication.fragments.AllRulesFragment;
 import de.uniulm.loraparkapplication.fragments.InactiveRulesFragment;
+import de.uniulm.loraparkapplication.models.Rule;
+import de.uniulm.loraparkapplication.viewmodels.RuleOverviewViewModel;
+import de.uniulm.loraparkapplication.viewmodels.SensorOverviewViewModel;
 
 public class RuleOverviewActivity extends AppCompatActivity {
 
@@ -29,6 +35,20 @@ public class RuleOverviewActivity extends AppCompatActivity {
     public final static int INACTIVE_RULE_TAB_INDEX = 1;
     public final static int ALL_RULE_TAB_INDEX = 2;
 
+    private RuleOverviewViewModel mRuleOverviewViewModel;
+
+
+    public static String random() {
+        Random generator = new Random();
+        StringBuilder randomStringBuilder = new StringBuilder();
+        int randomLength = generator.nextInt(15);
+        char tempChar;
+        for (int i = 0; i < randomLength; i++){
+            tempChar = (char) (generator.nextInt(96) + 32);
+            randomStringBuilder.append(tempChar);
+        }
+        return randomStringBuilder.toString();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +70,27 @@ public class RuleOverviewActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(pager);
 
+
+        this.mRuleOverviewViewModel =  new ViewModelProvider(this).get(RuleOverviewViewModel.class);
+
+
         FloatingActionButton fab = findViewById(R.id.fab_add_rule);
         fab.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(RuleOverviewActivity.this, DownloadRuleActivity.class);
-                RuleOverviewActivity.this.startActivity(intent);
+               // Intent intent = new Intent(RuleOverviewActivity.this, DownloadRuleActivity.class);
+               // RuleOverviewActivity.this.startActivity(intent);
+
+                Rule rule = new Rule();
+                rule.setName("New Rule");
+                rule.setDescription("Rule description");
+                rule.setId(random());
+                rule.setCondition("Condition");
+                rule.setIsActive(true);
+
+                RuleOverviewActivity.this.mRuleOverviewViewModel.insertRule(rule);
+
             }
         });
     }

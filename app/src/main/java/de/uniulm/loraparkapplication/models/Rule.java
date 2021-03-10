@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 
 import org.jetbrains.annotations.NotNull;
 
-@Entity
+@Entity(tableName = "rule_table")
 public class Rule {
 
     @PrimaryKey(autoGenerate = false)
@@ -27,7 +27,6 @@ public class Rule {
 
     @ColumnInfo(name = "is_active")
     private Boolean isActive;
-
 
     //region Getters and setters
 
