@@ -12,7 +12,6 @@ import java.util.List;
 
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
-import de.uniulm.loraparkapplication.models.SensorDescription;
 import de.uniulm.loraparkapplication.repositories.RuleDataRepository;
 
 public class RuleOverviewViewModel extends AndroidViewModel {

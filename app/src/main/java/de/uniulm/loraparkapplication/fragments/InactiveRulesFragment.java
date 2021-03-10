@@ -85,7 +85,6 @@ public class InactiveRulesFragment extends Fragment {
         super.onResume();
         RuleOverviewActivity parentActivity = (RuleOverviewActivity) getActivity();
         if(parentActivity != null){
-
             Boolean refreshFragment = parentActivity.getRefreshInactiveRulesFragments();
             if(refreshFragment){
                 this.mRuleOverviewViewModel.refresh();
