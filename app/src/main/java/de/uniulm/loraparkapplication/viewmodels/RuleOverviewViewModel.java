@@ -20,20 +20,25 @@ public class RuleOverviewViewModel extends AndroidViewModel {
     //TODO: https://developer.android.com/topic/libraries/architecture/viewmodel.html#sharing implement it like this and hold the data in here
     private RuleDataRepository mRuleDataRepository;
 
-    private MutableLiveData<Resource<List<Rule>>> mAllRules;
-    private MutableLiveData<Resource<List<Rule>>> mActiveRules;
-    private MutableLiveData<Resource<List<Rule>>> mInactiveRules;
+    private LiveData<Resource<List<Rule>>> mAllRules;
+    private LiveData<Resource<List<Rule>>> mActiveRules;
+    private LiveData<Resource<List<Rule>>> mInactiveRules;
 
-    private MutableLiveData<Boolean> mRefreshRules;
+    private MutableLiveData<Integer> mRefreshCount;
+    private Integer counter;
 
     public RuleOverviewViewModel(@NonNull Application application) {
         super(application);
         mRuleDataRepository = RuleDataRepository.getInstance(application);
+        mRefreshCount = new MutableLiveData<Integer>();
+        mRefreshCount.setValue(0);
+        counter = 0;
     }
 
     public LiveData<Resource<List<Rule>>> getAllRules(){
         if(this.mAllRules == null){
-            this.mAllRules = this.mRuleDataRepository.getAllRules();
+            //this.mAllRules = this.mRuleDataRepository.getAllRules();
+            this.mAllRules = Transformations.switchMap(mRefreshCount, count -> this.mRuleDataRepository.getAllRules());
         }
 
         return this.mAllRules;
@@ -41,7 +46,8 @@ public class RuleOverviewViewModel extends AndroidViewModel {
 
     public LiveData<Resource<List<Rule>>> getActiveRules(){
         if(this.mActiveRules == null){
-            this.mActiveRules = mRuleDataRepository.getRules(true);
+            //this.mActiveRules = mRuleDataRepository.getRules(true);
+            this.mActiveRules = Transformations.switchMap(mRefreshCount, count -> this.mRuleDataRepository.getRules(true));
         }
 
         return this.mActiveRules;
@@ -49,7 +55,8 @@ public class RuleOverviewViewModel extends AndroidViewModel {
 
     public LiveData<Resource<List<Rule>>> getInactiveRules(){
         if(this.mInactiveRules == null){
-            this.mInactiveRules = mRuleDataRepository.getRules(false);
+            //this.mInactiveRules = mRuleDataRepository.getRules(false);
+            this.mInactiveRules = Transformations.switchMap(mRefreshCount, count -> this.mRuleDataRepository.getRules(false));
         }
 
         return this.mInactiveRules;
@@ -61,9 +68,16 @@ public class RuleOverviewViewModel extends AndroidViewModel {
         //TODO: https://stackoverflow.com/questions/51154786/android-implement-search-with-view-model-and-live-data
         //TODO: other solution migth be: https://stackoverflow.com/questions/53467820/how-to-properly-reload-livedata-manually-in-android
 
-        this.mInactiveRules = this.mRuleDataRepository.getRules(false);
-        this.mActiveRules = this.mRuleDataRepository.getRules(true);
-        this.mAllRules = this.mRuleDataRepository.getAllRules();
+        //TODO: FOR NOW WORKAROUND BASED ON COUNTER
+
+        //this.mInactiveRules = this.mRuleDataRepository.getRules(false);
+        //this.mActiveRules = this.mRuleDataRepository.getRules(true);
+        //this.mAllRules = this.mRuleDataRepository.getAllRules();
+        if(this.counter > 1000000){
+            this.counter = 0;
+        }
+        this.counter = this.counter + 1;
+        this.mRefreshCount.setValue(this.counter);
     }
 
     public void insertRule(@NonNull Rule rule){

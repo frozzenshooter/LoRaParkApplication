@@ -195,10 +195,4 @@ public class RuleOverviewActivity extends AppCompatActivity {
     public void setRefreshInactiveRules(Boolean refresh){
         this.refreshInactiveRules = refresh;
     }
-
-
-
-
-
-
 }
