@@ -37,6 +37,9 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
     private RuleOverviewViewModel mRuleOverviewViewModel;
 
+    private Boolean refreshAllRules = false;
+    private Boolean refreshActiveRules = false;
+    private Boolean refreshInactiveRules = false;
 
     public static String random() {
         Random generator = new Random();
@@ -81,6 +84,10 @@ public class RuleOverviewActivity extends AppCompatActivity {
             public void onClick(View view) {
                // Intent intent = new Intent(RuleOverviewActivity.this, DownloadRuleActivity.class);
                // RuleOverviewActivity.this.startActivity(intent);
+               RuleOverviewActivity.this.refreshAllRules = true;
+               RuleOverviewActivity.this.refreshActiveRules = true;
+               RuleOverviewActivity.this.refreshInactiveRules = true;
+
 
                 Rule rule = new Rule();
                 rule.setName("New Rule");
@@ -89,8 +96,16 @@ public class RuleOverviewActivity extends AppCompatActivity {
                 rule.setCondition("Condition");
                 rule.setIsActive(true);
 
-                RuleOverviewActivity.this.mRuleOverviewViewModel.insertRule(rule);
+                Rule rule2 = new Rule();
+                rule2.setName("New Rule");
+                rule2.setDescription("Rule description");
+                rule2.setId(random());
+                rule2.setCondition("Condition");
+                rule2.setIsActive(false);
 
+
+                RuleOverviewActivity.this.mRuleOverviewViewModel.insertRule(rule);
+                RuleOverviewActivity.this.mRuleOverviewViewModel.insertRule(rule2);
             }
         });
     }
@@ -99,6 +114,7 @@ public class RuleOverviewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.action_add_rule:
+                RuleOverviewActivity.this.mRuleOverviewViewModel.deleteAllRules();
                 Intent intent = new Intent(this, DownloadRuleActivity.class);
                 startActivity(intent);
                 return true;
@@ -155,4 +171,34 @@ public class RuleOverviewActivity extends AppCompatActivity {
             return null;
         }
     }
+
+    public Boolean getRefreshAllRulesFragments(){
+        return this.refreshAllRules;
+    }
+
+    public void setRefreshAllRules(Boolean refresh){
+        this.refreshAllRules = refresh;
+    }
+
+    public Boolean getRefreshActiveRulesFragments(){
+        return this.refreshActiveRules;
+    }
+
+    public void setRefreshActiveRules(Boolean refresh){
+        this.refreshActiveRules = refresh;
+    }
+
+    public Boolean getRefreshInactiveRulesFragments(){
+        return this.refreshInactiveRules;
+    }
+
+    public void setRefreshInactiveRules(Boolean refresh){
+        this.refreshInactiveRules = refresh;
+    }
+
+
+
+
+
+
 }
