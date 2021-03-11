@@ -21,8 +21,8 @@ public class RuleDownloadAdapter extends  RecyclerView.Adapter<RuleDownloadAdapt
 
         public ViewHolder(View v) {
             super(v);
-            this.ruleNameTextView = (TextView)v.findViewById(R.id.text_view_rule_name);
-            this.ruleDescriptionTextView = (TextView) v.findViewById(R.id.text_view_rule_description);
+            this.ruleNameTextView = (TextView)v.findViewById(R.id.text_view_download_rule_name);
+            this.ruleDescriptionTextView = (TextView) v.findViewById(R.id.text_view_download_rule_description);
         }
 
         public void bind(final DownloadRule rule){
@@ -43,7 +43,7 @@ public class RuleDownloadAdapter extends  RecyclerView.Adapter<RuleDownloadAdapt
     @Override
     public RuleDownloadAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_rule, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_download_rule, parent, false);
         return new RuleDownloadAdapter.ViewHolder(view);
     }
 
