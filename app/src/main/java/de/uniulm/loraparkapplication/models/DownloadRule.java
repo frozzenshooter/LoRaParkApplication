@@ -42,6 +42,6 @@ public class DownloadRule {
     public void setDescription(String description) {
         this.description = description;
     }
-    //endregion
 
+    //endregion
 }

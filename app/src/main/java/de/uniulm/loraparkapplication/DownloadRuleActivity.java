@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.HashSet;
 import java.util.List;
 
 import de.uniulm.loraparkapplication.adapters.RuleDownloadAdapter;
@@ -24,6 +25,8 @@ import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.viewmodels.DownloadRuleViewModel;
 
 public class DownloadRuleActivity extends AppCompatActivity {
+
+    public final static String SELECTED_RULES = "SELECTED_RULES";
 
     private RuleDownloadAdapter adapter;
     private DownloadRuleViewModel mDownloadRuleViewModel;
@@ -56,6 +59,16 @@ public class DownloadRuleActivity extends AppCompatActivity {
 
         downloadRuleRecycler.setLayoutManager(layoutManager);
 
+        // Retrieve the selected items from previous creation (e.g. after device rotation the selection has to be set again)
+        HashSet<String> selectedRules = new HashSet<>();
+        if(savedInstanceState != null){
+            String[] checkRuleIds = savedInstanceState.getStringArray(SELECTED_RULES);
+
+            for(int i=0; i < checkRuleIds.length; i++){
+                selectedRules.add(checkRuleIds[i]);
+            }
+        }
+
 
         this.mDownloadRuleViewModel = new ViewModelProvider(this).get(DownloadRuleViewModel.class);
         this.mDownloadRuleViewModel.init();
@@ -73,7 +86,8 @@ public class DownloadRuleActivity extends AppCompatActivity {
 
                         if (downloadRulesResource.data != null && downloadRulesResource.data.size() > 0) {
                             DownloadRule[] ruleArray = downloadRulesResource.data.toArray(new DownloadRule[0]);
-                            DownloadRuleActivity.this.adapter.updateRules(ruleArray);
+
+                            DownloadRuleActivity.this.adapter.updateRules(ruleArray, selectedRules);
                         }
 
                     } else if (downloadRulesResource.status == Resource.Status.ERROR) {
@@ -91,6 +105,14 @@ public class DownloadRuleActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        List<String> selectedRules= this.adapter.getSelectedDownloadRuleIds();
+
+        savedInstanceState.putStringArray(SELECTED_RULES, selectedRules.toArray(new String[0]));
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case android.R.id.home:
@@ -104,11 +126,11 @@ public class DownloadRuleActivity extends AppCompatActivity {
 
     public void downloadRules(View view) {
 
-        List<DownloadRule> selectedRules = adapter.getSelectedDownloadRules();
+        List<String> selectedRules = adapter.getSelectedDownloadRuleIds();
 
         StringBuilder build = new StringBuilder();
-        for(DownloadRule rule: selectedRules){
-            build.append(rule.getName());
+        for(String ruleId: selectedRules){
+            build.append(ruleId);
             build.append("; ");
         }
 

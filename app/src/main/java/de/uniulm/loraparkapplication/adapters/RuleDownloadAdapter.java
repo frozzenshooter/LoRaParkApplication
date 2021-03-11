@@ -8,9 +8,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,6 +25,7 @@ public class RuleDownloadAdapter extends  RecyclerView.Adapter<RuleDownloadAdapt
 
     private DownloadRule[] rules;
     private HashSet<Integer> checkedRules;
+    private HashSet<String> previousSelectedRuleIds;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView ruleNameTextView;
@@ -41,6 +44,11 @@ public class RuleDownloadAdapter extends  RecyclerView.Adapter<RuleDownloadAdapt
         public void bind(final DownloadRule rule){
             this.ruleNameTextView.setText(rule.getName());
             this.ruleDescriptionTextView.setText(rule.getDescription() == null ? "" : rule.getDescription() );
+
+            if(previousSelectedRuleIds.contains(rule.getId())){
+                checkedRules.add(getAdapterPosition());
+                selectedIcon.setVisibility(View.VISIBLE);
+            }
 
             this.view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -81,17 +89,20 @@ public class RuleDownloadAdapter extends  RecyclerView.Adapter<RuleDownloadAdapt
         holder.bind(rules[position]);
     }
 
-    public void updateRules(DownloadRule[] rules){
+    public void updateRules(@NonNull DownloadRule[] rules, @Nullable HashSet<String> selectedRules){
         this.rules = rules;
+        if(selectedRules != null){
+            this.previousSelectedRuleIds = selectedRules;
+        }
         notifyDataSetChanged();
     }
 
 
-    public List<DownloadRule> getSelectedDownloadRules(){
-        List<DownloadRule> selectedRules = new ArrayList<>();
+    public List<String> getSelectedDownloadRuleIds(){
+        List<String> selectedRules = new ArrayList<>();
 
         for(Integer position: checkedRules){
-            selectedRules.add(rules[position]);
+            selectedRules.add(rules[position].getId());
         }
 
         return selectedRules;
