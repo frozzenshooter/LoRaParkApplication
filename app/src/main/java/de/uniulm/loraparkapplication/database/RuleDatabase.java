@@ -21,7 +21,7 @@ public abstract class RuleDatabase extends RoomDatabase {
 
     private static volatile RuleDatabase instance;
     private static final int NUMBER_OF_THREADS = 4;
-    public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    public static final ExecutorService databaseExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public static RuleDatabase getDatabase(final Context context) {
         if (instance == null) {
@@ -34,5 +34,4 @@ public abstract class RuleDatabase extends RoomDatabase {
         }
         return instance;
     }
-
 }

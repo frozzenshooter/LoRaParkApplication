@@ -37,7 +37,7 @@ public class RuleDataRepository {
 
         data.setValue(Resource.loading(null));
 
-        RuleDatabase.databaseWriteExecutor.execute(() -> {
+        RuleDatabase.databaseExecutor.execute(() -> {
             List<Rule> rules = mRuleDao.findAll();
             data.postValue(Resource.success(rules));
         });
@@ -51,7 +51,7 @@ public class RuleDataRepository {
 
         data.setValue(Resource.loading(null));
 
-        RuleDatabase.databaseWriteExecutor.execute(() -> {
+        RuleDatabase.databaseExecutor.execute(() -> {
             List<Rule> rules = mRuleDao.findRules(isActive);
             data.postValue(Resource.success(rules));
         });
@@ -63,7 +63,7 @@ public class RuleDataRepository {
 
         //TODO: add error handling
 
-        RuleDatabase.databaseWriteExecutor.execute(() -> {
+        RuleDatabase.databaseExecutor.execute(() -> {
             mRuleDao.insert(rule);
         });
     }
@@ -71,7 +71,7 @@ public class RuleDataRepository {
     public void deleteAllRules() {
         //TODO: add error handling
 
-        RuleDatabase.databaseWriteExecutor.execute(() -> {
+        RuleDatabase.databaseExecutor.execute(() -> {
             mRuleDao.deleteAllRules();
         });
     }
