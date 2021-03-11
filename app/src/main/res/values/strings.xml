@@ -20,7 +20,7 @@
     <string name="label_is_active">active</string>
     <string name="label_add_rule">Add rule</string>
     <string name="label_download_rule">Download rule</string>
-
+    <string name="label_download_rules">Download rules</string>
 
 
 </resources>

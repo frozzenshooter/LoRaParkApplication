@@ -6,24 +6,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
 
-import de.uniulm.loraparkapplication.adapters.RuleAdapter;
 import de.uniulm.loraparkapplication.adapters.RuleDownloadAdapter;
 import de.uniulm.loraparkapplication.models.DownloadRule;
 import de.uniulm.loraparkapplication.models.Resource;
-import de.uniulm.loraparkapplication.models.Rule;
-import de.uniulm.loraparkapplication.models.SensorDetail;
 import de.uniulm.loraparkapplication.viewmodels.DownloadRuleViewModel;
-import de.uniulm.loraparkapplication.viewmodels.SensorDetailViewModel;
 
 public class DownloadRuleActivity extends AppCompatActivity {
 
@@ -41,8 +39,6 @@ public class DownloadRuleActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-
-
         RecyclerView downloadRuleRecycler = (RecyclerView) findViewById(R.id.download_rules_recycler);
 
         DownloadRule[] downloadRules = {};
@@ -55,6 +51,8 @@ public class DownloadRuleActivity extends AppCompatActivity {
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(downloadRuleRecycler.getContext(), layoutManager.getOrientation());
         downloadRuleRecycler.addItemDecoration(dividerItemDecoration);
+
+        downloadRuleRecycler.setHasFixedSize(true);
 
         downloadRuleRecycler.setLayoutManager(layoutManager);
 
@@ -102,5 +100,11 @@ public class DownloadRuleActivity extends AppCompatActivity {
 
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void downloadRules(View view) {
+        String message =  "Download rules";
+        Toast.makeText(DownloadRuleActivity.this, message, Toast.LENGTH_LONG).show();
+        finish();
     }
 }
