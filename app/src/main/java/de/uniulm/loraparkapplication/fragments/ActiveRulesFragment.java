@@ -20,10 +20,9 @@ import java.util.List;
 
 import de.uniulm.loraparkapplication.R;
 import de.uniulm.loraparkapplication.RuleOverviewActivity;
-import de.uniulm.loraparkapplication.SensorOverviewActivity;
+import de.uniulm.loraparkapplication.adapters.RuleAdapter;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
-import de.uniulm.loraparkapplication.models.SensorDescription;
 import de.uniulm.loraparkapplication.viewmodels.RuleOverviewViewModel;
 
 public class ActiveRulesFragment extends Fragment {

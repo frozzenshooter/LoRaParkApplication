@@ -1,4 +1,4 @@
-package de.uniulm.loraparkapplication.fragments;
+package de.uniulm.loraparkapplication.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;

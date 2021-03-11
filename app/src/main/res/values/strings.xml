@@ -11,7 +11,7 @@
     <!--Error messages-->
     <string name="error_sensor_descriptions_not_loaded">An error occurred retrieving the sensor data</string>
     <string name="error_sensor_values_not_loaded">An error occurred retrieving the sensor values</string>
-
+    <string name="error_rules_not_loaded">An error occurred retrieving the rules</string>
 
     <string name="label_tab_active_rules">Active</string>
     <string name="label_tab_inactive_rules">Inactive</string>
@@ -20,6 +20,7 @@
     <string name="label_is_active">active</string>
     <string name="label_add_rule">Add rule</string>
     <string name="label_download_rule">Download rule</string>
+
 
 
 </resources>

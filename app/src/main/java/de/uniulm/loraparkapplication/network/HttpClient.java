@@ -16,6 +16,7 @@ public class HttpClient {
 
     private final static String sensorDescriptionsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/sensor_descriptions/sensors.json";
     private final static String sensorDetailsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/sensor_descriptions/sensor_values.json";
+    private final static String downloadRuleURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/sensor_descriptions/sensor_values.json";
 
     private static OkHttpClient instance;
 
@@ -37,6 +38,11 @@ public class HttpClient {
         Log.i(HTTP_CLIENT_CLASSNAME,"Creation of request for sensorId: " + sensorId + "started.");
 
         Request req = new Request.Builder().url(HttpClient.sensorDetailsURL).build();
+        return req;
+    }
+
+    public static Request getDownloadRuleRequest(){
+        Request req = new Request.Builder().url(HttpClient.downloadRuleURL).build();
         return req;
     }
 }

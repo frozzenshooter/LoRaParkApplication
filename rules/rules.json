@@ -1,0 +1,31 @@
+[
+    {
+        "id": "test1",
+        "name": "Rule01",
+        "desctription": "Rule 01 description"
+    },
+    {
+        "id": "test2",
+        "name": "Rule02",
+        "desctription": "Rule 02 description"
+    },
+    {
+        "id": "test3",
+        "name": "Rule03",
+        "desctription": "Rule 03 description"
+    },
+    {
+        "id": "test4",
+        "name": "Rule04",
+        "desctription": "Rule 04 description"
+    },
+    {
+        "id": "test5",
+        "name": "Rule05"
+    },
+    {
+        "id": "test6",
+        "name": "Rule06",
+        "desctription": "Rule 06 long description description description description description"
+    }
+]
