@@ -41,18 +41,6 @@ public class RuleOverviewActivity extends AppCompatActivity {
     private Boolean refreshActiveRules = false;
     private Boolean refreshInactiveRules = false;
 
-    public static String random() {
-        Random generator = new Random();
-        StringBuilder randomStringBuilder = new StringBuilder();
-        int randomLength = generator.nextInt(15);
-        char tempChar;
-        for (int i = 0; i < randomLength; i++){
-            tempChar = (char) (generator.nextInt(96) + 32);
-            randomStringBuilder.append(tempChar);
-        }
-        return randomStringBuilder.toString();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,30 +70,8 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-               // Intent intent = new Intent(RuleOverviewActivity.this, DownloadRuleActivity.class);
-               // RuleOverviewActivity.this.startActivity(intent);
-               RuleOverviewActivity.this.refreshAllRules = true;
-               RuleOverviewActivity.this.refreshActiveRules = true;
-               RuleOverviewActivity.this.refreshInactiveRules = true;
-
-
-                Rule rule = new Rule();
-                rule.setName("New Rule");
-                rule.setDescription("Rule description");
-                rule.setId(random());
-                rule.setCondition("Condition");
-                rule.setIsActive(true);
-
-                Rule rule2 = new Rule();
-                rule2.setName("New Rule");
-                rule2.setDescription("Rule description");
-                rule2.setId(random());
-                rule2.setCondition("Condition");
-                rule2.setIsActive(false);
-
-
-                RuleOverviewActivity.this.mRuleOverviewViewModel.insertRule(rule);
-                RuleOverviewActivity.this.mRuleOverviewViewModel.insertRule(rule2);
+               Intent intent = new Intent(RuleOverviewActivity.this, DownloadRuleActivity.class);
+               RuleOverviewActivity.this.startActivity(intent);
             }
         });
     }
@@ -132,8 +98,6 @@ public class RuleOverviewActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_rule_overview, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
-
 
     private class RuleSectionsPagerAdapter extends FragmentPagerAdapter {
         public RuleSectionsPagerAdapter(FragmentManager fm) {

@@ -128,12 +128,12 @@ public class DownloadRuleActivity extends AppCompatActivity {
 
         List<String> selectedRules = adapter.getSelectedDownloadRuleIds();
 
-        StringBuilder build = new StringBuilder();
-        for(String ruleId: selectedRules){
-            build.append(ruleId);
-            build.append("; ");
+        if(selectedRules.size() == 0){
+            Toast.makeText(DownloadRuleActivity.this, getResources().getString(R.string.info_no_rule_selected), Toast.LENGTH_LONG).show();
+        }else{
+            // handle the selection and hand over to other activity
         }
 
-        Toast.makeText(DownloadRuleActivity.this,   build.toString(), Toast.LENGTH_SHORT).show();
+        finish();
     }
 }
