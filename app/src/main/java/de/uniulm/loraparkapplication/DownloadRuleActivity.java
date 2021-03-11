@@ -103,8 +103,15 @@ public class DownloadRuleActivity extends AppCompatActivity {
     }
 
     public void downloadRules(View view) {
-        String message =  "Download rules";
-        Toast.makeText(DownloadRuleActivity.this, message, Toast.LENGTH_LONG).show();
-        finish();
+
+        List<DownloadRule> selectedRules = adapter.getSelectedDownloadRules();
+
+        StringBuilder build = new StringBuilder();
+        for(DownloadRule rule: selectedRules){
+            build.append(rule.getName());
+            build.append("; ");
+        }
+
+        Toast.makeText(DownloadRuleActivity.this,   build.toString(), Toast.LENGTH_SHORT).show();
     }
 }
