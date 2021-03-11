@@ -11,11 +11,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -27,9 +33,9 @@ import de.uniulm.loraparkapplication.viewmodels.DownloadRuleViewModel;
 public class DownloadRuleActivity extends AppCompatActivity {
 
     public final static String SELECTED_RULES = "SELECTED_RULES";
+    public final static Integer REQUEST_ID = 1;
 
     private RuleDownloadAdapter adapter;
-    private DownloadRuleViewModel mDownloadRuleViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,18 +68,15 @@ public class DownloadRuleActivity extends AppCompatActivity {
         // Retrieve the selected items from previous creation (e.g. after device rotation the selection has to be set again)
         HashSet<String> selectedRules = new HashSet<>();
         if(savedInstanceState != null){
-            String[] checkRuleIds = savedInstanceState.getStringArray(SELECTED_RULES);
+            final String[] checkRuleIds = savedInstanceState.getStringArray(SELECTED_RULES);
 
-            for(int i=0; i < checkRuleIds.length; i++){
-                selectedRules.add(checkRuleIds[i]);
-            }
+            selectedRules.addAll(Arrays.asList(checkRuleIds));
         }
 
+        DownloadRuleViewModel mDownloadRuleViewModel = new ViewModelProvider(this).get(DownloadRuleViewModel.class);
+        mDownloadRuleViewModel.init();
 
-        this.mDownloadRuleViewModel = new ViewModelProvider(this).get(DownloadRuleViewModel.class);
-        this.mDownloadRuleViewModel.init();
-
-        this.mDownloadRuleViewModel.getDownloadRules().observe(this, new Observer<Resource<List<DownloadRule>>>() {
+        mDownloadRuleViewModel.getDownloadRules().observe(this, new Observer<Resource<List<DownloadRule>>>() {
 
             @Override
             public void onChanged(@Nullable Resource<List<DownloadRule>> downloadRulesResource) {
@@ -105,9 +108,9 @@ public class DownloadRuleActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NotNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        List<String> selectedRules= this.adapter.getSelectedDownloadRuleIds();
+        final List<String> selectedRules= this.adapter.getSelectedDownloadRuleIds();
 
         savedInstanceState.putStringArray(SELECTED_RULES, selectedRules.toArray(new String[0]));
     }
@@ -131,7 +134,10 @@ public class DownloadRuleActivity extends AppCompatActivity {
         if(selectedRules.size() == 0){
             Toast.makeText(DownloadRuleActivity.this, getResources().getString(R.string.info_no_rule_selected), Toast.LENGTH_LONG).show();
         }else{
-            // handle the selection and hand over to other activity
+            // handle the selection and hand result over to other activity
+            Intent resultIntent = new Intent();
+            resultIntent.putStringArrayListExtra(SELECTED_RULES, new ArrayList<String>(selectedRules));
+            setResult(Activity.RESULT_OK, resultIntent);
         }
 
         finish();

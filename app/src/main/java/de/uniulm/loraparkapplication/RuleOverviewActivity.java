@@ -1,5 +1,6 @@
 package de.uniulm.loraparkapplication;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ShareActionProvider;
@@ -12,19 +13,23 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import de.uniulm.loraparkapplication.fragments.ActiveRulesFragment;
 import de.uniulm.loraparkapplication.fragments.AllRulesFragment;
 import de.uniulm.loraparkapplication.fragments.InactiveRulesFragment;
+import de.uniulm.loraparkapplication.models.DownloadRule;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.viewmodels.RuleOverviewViewModel;
 import de.uniulm.loraparkapplication.viewmodels.SensorOverviewViewModel;
@@ -61,19 +66,21 @@ public class RuleOverviewActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(pager);
 
-
         this.mRuleOverviewViewModel =  new ViewModelProvider(this).get(RuleOverviewViewModel.class);
-
 
         FloatingActionButton fab = findViewById(R.id.fab_add_rule);
         fab.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-               Intent intent = new Intent(RuleOverviewActivity.this, DownloadRuleActivity.class);
-               RuleOverviewActivity.this.startActivity(intent);
+               startDownloadActivity();
             }
         });
+    }
+
+    private void startDownloadActivity(){
+        Intent intent = new Intent(this, DownloadRuleActivity.class);
+        startActivityForResult(intent, DownloadRuleActivity.REQUEST_ID);
     }
 
     @Override
@@ -81,8 +88,7 @@ public class RuleOverviewActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.action_add_rule:
                 RuleOverviewActivity.this.mRuleOverviewViewModel.deleteAllRules();
-                Intent intent = new Intent(this, DownloadRuleActivity.class);
-                startActivity(intent);
+                startDownloadActivity();
                 return true;
             case android.R.id.home:
                 finish();
@@ -90,6 +96,23 @@ public class RuleOverviewActivity extends AppCompatActivity {
             default:
 
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(data != null && requestCode == DownloadRuleActivity.REQUEST_ID){
+            ArrayList<String> rulesToDownload = data.getStringArrayListExtra(DownloadRuleActivity.SELECTED_RULES);
+
+            StringBuilder build = new StringBuilder();
+            for(int i=0 ; i < rulesToDownload.size(); i++){
+                build.append(rulesToDownload.get(i));
+                build.append("; ");
+            }
+
+            Toast.makeText(this, build.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 

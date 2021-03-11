@@ -1,11 +1,9 @@
 package de.uniulm.loraparkapplication.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,8 +22,7 @@ import de.uniulm.loraparkapplication.models.DownloadRule;
 public class RuleDownloadAdapter extends  RecyclerView.Adapter<RuleDownloadAdapter.ViewHolder> {
 
     private DownloadRule[] rules;
-    private HashSet<Integer> checkedRules;
-    private HashSet<String> previousSelectedRuleIds;
+    private HashSet<String> selectedRuleIds;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView ruleNameTextView;
@@ -45,20 +42,22 @@ public class RuleDownloadAdapter extends  RecyclerView.Adapter<RuleDownloadAdapt
             this.ruleNameTextView.setText(rule.getName());
             this.ruleDescriptionTextView.setText(rule.getDescription() == null ? "" : rule.getDescription() );
 
-            if(previousSelectedRuleIds.contains(rule.getId())){
-                checkedRules.add(getAdapterPosition());
+            if(selectedRuleIds.contains(rule.getId())){
+                rule.setSelected(true);
                 selectedIcon.setVisibility(View.VISIBLE);
+            }else{
+                rule.setSelected(false);
             }
 
             this.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Integer position = getAdapterPosition();
-                    if(checkedRules.contains(position)){
-                        checkedRules.remove(position);
+
+                    if(rule.isSelected()){
+                        rule.setSelected(false);
                         selectedIcon.setVisibility(View.INVISIBLE);
                     }else{
-                        checkedRules.add(position);
+                        rule.setSelected(true);
                         selectedIcon.setVisibility(View.VISIBLE);
                     }
                 }
@@ -68,7 +67,7 @@ public class RuleDownloadAdapter extends  RecyclerView.Adapter<RuleDownloadAdapt
 
     public RuleDownloadAdapter(DownloadRule[] rules){
         this.rules = rules;
-        this.checkedRules = new HashSet<>();
+        this.selectedRuleIds = new HashSet<>();
     }
 
     @Override
@@ -89,23 +88,25 @@ public class RuleDownloadAdapter extends  RecyclerView.Adapter<RuleDownloadAdapt
         holder.bind(rules[position]);
     }
 
-    public void updateRules(@NonNull DownloadRule[] rules, @Nullable HashSet<String> selectedRules){
+    public void updateRules(@NonNull DownloadRule[] rules, @Nullable HashSet<String> prSelectedRules){
         this.rules = rules;
-        if(selectedRules != null){
-            this.previousSelectedRuleIds = selectedRules;
+        if(prSelectedRules != null){
+            this.selectedRuleIds = prSelectedRules;
         }
         notifyDataSetChanged();
     }
 
 
     public List<String> getSelectedDownloadRuleIds(){
-        List<String> selectedRules = new ArrayList<>();
+        List<String> selectedRulesForExport = new ArrayList<>();
 
-        for(Integer position: checkedRules){
-            selectedRules.add(rules[position].getId());
+        for(int i=0; i < rules.length; i++){
+            if(rules[i].isSelected()){
+                selectedRulesForExport.add(rules[i].getId());
+            }
         }
 
-        return selectedRules;
+        return selectedRulesForExport;
     }
 
 }

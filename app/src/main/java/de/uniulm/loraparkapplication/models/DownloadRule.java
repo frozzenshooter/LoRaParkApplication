@@ -17,6 +17,9 @@ public class DownloadRule {
     @Expose
     private String description;
 
+    /*Not parsed - only needed for recycle view*/
+    private Boolean isSelected;
+
     //region Getters and setters
 
     public String getId() {
@@ -41,6 +44,14 @@ public class DownloadRule {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(Boolean selected) {
+        isSelected = selected;
     }
 
     //endregion
