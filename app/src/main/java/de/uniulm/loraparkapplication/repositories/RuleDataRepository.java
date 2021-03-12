@@ -3,6 +3,7 @@ package de.uniulm.loraparkapplication.repositories;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 
 import com.google.gson.Gson;
 
@@ -43,38 +44,12 @@ public class RuleDataRepository {
 
     //region Rule queries
 
-    public Observable<List<Rule>> getAllRules() {
-
-        return Observable.create(new ObservableOnSubscribe<List<Rule>>() {
-            @Override
-            public void subscribe(final ObservableEmitter<List<Rule>> emitter) throws Exception {
-
-                RuleDatabase.databaseExecutor.execute(() -> {
-                    List<Rule> rules = mRuleDao.findAll();
-                    if(!emitter.isDisposed()){
-                        emitter.onNext(rules);
-                        emitter.onComplete();
-                    }
-                });
-            }
-        });
+    public LiveData<List<Rule>> getLiveAllRules(){
+        return mRuleDao.findAllRules();
     }
 
-    public Observable<List<Rule>> getRules(Boolean isActive) {
-
-        return Observable.create(new ObservableOnSubscribe<List<Rule>>() {
-            @Override
-            public void subscribe(final ObservableEmitter<List<Rule>> emitter) throws Exception {
-
-                RuleDatabase.databaseExecutor.execute(() -> {
-                    List<Rule> rules = mRuleDao.findRules(isActive);
-                    if(!emitter.isDisposed()){
-                        emitter.onNext(rules);
-                        emitter.onComplete();
-                    }
-                });
-            }
-        });
+    public LiveData<List<Rule>> getRules(Boolean isActive) {
+        return mRuleDao.findRules(isActive);
     }
 
     //endregion
@@ -83,12 +58,16 @@ public class RuleDataRepository {
 
     public Observable<Resource<Boolean>> insertRule(@NonNull Rule rule) {
 
+        RuleDatabase.databaseExecutor.execute(() -> {
+                mRuleDao.insert(rule);
+        });
+
         return Observable.create(new ObservableOnSubscribe<Resource<Boolean>>() {
             @Override
             public void subscribe(final ObservableEmitter<Resource<Boolean>> emitter) throws Exception {
 
                 RuleDatabase.databaseExecutor.execute(() -> {
-                    mRuleDao.insert(rule);
+
                     if(!emitter.isDisposed()){
                         emitter.onNext(Resource.success(true));
                         emitter.onComplete();
@@ -99,14 +78,16 @@ public class RuleDataRepository {
     }
 
     public Observable<Resource<Boolean>> deleteAllRules() {
-
+        RuleDatabase.databaseExecutor.execute(() -> {
+            mRuleDao.deleteAllRules();
+        });
         return Observable.create(new ObservableOnSubscribe<Resource<Boolean>>() {
 
             @Override
             public void subscribe(final ObservableEmitter<Resource<Boolean>> emitter) throws Exception {
 
                 RuleDatabase.databaseExecutor.execute(() -> {
-                    mRuleDao.deleteAllRules();
+
 
                     if(!emitter.isDisposed()){
                         emitter.onNext(Resource.success(true));

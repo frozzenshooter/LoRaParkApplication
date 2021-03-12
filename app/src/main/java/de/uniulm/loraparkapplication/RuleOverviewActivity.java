@@ -153,8 +153,8 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
                         if (rulesState.status == Resource.Status.SUCCESS) {
 
-                            //refresh the data in teh ViewModel in order to display the new rules
-                            mRuleOverviewViewModel.refresh();
+                            //refresh the data in teh ViewModel in order to display the new rules -> not needed because room updates livedata when the db changes
+
 
                         } else if (rulesState.status == Resource.Status.ERROR) {
 

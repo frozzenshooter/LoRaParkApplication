@@ -62,25 +62,13 @@ public class ActiveRulesFragment extends Fragment {
 
         this.mRuleOverviewViewModel =  new ViewModelProvider(getActivity()).get(RuleOverviewViewModel.class);
 
-        this.mRuleOverviewViewModel.getActiveRules().observe(getViewLifecycleOwner(), new Observer<Resource<List<Rule>>>() {
+        this.mRuleOverviewViewModel.getActiveRules().observe(getViewLifecycleOwner(), new Observer<List<Rule>>() {
             @Override
-            public void onChanged(@Nullable Resource<List<Rule>> rulesResource) {
+            public void onChanged(@Nullable List<Rule> rules) {
 
-                if(rulesResource != null) {
-                    if (rulesResource.status == Resource.Status.SUCCESS) {
-
-                        if (rulesResource.data != null) {
-                            Rule[] ruleArray = rulesResource.data.toArray(new Rule[0]);
-                            adapter.updateRules(ruleArray);
-                        }
-
-                    } else if (rulesResource.status == Resource.Status.ERROR) {
-                        // Failure to retrieve or parse the data
-                        String message = getResources().getString(R.string.error_sensor_descriptions_not_loaded) + " (" + rulesResource.message + ")";
-                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-                    } else {
-                        // Data loading: future TODO: add loading animation
-                    }
+                if(rules != null) {
+                    Rule[] ruleArray = rules.toArray(new Rule[0]);
+                    adapter.updateRules(ruleArray);
                 }
             }
         });

@@ -27,9 +27,10 @@ public interface RuleDao {
     @Query("DELETE FROM rule_table")
     void deleteAllRules();
 
-    @Query("SELECT * FROM rule_table")
-    List<Rule> findAll();
-
     @Query("SELECT * FROM rule_table WHERE is_active = :isActive")
-    List<Rule> findRules(Boolean isActive);
+    LiveData<List<Rule>> findRules(Boolean isActive);
+
+    @Query("SELECT * FROM rule_table")
+    LiveData<List<Rule>> findAllRules();
+
 }
