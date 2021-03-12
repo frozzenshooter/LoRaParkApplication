@@ -29,9 +29,4 @@ public class DownloadRuleViewModel extends AndroidViewModel {
     public LiveData<Resource<List<DownloadRule>>> getDownloadRules(){
         return mDownloadRules;
     }
-
-    /*public Completable downloadRules(List<String> ruleIds){
-        //DisposableCompletableObserver
-        return Completable.complete().delay(5, TimeUnit.SECONDS, Schedulers.io());
-    }*/
 }

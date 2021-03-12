@@ -28,6 +28,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import de.uniulm.loraparkapplication.fragments.ActiveRulesFragment;
@@ -111,11 +112,23 @@ public class RuleOverviewActivity extends AppCompatActivity {
                 rule1.setCondition("Condition");
                 rule1.setIsActive(true);
 
-                RuleOverviewActivity.this.mRuleOverviewViewModel.insertRule(rule1);
+                RuleOverviewActivity.this.mRuleOverviewViewModel.insertRule(rule1).observe(this,new Observer<Resource<String>>(){
+                    @Override
+                    public void onChanged(Resource<String> stringResource) {
+                        handleResourceFromBackground(stringResource);
+                    }
+                });
+
                 return true;
 
             case R.id.action_delete_all_rules:
-                RuleOverviewActivity.this.mRuleOverviewViewModel.deleteAllRules();
+                RuleOverviewActivity.this.mRuleOverviewViewModel.deleteAllRules().observe(this,new Observer<Resource<String>>(){
+                    @Override
+                    public void onChanged(Resource<String> stringResource) {
+                        handleResourceFromBackground(stringResource);
+                    }
+                });
+
                 return true;
 
             case android.R.id.home:
@@ -125,6 +138,18 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void handleResourceFromBackground(Resource<String> resource){
+        if(resource.status == Resource.Status.ERROR){
+            String message = getResources().getString(R.string.error_rules_not_loaded);
+            if(!resource.message.isEmpty() && !Objects.equals(resource.message, "") && resource.message != null){
+                message = message + " (" + resource.message + ")";
+            }
+
+            Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
+        }
+        // in other cases do nothing
     }
 
     @Override

@@ -16,16 +16,16 @@ import de.uniulm.loraparkapplication.models.Rule;
 public interface RuleDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Rule rule);
+    void insert(Rule rule) throws Exception;
 
     @Update
-    void update(Rule rule);
+    void update(Rule rule) throws Exception;
 
     @Delete
-    void delete(Rule rule);
+    void delete(Rule rule) throws Exception;
 
     @Query("DELETE FROM rule_table")
-    void deleteAllRules();
+    void deleteAllRules() throws Exception;
 
     @Query("SELECT * FROM rule_table WHERE is_active = :isActive")
     LiveData<List<Rule>> findRules(Boolean isActive);

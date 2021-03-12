@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 
@@ -56,47 +57,37 @@ public class RuleDataRepository {
 
     //region Rule creation and deletion
 
-    public Observable<Resource<Boolean>> insertRule(@NonNull Rule rule) {
+    public LiveData<Resource<String>> insertRule(@NonNull Rule rule) {
+
+        MutableLiveData<Resource<String>> data = new MutableLiveData<>();
+        data.postValue(Resource.loading(null));
 
         RuleDatabase.databaseExecutor.execute(() -> {
+            try {
                 mRuleDao.insert(rule);
-        });
-
-        return Observable.create(new ObservableOnSubscribe<Resource<Boolean>>() {
-            @Override
-            public void subscribe(final ObservableEmitter<Resource<Boolean>> emitter) throws Exception {
-
-                RuleDatabase.databaseExecutor.execute(() -> {
-
-                    if(!emitter.isDisposed()){
-                        emitter.onNext(Resource.success(true));
-                        emitter.onComplete();
-                    }
-                });
+                data.postValue(Resource.success(""));
+            }catch(Exception e){
+                data.postValue(Resource.error(e.getMessage(), ""));
             }
         });
+
+        return data;
     }
 
-    public Observable<Resource<Boolean>> deleteAllRules() {
+    public LiveData<Resource<String>> deleteAllRules() {
+        MutableLiveData<Resource<String>> data = new MutableLiveData<>();
+        data.postValue(Resource.loading(null));
+
         RuleDatabase.databaseExecutor.execute(() -> {
-            mRuleDao.deleteAllRules();
-        });
-        return Observable.create(new ObservableOnSubscribe<Resource<Boolean>>() {
-
-            @Override
-            public void subscribe(final ObservableEmitter<Resource<Boolean>> emitter) throws Exception {
-
-                RuleDatabase.databaseExecutor.execute(() -> {
-
-
-                    if(!emitter.isDisposed()){
-                        emitter.onNext(Resource.success(true));
-                        emitter.onComplete();
-                    }
-
-                });
+            try {
+                mRuleDao.deleteAllRules();
+                data.postValue(Resource.success(""));
+            }catch(Exception e){
+                data.postValue(Resource.error(e.getMessage(), ""));
             }
         });
+
+        return data;
     }
 
     //endregion

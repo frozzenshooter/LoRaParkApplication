@@ -57,12 +57,12 @@ public class RuleOverviewViewModel extends AndroidViewModel {
 
     //TODO: find a way to hand over the status of the background task (e.g deletion/...)
 
-    public void deleteAllRules(){
-        this.mRuleDataRepository.deleteAllRules();
+    public LiveData<Resource<String>> deleteAllRules(){
+        return this.mRuleDataRepository.deleteAllRules();
     }
 
-    public void insertRule(@NonNull Rule rule){
-        this.mRuleDataRepository.insertRule(rule);
+    public LiveData<Resource<String>> insertRule(@NonNull Rule rule){
+        return this.mRuleDataRepository.insertRule(rule);
     }
 
     public LiveData<Resource<String>> downloadRules(List<String> ruleIds){
