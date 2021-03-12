@@ -13,6 +13,7 @@ import java.util.List;
 import de.uniulm.loraparkapplication.models.DownloadRule;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.network.HttpClient;
+import io.reactivex.rxjava3.core.Completable;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -61,5 +62,8 @@ public class DownloadRuleRepository {
 
         return data;
     }
+
+
+
 
 }
