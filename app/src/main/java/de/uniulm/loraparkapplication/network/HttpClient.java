@@ -45,4 +45,10 @@ public class HttpClient {
         Request req = new Request.Builder().url(HttpClient.downloadRuleURL).build();
         return req;
     }
+
+    public static Request getRule(@NonNull String ruleId){
+        //TODO: CORRETC URL
+        Request req = new Request.Builder().url(HttpClient.downloadRuleURL).build();
+        return req;
+    }
 }

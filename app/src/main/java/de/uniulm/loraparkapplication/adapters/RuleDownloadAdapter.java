@@ -97,12 +97,12 @@ public class RuleDownloadAdapter extends  RecyclerView.Adapter<RuleDownloadAdapt
     }
 
 
-    public List<String> getSelectedDownloadRuleIds(){
+    public List<String> getSelectedRuleIds(){
         List<String> selectedRulesForExport = new ArrayList<>();
 
-        for(int i=0; i < rules.length; i++){
-            if(rules[i].isSelected()){
-                selectedRulesForExport.add(rules[i].getId());
+        for (DownloadRule rule : rules) {
+            if (rule.isSelected()) {
+                selectedRulesForExport.add(rule.getId());
             }
         }
 

@@ -69,7 +69,7 @@ public class ActiveRulesFragment extends Fragment {
                 if(rulesResource != null) {
                     if (rulesResource.status == Resource.Status.SUCCESS) {
 
-                        if (rulesResource.data != null && rulesResource.data.size() > 0) {
+                        if (rulesResource.data != null) {
                             Rule[] ruleArray = rulesResource.data.toArray(new Rule[0]);
                             adapter.updateRules(ruleArray);
                         }
@@ -84,18 +84,5 @@ public class ActiveRulesFragment extends Fragment {
                 }
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        RuleOverviewActivity parentActivity = (RuleOverviewActivity) getActivity();
-        if(parentActivity != null){
-            Boolean refreshFragment = parentActivity.getRefreshActiveRulesFragments();
-            if(refreshFragment){
-                this.mRuleOverviewViewModel.refresh();
-                parentActivity.setRefreshActiveRules(false);
-            }
-        }
     }
 }

@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,9 +28,6 @@ import de.uniulm.loraparkapplication.adapters.RuleDownloadAdapter;
 import de.uniulm.loraparkapplication.models.DownloadRule;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.viewmodels.DownloadRuleViewModel;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class DownloadRuleActivity extends AppCompatActivity {
 
@@ -39,7 +35,7 @@ public class DownloadRuleActivity extends AppCompatActivity {
     public final static Integer REQUEST_ID = 1;
 
     private RuleDownloadAdapter adapter;
-    private DownloadRuleViewModel mDownloadRuleViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +46,9 @@ public class DownloadRuleActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.rule_download_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if(actionBar!=null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         RecyclerView downloadRuleRecycler = (RecyclerView) findViewById(R.id.download_rules_recycler);
 
@@ -77,9 +75,9 @@ public class DownloadRuleActivity extends AppCompatActivity {
             selectedRules.addAll(Arrays.asList(checkRuleIds));
         }
 
-        this.mDownloadRuleViewModel = new ViewModelProvider(this).get(DownloadRuleViewModel.class);
+        DownloadRuleViewModel mDownloadRuleViewModel = new ViewModelProvider(this).get(DownloadRuleViewModel.class);
 
-        this.mDownloadRuleViewModel.getDownloadRules().observe(this, new Observer<Resource<List<DownloadRule>>>() {
+        mDownloadRuleViewModel.getDownloadRules().observe(this, new Observer<Resource<List<DownloadRule>>>() {
 
             @Override
             public void onChanged(@Nullable Resource<List<DownloadRule>> downloadRulesResource) {
@@ -103,7 +101,7 @@ public class DownloadRuleActivity extends AppCompatActivity {
                         Toast.makeText(DownloadRuleActivity.this, message, Toast.LENGTH_LONG).show();
 
                     } else {
-                        // Data loading: future TODO: add loading animation
+                        // Data loading - TODO: add loading animation
                     }
                 }
             }
@@ -113,7 +111,7 @@ public class DownloadRuleActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(@NotNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        final List<String> selectedRules= this.adapter.getSelectedDownloadRuleIds();
+        final List<String> selectedRules= this.adapter.getSelectedRuleIds();
 
         savedInstanceState.putStringArray(SELECTED_RULES, selectedRules.toArray(new String[0]));
     }
@@ -132,41 +130,16 @@ public class DownloadRuleActivity extends AppCompatActivity {
 
     public void downloadRules(View view) {
 
-        List<String> selectedRules = adapter.getSelectedDownloadRuleIds();
+        List<String> selectedRules = adapter.getSelectedRuleIds();
 
-        //TODO: cleanup so only a boolean with if a refresh is needed will be handed over to the starting activity
         if(selectedRules.size() == 0){
             Toast.makeText(DownloadRuleActivity.this, getResources().getString(R.string.info_no_rule_selected), Toast.LENGTH_LONG).show();
-            finish();
-        }else{
-            // download the selected rules and save them locally
-
-            View v = findViewById(R.id.progressbar_rule_download);
-
-            this.mDownloadRuleViewModel.downloadRules(selectedRules)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeWith(new DisposableCompletableObserver() {
-                        @Override
-                        public void onStart() {
-                            v.setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void onError(Throwable error) {
-                            error.printStackTrace();
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            v.setVisibility(View.GONE);
-                            // Hand over the result
-                            Intent resultIntent = new Intent();
-                            resultIntent.putStringArrayListExtra(SELECTED_RULES, new ArrayList<String>(selectedRules));
-                            setResult(Activity.RESULT_OK, resultIntent);
-                            finish();
-                        }
-                    });
         }
+
+        // hand over the ids of the selected rules that will be downloaded
+        Intent resultIntent = new Intent();
+        resultIntent.putStringArrayListExtra(SELECTED_RULES, new ArrayList<String>(selectedRules));
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
     }
 }

@@ -9,30 +9,38 @@ import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import de.uniulm.loraparkapplication.fragments.ActiveRulesFragment;
 import de.uniulm.loraparkapplication.fragments.AllRulesFragment;
 import de.uniulm.loraparkapplication.fragments.InactiveRulesFragment;
 import de.uniulm.loraparkapplication.models.DownloadRule;
+import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.viewmodels.RuleOverviewViewModel;
 import de.uniulm.loraparkapplication.viewmodels.SensorOverviewViewModel;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RuleOverviewActivity extends AppCompatActivity {
 
@@ -42,9 +50,17 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
     private RuleOverviewViewModel mRuleOverviewViewModel;
 
-    private Boolean refreshAllRules = false;
-    private Boolean refreshActiveRules = false;
-    private Boolean refreshInactiveRules = false;
+    public static String random() {
+        Random generator = new Random();
+        StringBuilder randomStringBuilder = new StringBuilder();
+        int randomLength = generator.nextInt(15);
+        char tempChar;
+        for (int i = 0; i < randomLength; i++){
+            tempChar = (char) (generator.nextInt(96) + 32);
+            randomStringBuilder.append(tempChar);
+        }
+        return randomStringBuilder.toString();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +103,21 @@ public class RuleOverviewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.action_add_rule:
-                RuleOverviewActivity.this.mRuleOverviewViewModel.deleteAllRules();
-                startDownloadActivity();
+
+                Rule rule1 = new Rule();
+                rule1.setName("New Rule");
+                rule1.setDescription("Rule description");
+                rule1.setId(random());
+                rule1.setCondition("Condition");
+                rule1.setIsActive(true);
+
+                RuleOverviewActivity.this.mRuleOverviewViewModel.insertRule(rule1);
                 return true;
+
+            case R.id.action_delete_all_rules:
+                RuleOverviewActivity.this.mRuleOverviewViewModel.deleteAllRules();
+                return true;
+
             case android.R.id.home:
                 finish();
                 return true;
@@ -113,6 +141,35 @@ public class RuleOverviewActivity extends AppCompatActivity {
             }
 
             Toast.makeText(this, build.toString(), Toast.LENGTH_SHORT).show();
+
+
+            //TODO: use RuleOverviewViewModel.downloadRules to fetch and save all
+            this.mRuleOverviewViewModel.downloadRules(rulesToDownload).observe(this, new Observer<Resource<String>>() {
+
+                @Override
+                public void onChanged(@Nullable Resource<String> rulesState) {
+
+                    if (rulesState != null) {
+
+                        if (rulesState.status == Resource.Status.SUCCESS) {
+
+                            //refresh the data in teh ViewModel in order to display the new rules
+                            mRuleOverviewViewModel.refresh();
+
+                        } else if (rulesState.status == Resource.Status.ERROR) {
+
+                            // Failure to retrieve or parse the data
+                            String message = getResources().getString(R.string.error_rules_not_loaded) + " (" + rulesState.message + ")";
+                            Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
+
+                        } else {
+                            // Data loading: future TODO: add loading animation
+
+
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -157,29 +214,5 @@ public class RuleOverviewActivity extends AppCompatActivity {
             }
             return null;
         }
-    }
-
-    public Boolean getRefreshAllRulesFragments(){
-        return this.refreshAllRules;
-    }
-
-    public void setRefreshAllRules(Boolean refresh){
-        this.refreshAllRules = refresh;
-    }
-
-    public Boolean getRefreshActiveRulesFragments(){
-        return this.refreshActiveRules;
-    }
-
-    public void setRefreshActiveRules(Boolean refresh){
-        this.refreshActiveRules = refresh;
-    }
-
-    public Boolean getRefreshInactiveRulesFragments(){
-        return this.refreshInactiveRules;
-    }
-
-    public void setRefreshInactiveRules(Boolean refresh){
-        this.refreshInactiveRules = refresh;
     }
 }

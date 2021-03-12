@@ -63,7 +63,4 @@ public class DownloadRuleRepository {
         return data;
     }
 
-
-
-
 }
