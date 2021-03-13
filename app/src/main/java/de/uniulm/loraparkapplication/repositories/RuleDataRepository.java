@@ -53,6 +53,12 @@ public class RuleDataRepository {
         return mRuleDao.findRules(isActive);
     }
 
+
+    public LiveData<Rule> getRule(String ruleId) {
+        return mRuleDao.findRule(ruleId);
+    }
+
+
     //endregion
 
     //region Rule creation and deletion
@@ -128,6 +134,7 @@ public class RuleDataRepository {
 
         });
     }
+
 
     //endregion
 }

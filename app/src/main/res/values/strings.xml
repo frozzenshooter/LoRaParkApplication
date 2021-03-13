@@ -23,6 +23,7 @@
     <string name="label_download_rules">Download rules</string>
     <string name="info_no_rule_selected">No rule was selected to download!\nSelect one or more rules to download them.</string>
     <string name="label_delete_all_rules">Delete all rules</string>
+    <string name="label_rule_details">Rule detail</string>
 
 
 </resources>

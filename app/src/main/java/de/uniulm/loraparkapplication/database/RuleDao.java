@@ -33,4 +33,7 @@ public interface RuleDao {
     @Query("SELECT * FROM rule_table")
     LiveData<List<Rule>> findAllRules();
 
+    @Query("SELECT * FROM rule_table WHERE id = :ruleId")
+    LiveData<Rule> findRule(String ruleId);
+
 }

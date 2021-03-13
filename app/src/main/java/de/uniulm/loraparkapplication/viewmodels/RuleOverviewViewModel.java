@@ -58,6 +58,8 @@ public class RuleOverviewViewModel extends AndroidViewModel {
     //TODO: find a way to hand over the status of the background task (e.g deletion/...)
 
     public LiveData<Resource<String>> deleteAllRules(){
+
+        //TODO: DEACTIVATE RULES BEFORE DELETING
         return this.mRuleDataRepository.deleteAllRules();
     }
 
@@ -68,10 +70,13 @@ public class RuleOverviewViewModel extends AndroidViewModel {
     public LiveData<Resource<String>> downloadRules(List<String> ruleIds){
 
         // mRuleDataRepository.downloadNewRules(ruleIds);
+        //TODO: handle the down load in the background -> Download and parse the data with a repository
+        //TODO: use RXJava to save the resulting rules in the database
+        //TODO: perhaps not on the android main thread -> use other threading possibilities
+
         Flowable t = Flowable.fromCallable(() -> Resource.success("Worked") ).delay(5, TimeUnit.SECONDS, Schedulers.io());
         LiveData<Resource<String>> ld = LiveDataReactiveStreams.fromPublisher(t);
 
-        //TODO: to solve the refresh problem: you load the data over here and push it in the Livedata (has to be changed into mutuable live data)
         return ld;
     }
 }
