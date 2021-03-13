@@ -1,5 +1,6 @@
 package de.uniulm.loraparkapplication;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +12,9 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,12 +27,14 @@ import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.models.SensorDetail;
 import de.uniulm.loraparkapplication.viewmodels.RuleDetailViewModel;
 import de.uniulm.loraparkapplication.viewmodels.SensorDetailViewModel;
+import de.uniulm.loraparkapplication.views.KeyValueView;
 
 public class RuleDetailActivity extends AppCompatActivity {
 
     public final static String RULE_ID_EXTRA = "RULE_ID_EXTRA";
 
     private static final String RULE_DETAIL_ACTIVITY_CLASSNAME = RuleDetailActivity.class.getName();
+    private final static float REDUCED_TEXT_SIZE = 14;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,7 @@ public class RuleDetailActivity extends AppCompatActivity {
         }
 
         if(id != null){
+            
             RuleDetailViewModel mRuleDetailViewModel = new ViewModelProvider(this).get(RuleDetailViewModel.class);
             mRuleDetailViewModel.init(id);
 
@@ -67,35 +74,27 @@ public class RuleDetailActivity extends AppCompatActivity {
     }
 
     private void handleNewRuleData(@NotNull Rule rule){
-        //TODO: Update GUI
-        TextView textView = findViewById(R.id.rule_detail_text_view);
-
-        StringBuilder detailsBuilder = new StringBuilder();
-
-        detailsBuilder.append("Rule id: ");
-        detailsBuilder.append(rule.getId());
-        detailsBuilder.append("\n");
 
         if(rule.getName() != null){
-            detailsBuilder.append("Rule name: ");
-            detailsBuilder.append(rule.getName());
-            detailsBuilder.append("\n");
+            KeyValueView kv = findViewById(R.id.rule_details_name);
+            kv.setValues("Name", rule.getName(), null);
         }
 
         if(rule.getDescription() != null){
-            detailsBuilder.append("Rule description: ");
-            detailsBuilder.append(rule.getDescription());
-            detailsBuilder.append("\n");
+
+            KeyValueView kv = findViewById(R.id.rule_details_description);
+            kv.setValueTextSize(REDUCED_TEXT_SIZE);
+            kv.setValues("Description", rule.getDescription(), null);
         }
 
         if(rule.getIsActive() != null){
-            detailsBuilder.append("Rule active: ");
-            detailsBuilder.append(rule.getIsActive() ? "true" : "false");
-            detailsBuilder.append("\n");
+            CheckBox cb = findViewById(R.id.rule_details_is_active);
+            cb.setChecked(rule.getIsActive());
         }
 
-        textView.setText(detailsBuilder.toString());
+        //TODO: show map with geofence or the relevant sensor ??
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){

@@ -134,7 +134,7 @@ public class SensorDetailActivity extends AppCompatActivity {
         }
     }
 
-    private KeyValueView createKeyValueView(@NonNull String key,@NonNull String value,@Nullable String unit, boolean reduceTextSize){
+    private KeyValueView createKeyValueView(@NonNull String key,@NonNull String value, @Nullable String unit, boolean reduceTextSize){
 
         KeyValueView kv = new KeyValueView(this);
         kv.setValues(key, value, unit);

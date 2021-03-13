@@ -27,11 +27,32 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
-            <TextView
-                android:id="@+id/rule_detail_text_view"
+            <de.uniulm.loraparkapplication.views.KeyValueView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:id="@+id/rule_details_name"/>
+
+            <de.uniulm.loraparkapplication.views.KeyValueView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rule_details_description"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp">
+
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rule_details_is_active"
+                    android:text="@string/label_is_active"
+                    android:enabled="false"
+                    android:clickable="false"/>
+            </LinearLayout>
+
 
         </LinearLayout>
     </ScrollView>
