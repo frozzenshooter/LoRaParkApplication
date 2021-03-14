@@ -12,6 +12,7 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.List;
 
+import de.uniulm.loraparkapplication.models.CompleteRule;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.models.RuleDeserializer;
@@ -83,7 +84,7 @@ public class RuleHandler {
      * @param ruleId the id of the rule to download
      * @return observable which will return the parsed rule
      */
-    public Observable<Rule> downloadNewRule(@NonNull String ruleId){
+    public Observable<CompleteRule> downloadNewRule(@NonNull String ruleId){
         return Observable.defer(() -> {
 
             try {
@@ -91,22 +92,17 @@ public class RuleHandler {
 
                 GsonBuilder gsonBuilder = new GsonBuilder();
 
-                gsonBuilder.registerTypeAdapter(Rule.class, new RuleDeserializer());
+                gsonBuilder.registerTypeAdapter(CompleteRule.class, new RuleDeserializer());
 
                 Gson ruleGson = gsonBuilder.create();
 
-                Rule rule = ruleGson.fromJson(response.body().charStream(), Rule.class);
+                CompleteRule completeRule = ruleGson.fromJson(response.body().charStream(), CompleteRule.class);
+
 
                 //TODO: DELETE AFTER DEBUGGING
-                StringBuilder builder = new StringBuilder();
-                builder.append("id: ").append(rule.getId()).append("; ");
-                builder.append("name: ").append(rule.getName()).append("; ");
-                builder.append("description: ").append(rule.getDescription()).append("; ");
-                builder.append("condition: ").append(rule.getCondition()).append("; ");
+                Log.e("RULE_DOWNLOAD", completeRule.toString());
 
-                Log.e("RULE_DOWNLOAD", builder.toString());
-
-                return Observable.just(rule);
+                return Observable.just(completeRule);
             } catch (IOException e) {
                 return Observable.error(e);
             }
@@ -115,18 +111,20 @@ public class RuleHandler {
     }
 
     /**
-     * Insert a rule, but checking if it already exists.
+     * Insert a complete rule, but checking if it already exists.
      * If it already exists it will deactivate the current rule and replace the current rule with the new rule
      *
-     * @param rule the rule to insert
+     * @param completeRule the rule to insert
      */
-    public LiveData<Resource<String>> insertRuleSave(@NonNull Rule rule){
+    public LiveData<Resource<String>> insertRuleSave(@NonNull CompleteRule completeRule){
+        Rule rule = completeRule.getRule();
         Integer count = this.mRuleDataRepository.getAmountOfRules(rule.getId());
 
         if(count > 0){
             deactivateRule(rule);
         }
 
+        //TODO: SAVE INSERT THE COMPLETE RULE
         return insertRule(rule);
     }
 
