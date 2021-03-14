@@ -1,6 +1,6 @@
 {
-  "id": "rule1",
-  "name": "ExampleRule1",
+  "id": "rule2",
+  "name": "ExampleRule2",
   "description": "Example rule1 for testing purposes.",
   "sensors": [
 	  {

@@ -1,7 +1,7 @@
 {
-  "id": "rule1",
-  "name": "ExampleRule1",
-  "description": "Example rule1 for testing purposes.",
+  "id": "rule3",
+  "name": "ExampleRule3",
+  "description": "Example rule3 for testing purposes.",
   "sensors": [
 	  {
 		  "domain": "co2",
