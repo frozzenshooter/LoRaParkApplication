@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.repositories.RuleDataRepository;
+import de.uniulm.loraparkapplication.repositories.RuleHandler;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 import io.reactivex.rxjava3.core.Flowable;
@@ -38,19 +39,20 @@ public class RuleOverviewViewModel extends AndroidViewModel {
 
 
     //TODO: https://developer.android.com/topic/libraries/architecture/viewmodel.html#sharing implement it like this and hold the data in here
-    private final RuleDataRepository mRuleDataRepository;
 
     private final LiveData<List<Rule>> mAllRules;
     private final LiveData<List<Rule>> mActiveRules;
     private final LiveData<List<Rule>> mInactiveRules;
 
+    private final RuleHandler ruleHandler;
+
     public RuleOverviewViewModel(@NonNull Application application) {
         super(application);
-        this.mRuleDataRepository = RuleDataRepository.getInstance(application);
+        this.ruleHandler = new RuleHandler(application);
 
-        this.mAllRules = this.mRuleDataRepository.getLiveAllRules();
-        this.mActiveRules = this.mRuleDataRepository.getRules(true);
-        this.mInactiveRules = this.mRuleDataRepository.getRules(false);
+        this.mAllRules = this.ruleHandler.getAllRules();
+        this.mActiveRules = this.ruleHandler.getActiveRules();
+        this.mInactiveRules = this.ruleHandler.getInactiveRules();
     }
 
     public LiveData<List<Rule>> getAllRules(){
@@ -68,20 +70,15 @@ public class RuleOverviewViewModel extends AndroidViewModel {
     //TODO: Status of the insertion/deletion/.. needed
 
     public LiveData<Resource<String>> deleteAllRules(){
-        return this.mRuleDataRepository.deleteAllRules();
+        return this.ruleHandler.deleteAllRules();
     }
 
     public LiveData<Resource<String>> insertRule(@NonNull Rule rule){
-        return this.mRuleDataRepository.insertRule(rule);
+        //TODO: delete later -> no manual adding
+        return this.ruleHandler.insertRule(rule);
     }
 
     public void downloadRules(List<String> ruleIds){
-
-        if(ruleIds != null && ruleIds.size() > 0){
-            Observable<String> ruleIdObservable = Observable.fromArray(ruleIds.toArray(new String[0]));
-            ruleIdObservable.subscribeOn(Schedulers.io())
-                            .flatMap(this.mRuleDataRepository::downloadNewRule)
-                            .subscribe(this.mRuleDataRepository::insertRuleSave);
-        }
+        this.ruleHandler.downloadRules(ruleIds);
     }
 }

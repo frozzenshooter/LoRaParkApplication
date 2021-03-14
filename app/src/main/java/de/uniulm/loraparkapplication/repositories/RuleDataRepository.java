@@ -59,7 +59,7 @@ public class RuleDataRepository {
      *
      * @return list with all rules
      */
-    public LiveData<List<Rule>> getLiveAllRules(){
+    public LiveData<List<Rule>> getAllRules(){
         return mRuleDao.findAllRules();
     }
 
@@ -111,21 +111,8 @@ public class RuleDataRepository {
         return data;
     }
 
-    /**
-     * Insert a rule, but checking if it already exists.
-     * If it already exists it will deactivate the current rule and replace the current rule with the new rule
-     *
-     * @param rule the rule to insert
-     */
-    public LiveData<Resource<String>> insertRuleSave(@NonNull Rule rule){
-        Integer count = mRuleDao.getAmountOfRules(rule.getId());
-
-        //TODO: Perhaps replace with a delete rule and insert afterwards (the deletion has to deactivate anyway
-        if(count > 0){
-            deactivateRule(rule);
-        }
-
-        return insertRule(rule);
+    public Integer getAmountOfRules(@NonNull String ruleId){
+        return mRuleDao.getAmountOfRules(ruleId);
     }
 
     /**
@@ -139,7 +126,6 @@ public class RuleDataRepository {
 
         RuleDatabase.databaseExecutor.execute(() -> {
             try {
-                deactivateAllRules();
                 mRuleDao.deleteAllRules();
                 data.postValue(Resource.success(""));
             }catch(Exception e){
@@ -151,63 +137,4 @@ public class RuleDataRepository {
     }
 
     //endregion
-
-    //region Download and process new rules
-
-    /**
-     * Download a new rule from the server
-     * @param ruleId the id of the rule to download
-     * @return observable which will return the parsed rule
-     */
-    public Observable<Rule> downloadNewRule(@NonNull String ruleId){
-        return Observable.defer(() -> {
-
-        try {
-            Response response = HttpClient.getInstance().newCall(HttpClient.getRule(ruleId)).execute();
-
-            GsonBuilder gsonBuilder = new GsonBuilder();
-
-            gsonBuilder.registerTypeAdapter(Rule.class, new RuleDeserializer());
-
-            Gson ruleGson = gsonBuilder.create();
-
-            Rule rule = ruleGson.fromJson(response.body().charStream(), Rule.class);
-
-            //TODO: DELETE AFTER DEBUGGING
-            StringBuilder builder = new StringBuilder();
-            builder.append("id: ").append(rule.getId()).append("; ");
-            builder.append("name: ").append(rule.getName()).append("; ");
-            builder.append("description: ").append(rule.getDescription()).append("; ");
-            builder.append("condition: ").append(rule.getCondition()).append("; ");
-
-            Log.e("RULE_DOWNLOAD", builder.toString());
-
-            return Observable.just(rule);
-        } catch (IOException e) {
-            return Observable.error(e);
-        }
-
-        });
-    }
-
-    /**
-     * Deactivates a rule and removes active geofences
-     *
-     * @param rule the rule to deactivate
-     */
-    public void deactivateRule(@NonNull Rule rule){
-        // Deactivate rule
-    }
-
-    /**
-     * Deactivates all rules
-     */
-    public void deactivateAllRules(){
-        // TODO: deactivate all rules
-    }
-
-
-    //endregion
-
-
 }
