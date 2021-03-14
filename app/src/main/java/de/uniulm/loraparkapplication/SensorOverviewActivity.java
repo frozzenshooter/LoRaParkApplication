@@ -142,6 +142,9 @@ public class SensorOverviewActivity extends AppCompatActivity {
 
     //region Activity setup
 
+    /**
+     * Checks the permissions needed for the map view
+     */
     private void checkPermissions() {
 
         List<String> permissions = new ArrayList<String>();
@@ -162,6 +165,9 @@ public class SensorOverviewActivity extends AppCompatActivity {
         } // else: We already have permissions, so handle as normal
     }
 
+    /**
+     * Setup of the map
+     */
     private void setupMapView(){
         //important! set your user agent to prevent getting banned from the osm servers
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
@@ -188,6 +194,11 @@ public class SensorOverviewActivity extends AppCompatActivity {
 
     //region Marker creation
 
+    /**
+     * Creytes the markers for the sensors on the map
+     *
+     * @param sensorDescriptions list of all descriptions of all available sensors
+     */
     private void updateMarkersOnMap(List<SensorDescription> sensorDescriptions) {
 
         // Remove previous markers
@@ -201,6 +212,11 @@ public class SensorOverviewActivity extends AppCompatActivity {
         this.map.invalidate();
     }
 
+    /**
+     * Creates a marker for a single sensor
+     *
+     * @param sensorDescription the description of the sensor
+     */
     private void createSensorMarker(@NotNull SensorDescription sensorDescription){
         Location loc = sensorDescription.getLocation();
         GeoPoint geoPoint = new GeoPoint(loc.getLatitude(), loc.getLongitude());

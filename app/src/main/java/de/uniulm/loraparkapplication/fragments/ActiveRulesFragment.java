@@ -30,10 +30,6 @@ public class ActiveRulesFragment extends Fragment {
     private RuleAdapter adapter;
     private RuleOverviewViewModel mRuleOverviewViewModel;
 
-    public static ActiveRulesFragment newInstance() {
-        return new ActiveRulesFragment();
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {

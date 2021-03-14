@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
-* Used for the status handling of resources (e.g. data from APIs and their status)
+*  Class that is used for the status handling of resources (e.g. data from APIs and their status)
  */
 public class Resource<T> {
 

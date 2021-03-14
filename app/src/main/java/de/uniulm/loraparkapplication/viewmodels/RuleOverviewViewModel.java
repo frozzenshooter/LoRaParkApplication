@@ -26,7 +26,16 @@ import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+/**
+ * ViewModel that handles the data for the rule overview activity
+ *
+ * This ViewModel implements the AndroidViewModel because the application context is needed in order to access the database
+ */
 public class RuleOverviewViewModel extends AndroidViewModel {
+
+    //TODO: use an intermediate "use case" class to access the different repos (e.g. to save delete a rule you have to deactivate beforehand)
+    //TODO: this allows to handle the differnent steps in a cental and abstract way and not in the viewmodel
+
 
     //TODO: https://developer.android.com/topic/libraries/architecture/viewmodel.html#sharing implement it like this and hold the data in here
     private final RuleDataRepository mRuleDataRepository;
@@ -56,11 +65,9 @@ public class RuleOverviewViewModel extends AndroidViewModel {
         return this.mInactiveRules;
     }
 
-    //TODO: find a way to hand over the status of the background task (e.g deletion/...)
+    //TODO: Status of the insertion/deletion/.. needed
 
     public LiveData<Resource<String>> deleteAllRules(){
-
-        //TODO: DEACTIVATE RULES BEFORE DELETING
         return this.mRuleDataRepository.deleteAllRules();
     }
 
@@ -74,7 +81,7 @@ public class RuleOverviewViewModel extends AndroidViewModel {
             Observable<String> ruleIdObservable = Observable.fromArray(ruleIds.toArray(new String[0]));
             ruleIdObservable.subscribeOn(Schedulers.io())
                             .flatMap(this.mRuleDataRepository::downloadNewRule)
-                            .subscribe(this.mRuleDataRepository::insertRule);
+                            .subscribe(this.mRuleDataRepository::insertRuleSave);
         }
     }
 }

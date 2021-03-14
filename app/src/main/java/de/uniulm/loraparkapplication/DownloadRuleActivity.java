@@ -128,7 +128,12 @@ public class DownloadRuleActivity extends AppCompatActivity {
         }
     }
 
-    public void downloadRules(View view) {
+    /**
+     * Finishes the activity and sets the result of the activity (list of selected rules)
+     *
+     * If no rule is selected a toast will be created with a info message.
+     */
+    public void downloadRules(@Nullable View view) {
 
         List<String> selectedRules = adapter.getSelectedRuleIds();
 

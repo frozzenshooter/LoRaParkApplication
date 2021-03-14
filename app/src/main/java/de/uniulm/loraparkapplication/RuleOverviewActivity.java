@@ -52,6 +52,11 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
     private RuleOverviewViewModel mRuleOverviewViewModel;
 
+    /**
+     * Create a random string - use for testing to create random ids for rules
+     *
+     * @return random string
+     */
     public static String random() {
         Random generator = new Random();
         StringBuilder randomStringBuilder = new StringBuilder();
@@ -91,12 +96,15 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-               startDownloadActivity();
+                startDownloadRuleActivity();
             }
         });
     }
 
-    private void startDownloadActivity(){
+    /**
+     * Start the startDownloadRuleActivity
+     */
+    private void startDownloadRuleActivity(){
         Intent intent = new Intent(this, DownloadRuleActivity.class);
         startActivityForResult(intent, DownloadRuleActivity.REQUEST_ID);
     }
@@ -141,6 +149,11 @@ public class RuleOverviewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Show a toast if there was an error (in a background task)
+     *
+     * @param resource
+     */
     private void handleResourceFromBackground(Resource<String> resource){
         if(resource.status == Resource.Status.ERROR){
             String message = getResources().getString(R.string.error_rules_not_loaded);
@@ -185,6 +198,9 @@ public class RuleOverviewActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Fragment adapter for the tab view
+     */
     private class RuleSectionsPagerAdapter extends FragmentPagerAdapter {
         public RuleSectionsPagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);

@@ -73,6 +73,11 @@ public class RuleDetailActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Updates the UI with the data from the rule
+     *
+     * @param rule the rule containing the data for the UI
+     */
     private void handleNewRuleData(@NotNull Rule rule){
 
         if(rule.getName() != null){

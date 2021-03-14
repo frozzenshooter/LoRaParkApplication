@@ -2,10 +2,13 @@ package de.uniulm.loraparkapplication.repositories;
 
 import android.app.Application;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,11 +18,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.List;
 
+import de.uniulm.loraparkapplication.R;
+import de.uniulm.loraparkapplication.SensorDetailActivity;
 import de.uniulm.loraparkapplication.database.RuleDao;
 import de.uniulm.loraparkapplication.database.RuleDatabase;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.models.RuleDeserializer;
+import de.uniulm.loraparkapplication.models.SensorDetail;
 import de.uniulm.loraparkapplication.network.HttpClient;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableEmitter;
@@ -48,15 +54,31 @@ public class RuleDataRepository {
 
     //region Rule queries
 
+    /**
+     * Returns all local rules (in the db)
+     *
+     * @return list with all rules
+     */
     public LiveData<List<Rule>> getLiveAllRules(){
         return mRuleDao.findAllRules();
     }
 
+    /**
+     * Returns a list with filtered rules. The rules will be filtered by their state: if they are currently active
+     *
+     * @param isActive filters the rules if they are active
+     * @return list with filtered rules
+     */
     public LiveData<List<Rule>> getRules(Boolean isActive) {
         return mRuleDao.findRules(isActive);
     }
 
-
+    /**
+     *  Returns a single rule
+     *
+     * @param ruleId the id of the requested rule
+     * @return the rule with the requested ruleId
+     */
     public LiveData<Rule> getRule(String ruleId) {
         return mRuleDao.findRule(ruleId);
     }
@@ -66,6 +88,12 @@ public class RuleDataRepository {
 
     //region Rule creation and deletion
 
+    /**
+     * Insert rule (overrides an existing one)
+     *
+     * @param rule the rule to insert
+     * @return
+     */
     public LiveData<Resource<String>> insertRule(@NonNull Rule rule) {
 
         MutableLiveData<Resource<String>> data = new MutableLiveData<>();
@@ -83,12 +111,35 @@ public class RuleDataRepository {
         return data;
     }
 
+    /**
+     * Insert a rule, but checking if it already exists.
+     * If it already exists it will deactivate the current rule and replace the current rule with the new rule
+     *
+     * @param rule the rule to insert
+     */
+    public LiveData<Resource<String>> insertRuleSave(@NonNull Rule rule){
+        Integer count = mRuleDao.getAmountOfRules(rule.getId());
+
+        //TODO: Perhaps replace with a delete rule and insert afterwards (the deletion has to deactivate anyway
+        if(count > 0){
+            deactivateRule(rule);
+        }
+
+        return insertRule(rule);
+    }
+
+    /**
+     * Deletes all rules
+     *
+     * @return resource with the state of the deletion
+     */
     public LiveData<Resource<String>> deleteAllRules() {
         MutableLiveData<Resource<String>> data = new MutableLiveData<>();
         data.postValue(Resource.loading(null));
 
         RuleDatabase.databaseExecutor.execute(() -> {
             try {
+                deactivateAllRules();
                 mRuleDao.deleteAllRules();
                 data.postValue(Resource.success(""));
             }catch(Exception e){
@@ -103,6 +154,11 @@ public class RuleDataRepository {
 
     //region Download and process new rules
 
+    /**
+     * Download a new rule from the server
+     * @param ruleId the id of the rule to download
+     * @return observable which will return the parsed rule
+     */
     public Observable<Rule> downloadNewRule(@NonNull String ruleId){
         return Observable.defer(() -> {
 
@@ -134,6 +190,24 @@ public class RuleDataRepository {
         });
     }
 
+    /**
+     * Deactivates a rule and removes active geofences
+     *
+     * @param rule the rule to deactivate
+     */
+    public void deactivateRule(@NonNull Rule rule){
+        // Deactivate rule
+    }
+
+    /**
+     * Deactivates all rules
+     */
+    public void deactivateAllRules(){
+        // TODO: deactivate all rules
+    }
+
 
     //endregion
+
+
 }

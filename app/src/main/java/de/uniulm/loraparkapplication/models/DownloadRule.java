@@ -17,7 +17,7 @@ public class DownloadRule {
     @Expose
     private String description;
 
-    /*Not parsed - only needed for recycle view*/
+    /*Not parsed - only needed for recycle view multi-select*/
     private Boolean isSelected;
 
     //region Getters and setters

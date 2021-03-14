@@ -37,6 +37,11 @@ public class SensorDescriptionRepository {
     }
 
 
+    /**
+     * Loads the descriptions of all available sensors
+     *
+     * @return list with the descriptions fo available sensors
+     */
     public MutableLiveData<Resource<List<SensorDescription>>> getSensorDescriptions() {
 
         MutableLiveData<Resource<List<SensorDescription>>> data = new MutableLiveData<>();

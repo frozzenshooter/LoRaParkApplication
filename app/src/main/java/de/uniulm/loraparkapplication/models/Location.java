@@ -3,6 +3,9 @@ package de.uniulm.loraparkapplication.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Location
+ */
 public class Location {
 
     @SerializedName("latitude")

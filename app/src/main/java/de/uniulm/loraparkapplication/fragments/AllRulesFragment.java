@@ -2,6 +2,7 @@ package de.uniulm.loraparkapplication.fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -30,7 +31,8 @@ public class AllRulesFragment extends Fragment {
     private RuleOverviewViewModel mRuleOverviewViewModel;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
 
         RecyclerView ruleRecycler = (RecyclerView) inflater.inflate(R.layout.fragment_all_rules, container, false);
 

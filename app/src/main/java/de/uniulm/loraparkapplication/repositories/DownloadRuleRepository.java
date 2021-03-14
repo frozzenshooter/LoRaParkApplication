@@ -30,6 +30,11 @@ public class DownloadRuleRepository {
     }
 
 
+    /**
+     * Loads the list with downloadable rules from the server
+     *
+     * @return list with rules on the server
+     */
     public MutableLiveData<Resource<List<DownloadRule>>> getDownloadRules() {
 
         MutableLiveData<Resource<List<DownloadRule>>> data = new MutableLiveData<>();

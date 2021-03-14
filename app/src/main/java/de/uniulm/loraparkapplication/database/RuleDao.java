@@ -36,4 +36,7 @@ public interface RuleDao {
     @Query("SELECT * FROM rule_table WHERE id = :ruleId")
     LiveData<Rule> findRule(String ruleId);
 
+    @Query("SELECT COUNT(id) FROM rule_table WHERE id = :ruleId")
+    Integer getAmountOfRules(String ruleId);
+
 }

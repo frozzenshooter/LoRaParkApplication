@@ -1,11 +1,9 @@
 package de.uniulm.loraparkapplication.viewmodels;
 
-import android.app.Application;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
@@ -13,17 +11,18 @@ import de.uniulm.loraparkapplication.models.DownloadRule;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.repositories.DownloadRuleRepository;
 
-public class DownloadRuleViewModel extends AndroidViewModel {
+/**
+ * ViewModel that handles the data for the download rule activity
+ */
+public class DownloadRuleViewModel extends ViewModel {
 
-    private MutableLiveData<Resource<List<DownloadRule>>> mDownloadRules;
-    private DownloadRuleRepository mDownloadRuleRepository;
+    private final MutableLiveData<Resource<List<DownloadRule>>> mDownloadRules;
 
-    public DownloadRuleViewModel(@NonNull Application application) {
-        //TODO: androidviewmodel to viewmodel -> and create it as singleton
-        super(application);
-        this.mDownloadRuleRepository = DownloadRuleRepository.getInstance();
+    public DownloadRuleViewModel() {
+        super();
+        DownloadRuleRepository mDownloadRuleRepository = DownloadRuleRepository.getInstance();
 
-        this.mDownloadRules = this.mDownloadRuleRepository.getDownloadRules();
+        this.mDownloadRules = mDownloadRuleRepository.getDownloadRules();
     }
 
     public LiveData<Resource<List<DownloadRule>>> getDownloadRules(){

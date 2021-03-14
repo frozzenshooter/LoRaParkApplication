@@ -11,16 +11,18 @@ import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.SensorDetail;
 import de.uniulm.loraparkapplication.repositories.SensorDataRepository;
 
+/**
+ * ViewModel that handles the data for the sensor detail activity
+ */
 public class SensorDetailViewModel extends ViewModel {
 
     private MutableLiveData<Resource<List<SensorDetail>>> mSensorValues;
-    private SensorDataRepository mSensorDataRepository;
 
     public void init(@NonNull String sensorId) {
-        if(mSensorDataRepository != null){
+        if(mSensorValues != null){
             return;
         }
-        mSensorDataRepository = SensorDataRepository.getInstance();
+        SensorDataRepository mSensorDataRepository = SensorDataRepository.getInstance();
         mSensorValues = mSensorDataRepository.getSensorDetails(sensorId);
     }
 

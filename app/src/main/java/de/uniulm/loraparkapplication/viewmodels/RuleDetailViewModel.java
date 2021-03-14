@@ -8,6 +8,9 @@ import androidx.lifecycle.LiveData;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.repositories.RuleDataRepository;
 
+/**
+ * ViewModel that handles the data for the rule detail activity
+ */
 public class RuleDetailViewModel extends AndroidViewModel {
 
     private LiveData<Rule> mRule;

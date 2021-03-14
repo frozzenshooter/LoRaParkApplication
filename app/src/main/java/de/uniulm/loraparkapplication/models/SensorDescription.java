@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+/**
+ * Description of a sensor
+ */
 public class SensorDescription {
 
     @SerializedName("id")

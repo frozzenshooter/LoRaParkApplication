@@ -8,6 +8,9 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
+/**
+ * Custom deserializer that converts a json rule to a rule object
+ */
 public class RuleDeserializer implements JsonDeserializer<Rule> {
 
     @Override

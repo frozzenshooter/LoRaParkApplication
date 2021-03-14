@@ -33,6 +33,14 @@ public class SensorDataRepository {
         return instance;
     }
 
+    /**
+     * Loads all sensor details from a server - a detail is a triple with a name a value and a unit.
+     *
+     * E.g. name = temperature, value = 25 and unit = °C
+     *
+     * @param sensorId the id of the sensor
+     * @return a list with the sensor details from the sensor
+     */
     public MutableLiveData<Resource<List<SensorDetail>>> getSensorDetails(@NonNull String sensorId) {
         MutableLiveData<Resource<List<SensorDetail>>> data = new MutableLiveData<>();
 

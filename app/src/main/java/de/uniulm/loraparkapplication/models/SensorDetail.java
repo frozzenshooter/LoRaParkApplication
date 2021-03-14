@@ -3,6 +3,11 @@ package de.uniulm.loraparkapplication.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * The detail of a sensor - a detail is a triple with a name a value and a unit.
+ *
+ * E.g. name = temperature, value = 25 and unit = °C
+ */
 public class SensorDetail {
 
     @SerializedName("name")
