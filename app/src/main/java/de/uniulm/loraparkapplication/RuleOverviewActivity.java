@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 
 import de.uniulm.loraparkapplication.fragments.ActiveRulesFragment;
 import de.uniulm.loraparkapplication.fragments.AllRulesFragment;
@@ -119,9 +120,6 @@ public class RuleOverviewActivity extends AppCompatActivity {
                     }
                 });
 
-
-                RuleOverviewActivity.this.mRuleOverviewViewModel.downloadRule();
-
                 return true;
 
             case R.id.action_delete_all_rules:
@@ -170,34 +168,14 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
             Toast.makeText(this, build.toString(), Toast.LENGTH_SHORT).show();
 
-
-            //TODO: use RuleOverviewViewModel.downloadRules to fetch and save all
-            this.mRuleOverviewViewModel.downloadRules(rulesToDownload).observe(this, new Observer<Resource<String>>() {
-
-                @Override
-                public void onChanged(@Nullable Resource<String> rulesState) {
-
-                    if (rulesState != null) {
-
-                        if (rulesState.status == Resource.Status.SUCCESS) {
-
-                            //refresh the data in teh ViewModel in order to display the new rules -> not needed because room updates livedata when the db changes
-
-
-                        } else if (rulesState.status == Resource.Status.ERROR) {
-
-                            // Failure to retrieve or parse the data
-                            String message = getResources().getString(R.string.error_rules_not_loaded) + " (" + rulesState.message + ")";
-                            Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
-
-                        } else {
-                            // Data loading: future TODO: add loading animation
-
-
-                        }
-                    }
-                }
-            });
+            if(rulesToDownload != null && rulesToDownload.size() > 0) {
+                //TODO: use RuleOverviewViewModel.downloadRules to fetch and save all - NO EXCEPTION HANDLING YET
+                rulesToDownload.clear();
+                rulesToDownload.add("rule1");
+                rulesToDownload.add("rule2");
+                rulesToDownload.add("rule3");
+                this.mRuleOverviewViewModel.downloadRules(rulesToDownload);
+            }
         }
     }
 

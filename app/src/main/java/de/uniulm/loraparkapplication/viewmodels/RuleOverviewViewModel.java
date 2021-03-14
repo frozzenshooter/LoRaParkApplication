@@ -1,6 +1,7 @@
 package de.uniulm.loraparkapplication.viewmodels;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -21,6 +22,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -54,11 +56,6 @@ public class RuleOverviewViewModel extends AndroidViewModel {
         return this.mInactiveRules;
     }
 
-    public void downloadRule(){
-        this.mRuleDataRepository.downloadNewRule("");
-    }
-
-
     //TODO: find a way to hand over the status of the background task (e.g deletion/...)
 
     public LiveData<Resource<String>> deleteAllRules(){
@@ -71,16 +68,13 @@ public class RuleOverviewViewModel extends AndroidViewModel {
         return this.mRuleDataRepository.insertRule(rule);
     }
 
-    public LiveData<Resource<String>> downloadRules(List<String> ruleIds){
+    public void downloadRules(List<String> ruleIds){
 
-        // mRuleDataRepository.downloadNewRules(ruleIds);
-        //TODO: handle the down load in the background -> Download and parse the data with a repository
-        //TODO: use RXJava to save the resulting rules in the database
-        //TODO: perhaps not on the android main thread -> use other threading possibilities
-
-        Flowable t = Flowable.fromCallable(() -> Resource.success("Worked") ).delay(5, TimeUnit.SECONDS, Schedulers.io());
-        LiveData<Resource<String>> ld = LiveDataReactiveStreams.fromPublisher(t);
-
-        return ld;
+        if(ruleIds != null && ruleIds.size() > 0){
+            Observable<String> ruleIdObservable = Observable.fromArray(ruleIds.toArray(new String[0]));
+            ruleIdObservable.subscribeOn(Schedulers.io())
+                            .flatMap(this.mRuleDataRepository::downloadNewRule)
+                            .subscribe(this.mRuleDataRepository::insertRule);
+        }
     }
 }

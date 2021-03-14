@@ -103,49 +103,33 @@ public class RuleDataRepository {
 
     //region Download and process new rules
 
-    public void downloadNewRules(List<String> ruleIds){
-        for(String ruleId: ruleIds){
-            downloadNewRule(ruleId);
+    public Observable<Rule> downloadNewRule(@NonNull String ruleId){
+        return Observable.defer(() -> {
+
+        try {
+            Response response = HttpClient.getInstance().newCall(HttpClient.getRule(ruleId)).execute();
+
+            GsonBuilder gsonBuilder = new GsonBuilder();
+
+            gsonBuilder.registerTypeAdapter(Rule.class, new RuleDeserializer());
+
+            Gson ruleGson = gsonBuilder.create();
+
+            Rule rule = ruleGson.fromJson(response.body().charStream(), Rule.class);
+
+            //TODO: DELETE AFTER DEBUGGING
+            StringBuilder builder = new StringBuilder();
+            builder.append("id: ").append(rule.getId()).append("; ");
+            builder.append("name: ").append(rule.getName()).append("; ");
+            builder.append("description: ").append(rule.getDescription()).append("; ");
+            builder.append("condition: ").append(rule.getCondition()).append("; ");
+
+            Log.e("RULE_DOWNLOAD", builder.toString());
+
+            return Observable.just(rule);
+        } catch (IOException e) {
+            return Observable.error(e);
         }
-    }
-
-    public void downloadNewRule(String ruleId){
-
-        HttpClient.getInstance().newCall(HttpClient.getRule(ruleId)).enqueue(new Callback() {
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-
-                // ERROR
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-
-                try {
-                    // parse the data using Gson
-                    GsonBuilder gsonBuilder = new GsonBuilder();
-
-                    gsonBuilder.registerTypeAdapter(Rule.class, new RuleDeserializer());
-
-                    Gson ruleGson = gsonBuilder.create();
-
-                    Rule rule = ruleGson.fromJson(response.body().charStream(), Rule.class);
-
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("id: ").append(rule.getId()).append("; ");
-                    builder.append("name: ").append(rule.getName()).append("; ");
-                    builder.append("description: ").append(rule.getDescription()).append("; ");
-                    builder.append("condition: ").append(rule.getCondition()).append("; ");
-
-                    Log.e("RULE_DOWNLOAD", builder.toString());
-                    //insertRule(rule);
-
-                }catch(Exception ex){
-
-                    //ERROR
-                }
-            }
 
         });
     }
