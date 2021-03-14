@@ -119,6 +119,9 @@ public class RuleOverviewActivity extends AppCompatActivity {
                     }
                 });
 
+
+                RuleOverviewActivity.this.mRuleOverviewViewModel.downloadRule();
+
                 return true;
 
             case R.id.action_delete_all_rules:

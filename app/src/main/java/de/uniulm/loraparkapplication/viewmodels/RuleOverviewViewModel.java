@@ -54,6 +54,10 @@ public class RuleOverviewViewModel extends AndroidViewModel {
         return this.mInactiveRules;
     }
 
+    public void downloadRule(){
+        this.mRuleDataRepository.downloadNewRule("");
+    }
+
 
     //TODO: find a way to hand over the status of the background task (e.g deletion/...)
 

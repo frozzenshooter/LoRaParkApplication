@@ -1,12 +1,14 @@
 package de.uniulm.loraparkapplication.repositories;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +19,7 @@ import de.uniulm.loraparkapplication.database.RuleDao;
 import de.uniulm.loraparkapplication.database.RuleDatabase;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
+import de.uniulm.loraparkapplication.models.RuleDeserializer;
 import de.uniulm.loraparkapplication.network.HttpClient;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableEmitter;
@@ -121,10 +124,22 @@ public class RuleDataRepository {
 
                 try {
                     // parse the data using Gson
-                    Gson gson = new Gson();
-                    Rule rule = gson.fromJson(response.body().charStream(), Rule.class);
+                    GsonBuilder gsonBuilder = new GsonBuilder();
 
-                    insertRule(rule);
+                    gsonBuilder.registerTypeAdapter(Rule.class, new RuleDeserializer());
+
+                    Gson ruleGson = gsonBuilder.create();
+
+                    Rule rule = ruleGson.fromJson(response.body().charStream(), Rule.class);
+
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("id: ").append(rule.getId()).append("; ");
+                    builder.append("name: ").append(rule.getName()).append("; ");
+                    builder.append("description: ").append(rule.getDescription()).append("; ");
+                    builder.append("condition: ").append(rule.getCondition()).append("; ");
+
+                    Log.e("RULE_DOWNLOAD", builder.toString());
+                    //insertRule(rule);
 
                 }catch(Exception ex){
 

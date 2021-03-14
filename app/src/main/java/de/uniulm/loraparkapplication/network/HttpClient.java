@@ -17,6 +17,7 @@ public class HttpClient {
     private final static String sensorDescriptionsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/sensor_descriptions/sensors.json";
     private final static String sensorDetailsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/sensor_descriptions/sensor_values.json";
     private final static String downloadRuleURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rules.json";
+    private final static String ruleURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/rule_download/rules/rule.json";
 
     private static OkHttpClient instance;
 
@@ -48,7 +49,7 @@ public class HttpClient {
 
     public static Request getRule(@NonNull String ruleId){
         //TODO: CORRETC URL
-        Request req = new Request.Builder().url(HttpClient.downloadRuleURL).build();
+        Request req = new Request.Builder().url(HttpClient.ruleURL).build();
         return req;
     }
 }
