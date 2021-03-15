@@ -17,7 +17,9 @@ import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.models.RuleDeserializer;
 import de.uniulm.loraparkapplication.network.HttpClient;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.Response;
 
@@ -37,6 +39,8 @@ public class RuleHandler {
         this.mInactiveRules = this.mRuleDataRepository.getRules(false);
     }
 
+    //region Rule access
+
     public LiveData<List<Rule>> getAllRules(){
         return this.mAllRules;
     }
@@ -49,11 +53,19 @@ public class RuleHandler {
         return this.mInactiveRules;
     }
 
-    public LiveData<Resource<String>> deleteAllRules(){
+    //endregion
 
-        this.deactivateAllRules();
-        return this.mRuleDataRepository.deleteAllRules();
+    //region Rule deletion
+
+    public Completable deleteAllRules(){
+
+        return Completable
+                .defer(this::deactivateAllRules)
+                .subscribeOn(Schedulers.io())
+                .concatWith(this.mRuleDataRepository.deleteAllRules());
     }
+
+    //endregion
 
     //region Download new rules
 
@@ -62,15 +74,11 @@ public class RuleHandler {
      *
      * @param ruleIds the ids of the rules to download and insert into the db
      */
-    public void downloadRules(List<String> ruleIds){
-
-        //TODO: ERROR HANDLING
-        if(ruleIds != null && ruleIds.size() > 0){
-            Observable<String> ruleIdObservable = Observable.fromArray(ruleIds.toArray(new String[0]));
-            ruleIdObservable.subscribeOn(Schedulers.io())
-                    .flatMap(this::downloadNewRule)
-                    .subscribe(this::insertCompleteRuleSave);
-        }
+    public Observable<String> downloadRules(List<String> ruleIds){
+        return Observable.fromIterable(ruleIds)
+                .subscribeOn(Schedulers.io())
+                .concatMap(this::downloadNewRule)
+                .concatMap(this::insertCompleteRuleSave);
     }
 
     /**
@@ -92,9 +100,6 @@ public class RuleHandler {
 
                 CompleteRule completeRule = ruleGson.fromJson(response.body().charStream(), CompleteRule.class);
 
-                //TODO: DELETE AFTER DEBUGGING
-                Log.e("RULE_DOWNLOAD", completeRule.toString());
-
                 return Observable.just(completeRule);
             } catch (IOException e) {
                 return Observable.error(e);
@@ -103,13 +108,17 @@ public class RuleHandler {
         });
     }
 
+    //endregion
+
+    //region Rule insertion
+
     /**
      * Insert a complete rule, but checking if it already exists.
      * If it already exists it will deactivate the current rule and replace the current rule with the new rule
      *
      * @param completeRule the rule to insert
      */
-    public LiveData<Resource<String>> insertCompleteRuleSave(@NonNull CompleteRule completeRule){
+    public Observable<String> insertCompleteRuleSave(@NonNull CompleteRule completeRule){
         Rule rule = completeRule.getRule();
         Integer count = this.mRuleDataRepository.getAmountOfRules(rule.getId());
 
@@ -118,13 +127,15 @@ public class RuleHandler {
             deactivateRule(rule);
 
             // this will delete also all attached sensors, geofences and actions
-            this.mRuleDataRepository.deleteRule(rule);
+           this.mRuleDataRepository.deleteRule(rule);
         }
 
         return this.mRuleDataRepository.insertCompleteRule(completeRule);
     }
 
     //endregion
+
+    //region Rule deactivation
 
     /**
      * Deactivates a rule and removes active geofences
@@ -136,6 +147,19 @@ public class RuleHandler {
         // Delete geofences
         // Delete sensor fetching
     }
+
+    /**
+     * Deactivates all rules
+     */
+    public Completable deactivateAllRules(){
+
+        // TODO: deactivate all rules
+        return  Completable.complete();
+    }
+
+    //endregion
+
+    // region Complete rule access
 
     /**
      * Returns all rules as complete rules
@@ -166,11 +190,5 @@ public class RuleHandler {
         return this.mRuleDataRepository.getCompleteRules(isActive);
     }
 
-    /**
-     * Deactivates all rules
-     */
-    public void deactivateAllRules(){
-
-        // TODO: deactivate all rules
-    }
+    //endregion
 }

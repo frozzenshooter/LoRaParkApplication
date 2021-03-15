@@ -14,6 +14,8 @@ import de.uniulm.loraparkapplication.database.RuleDatabase;
 import de.uniulm.loraparkapplication.models.CompleteRule;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
 
 public class RuleDataRepository {
 
@@ -98,48 +100,22 @@ public class RuleDataRepository {
     //region Rule creation and deletion
 
     /**
-     * Insert rule (overrides an existing one)
-     *
-     * @param rule the rule to insert
-     * @return
-     */
-    public LiveData<Resource<String>> insertRule(@NonNull Rule rule) {
-
-        MutableLiveData<Resource<String>> data = new MutableLiveData<>();
-        data.postValue(Resource.loading(null));
-
-        RuleDatabase.databaseExecutor.execute(() -> {
-            try {
-                mRuleDao.insert(rule);
-                data.postValue(Resource.success(""));
-            }catch(Exception e){
-                data.postValue(Resource.error(e.getMessage(), ""));
-            }
-        });
-
-        return data;
-    }
-
-    /**
      * Insert a complete rule (overrides an existing one)
      *
      * @param completeRule the rule to insert
      * @return
      */
-    public LiveData<Resource<String>> insertCompleteRule(@NonNull CompleteRule completeRule){
-        MutableLiveData<Resource<String>> data = new MutableLiveData<>();
-        data.postValue(Resource.loading(null));
+    public Observable<String> insertCompleteRule(@NonNull CompleteRule completeRule){
 
-        RuleDatabase.databaseExecutor.execute(() -> {
+        return Observable.defer(() -> {
+
             try {
                 mRuleDao.insertCompleteRule(completeRule);
-                data.postValue(Resource.success(""));
-            }catch(Exception e){
-                data.postValue(Resource.error(e.getMessage(), ""));
+                return Observable.just(completeRule.getRule().getId());
+            } catch (Exception e) {
+                return Observable.error(e);
             }
         });
-
-        return data;
     }
 
     public Integer getAmountOfRules(@NonNull String ruleId){
@@ -149,27 +125,25 @@ public class RuleDataRepository {
     /**
      * Deletes all rules
      *
-     * @return resource with the state of the deletion
      */
-    public LiveData<Resource<String>> deleteAllRules() {
-        MutableLiveData<Resource<String>> data = new MutableLiveData<>();
-        data.postValue(Resource.loading(null));
+    public Completable deleteAllRules() {
 
-        RuleDatabase.databaseExecutor.execute(() -> {
+        return Completable.defer(() ->{
             try {
                 mRuleDao.deleteAllRules();
-                data.postValue(Resource.success(""));
+                return Completable.complete();
             }catch(Exception e){
-                data.postValue(Resource.error(e.getMessage(), ""));
+                return Completable.error(e);
             }
         });
-
-        return data;
     }
 
+    /**
+     * Delete the specific rule
+     *
+     * @param rule
+     */
     public void deleteRule(Rule rule) {
-
-        // TODO: SOLVE DELETION WITH RX JAVA
         try{
             mRuleDao.delete(rule);
         }catch(Exception ex){

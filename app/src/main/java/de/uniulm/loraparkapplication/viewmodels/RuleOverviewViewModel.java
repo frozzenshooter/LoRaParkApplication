@@ -13,6 +13,10 @@ import de.uniulm.loraparkapplication.models.CompleteRule;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.repositories.RuleHandler;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
  * ViewModel that handles the data for the rule overview activity
@@ -21,15 +25,11 @@ import de.uniulm.loraparkapplication.repositories.RuleHandler;
  */
 public class RuleOverviewViewModel extends AndroidViewModel {
 
-    //TODO: use an intermediate "use case" class to access the different repos (e.g. to save delete a rule you have to deactivate beforehand)
-    //TODO: this allows to handle the differnent steps in a cental and abstract way and not in the viewmodel
-
-
-    //TODO: https://developer.android.com/topic/libraries/architecture/viewmodel.html#sharing implement it like this and hold the data in here
-
     private final LiveData<List<Rule>> mAllRules;
     private final LiveData<List<Rule>> mActiveRules;
     private final LiveData<List<Rule>> mInactiveRules;
+
+    private CompositeDisposable disposables;
 
     private final RuleHandler ruleHandler;
 
@@ -40,6 +40,8 @@ public class RuleOverviewViewModel extends AndroidViewModel {
         this.mAllRules = this.ruleHandler.getAllRules();
         this.mActiveRules = this.ruleHandler.getActiveRules();
         this.mInactiveRules = this.ruleHandler.getInactiveRules();
+
+        this.disposables = new CompositeDisposable();
     }
 
     public LiveData<List<Rule>> getAllRules(){
@@ -54,11 +56,28 @@ public class RuleOverviewViewModel extends AndroidViewModel {
         return this.mInactiveRules;
     }
 
-    public LiveData<Resource<String>> deleteAllRules(){
+    public Completable deleteAllRules(){
+
         return this.ruleHandler.deleteAllRules();
     }
 
-    public void downloadRules(List<String> ruleIds){
-        this.ruleHandler.downloadRules(ruleIds);
+    public Observable<String> downloadRules(List<String> ruleIds){
+        return this.ruleHandler.downloadRules(ruleIds);
+    }
+
+    /**
+     * Call this method from every subscriber to be sure it will be reset
+     *
+     * @param d
+     */
+    public void addDisposable(Disposable d){
+        this.disposables.add(d);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        //needed to clear the subscribers that aren't needed anymore
+        disposables.clear();
     }
 }

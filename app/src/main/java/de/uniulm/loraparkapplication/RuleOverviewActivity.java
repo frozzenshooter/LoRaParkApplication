@@ -7,7 +7,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -37,6 +36,11 @@ import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.models.Sensor;
 import de.uniulm.loraparkapplication.viewmodels.RuleOverviewViewModel;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 
 public class RuleOverviewActivity extends AppCompatActivity {
 
@@ -107,12 +111,28 @@ public class RuleOverviewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.action_delete_all_rules:
-                RuleOverviewActivity.this.mRuleOverviewViewModel.deleteAllRules().observe(this,new Observer<Resource<String>>(){
-                    @Override
-                    public void onChanged(Resource<String> stringResource) {
-                        handleResourceFromBackground(stringResource);
+
+                DisposableCompletableObserver d = new DisposableCompletableObserver() {
+
+                   @Override
+                    public void onComplete() {
+                       String message = "Everything deleted";
+                       Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_SHORT).show();
                     }
-                });
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        String message = "Failure deleting the data";
+                        Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_SHORT).show();
+                    }
+                };
+
+                this.mRuleOverviewViewModel.addDisposable(d);
+
+                RuleOverviewActivity.this.mRuleOverviewViewModel.deleteAllRules()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(d);
+
                 return true;
 
             case android.R.id.home:
@@ -162,7 +182,31 @@ public class RuleOverviewActivity extends AppCompatActivity {
                 rulesToDownload.add("rule1");
                 rulesToDownload.add("rule2");
                 rulesToDownload.add("rule3");
-                this.mRuleOverviewViewModel.downloadRules(rulesToDownload);
+
+                this.mRuleOverviewViewModel.downloadRules(rulesToDownload)
+
+                        .subscribe(new Observer<String>() {
+                            @Override
+                            public void onSubscribe(@NonNull Disposable d) {
+                                mRuleOverviewViewModel.addDisposable(d);
+                            }
+
+                            @Override
+                            public void onNext(@NonNull String s) {
+                                // nothing
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                String message = "Failure saving the data";
+                                Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onComplete() {
+
+                            }
+                        });
             }
         }
     }
