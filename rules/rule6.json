@@ -1,0 +1,42 @@
+{
+  "id": "rule6",
+  "name": "ExampleRule6",
+  "description": "Rule6 long description description description description description",
+  "sensors": [
+	  {
+		  "domain": "co2",
+		  "id": "elsysco2-048e67",
+		  "value": "co2"
+	  }
+
+  ],
+  "geofences":[
+	  {
+		"id": "geofence6",
+		"location": {
+				"latitude": 48.396426,
+				"longitude": 9.990453
+		},
+		"radius" : 10
+	  }
+  ],  
+  "condition": {
+    "and": [
+      {
+        "<=": [
+          {
+            "sensor": "co2sensor"
+          },
+          500
+        ]
+      },
+      {"geofence":  "geofence1"}
+    ]
+  },
+  "actions": [
+    {
+      "action": "notification",
+      "data": {}
+    }
+  ]
+}
