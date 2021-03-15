@@ -1,31 +1,18 @@
 package de.uniulm.loraparkapplication.viewmodels;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.LiveDataReactiveStreams;
-import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 
+import de.uniulm.loraparkapplication.models.CompleteRule;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
-import de.uniulm.loraparkapplication.repositories.RuleDataRepository;
 import de.uniulm.loraparkapplication.repositories.RuleHandler;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-
-import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.core.Scheduler;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
  * ViewModel that handles the data for the rule overview activity
@@ -67,15 +54,8 @@ public class RuleOverviewViewModel extends AndroidViewModel {
         return this.mInactiveRules;
     }
 
-    //TODO: Status of the insertion/deletion/.. needed
-
     public LiveData<Resource<String>> deleteAllRules(){
         return this.ruleHandler.deleteAllRules();
-    }
-
-    public LiveData<Resource<String>> insertRule(@NonNull Rule rule){
-        //TODO: delete later -> no manual adding
-        return this.ruleHandler.insertRule(rule);
     }
 
     public void downloadRules(List<String> ruleIds){

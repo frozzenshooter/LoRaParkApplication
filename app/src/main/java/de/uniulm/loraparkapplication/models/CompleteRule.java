@@ -1,12 +1,23 @@
 package de.uniulm.loraparkapplication.models;
 
+import androidx.room.Embedded;
+import androidx.room.Relation;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class CompleteRule {
+    @Embedded
     private Rule rule;
-    private ArrayList<Sensor> sensors;
-    private ArrayList<Geofence> geofences;
-    private ArrayList<Action> actions;
+
+    @Relation(parentColumn = "id", entityColumn = "rule_id", entity = Sensor.class)
+    private List<Sensor> sensors;
+
+    @Relation(parentColumn = "id", entityColumn = "rule_id", entity = Geofence.class)
+    private List<Geofence> geofences;
+
+    @Relation(parentColumn = "id", entityColumn = "rule_id", entity = Action.class)
+    private List<Action> actions;
 
 
     public Rule getRule() {
@@ -17,14 +28,14 @@ public class CompleteRule {
         this.rule = rule;
     }
 
-    public ArrayList<Sensor> getSensors() {
+    public List<Sensor> getSensors() {
         if(sensors == null){
             sensors = new ArrayList<>();
         }
         return sensors;
     }
 
-    public void setSensors(ArrayList<Sensor> sensors) {
+    public void setSensors(List<Sensor> sensors) {
         this.sensors = sensors;
     }
 
@@ -37,14 +48,14 @@ public class CompleteRule {
         this.sensors.add(sensor);
     }
 
-    public ArrayList<Geofence> getGeofences() {
+    public List<Geofence> getGeofences() {
         if(geofences == null){
             geofences = new ArrayList<>();
         }
         return geofences;
     }
 
-    public void setGeofences(ArrayList<Geofence> geofences) {
+    public void setGeofences(List<Geofence> geofences) {
         this.geofences = geofences;
     }
 
@@ -57,14 +68,14 @@ public class CompleteRule {
         this.geofences.add(geofence);
     }
 
-    public ArrayList<Action> getActions() {
+    public List<Action> getActions() {
         if(actions == null){
             actions = new ArrayList<>();
         }
         return actions;
     }
 
-    public void setActions(ArrayList<Action> actions) {
+    public void setActions(List<Action> actions) {
         this.actions = actions;
     }
 
@@ -152,6 +163,8 @@ public class CompleteRule {
             builder.append(action.getRuleId());
             builder.append("\n");
         }
+
+        builder.append("---------------------------------------------------------");
 
         return builder.toString();
     }

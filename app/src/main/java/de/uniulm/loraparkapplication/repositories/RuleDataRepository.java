@@ -2,37 +2,18 @@ package de.uniulm.loraparkapplication.repositories;
 
 import android.app.Application;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 import java.util.List;
 
-import de.uniulm.loraparkapplication.R;
-import de.uniulm.loraparkapplication.SensorDetailActivity;
 import de.uniulm.loraparkapplication.database.RuleDao;
 import de.uniulm.loraparkapplication.database.RuleDatabase;
+import de.uniulm.loraparkapplication.models.CompleteRule;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
-import de.uniulm.loraparkapplication.models.RuleDeserializer;
-import de.uniulm.loraparkapplication.models.SensorDetail;
-import de.uniulm.loraparkapplication.network.HttpClient;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.ObservableEmitter;
-import io.reactivex.rxjava3.core.ObservableOnSubscribe;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class RuleDataRepository {
 
@@ -74,6 +55,34 @@ public class RuleDataRepository {
     }
 
     /**
+     * Returns all local complete rules (with sensors,geofences and actions)
+     *
+     * @return list with all completeRules
+     */
+    public LiveData<List<CompleteRule>> getCompleteRules(){
+        return mRuleDao.findCompleteRules();
+    }
+
+    /**
+     * Returns a specific complete rule (with sensors,geofences and actions)
+     *
+     * @param ruleId the id of the requested rule
+     * @return the complete rule
+     */
+    public LiveData<CompleteRule> getCompleteRule(@NonNull String ruleId){
+        return mRuleDao.findCompleteRule(ruleId);
+    }
+
+    /**
+     * Returns all local complete rules (with sensors,geofences and actions) filtered by state: if they are currently active
+     *
+     * @return list with filtered completeRules
+     */
+    public LiveData<List<CompleteRule>> getCompleteRules(Boolean isActive){
+        return mRuleDao.findCompleteRules(isActive);
+    }
+
+    /**
      *  Returns a single rule
      *
      * @param ruleId the id of the requested rule
@@ -111,6 +120,28 @@ public class RuleDataRepository {
         return data;
     }
 
+    /**
+     * Insert a complete rule (overrides an existing one)
+     *
+     * @param completeRule the rule to insert
+     * @return
+     */
+    public LiveData<Resource<String>> insertCompleteRule(@NonNull CompleteRule completeRule){
+        MutableLiveData<Resource<String>> data = new MutableLiveData<>();
+        data.postValue(Resource.loading(null));
+
+        RuleDatabase.databaseExecutor.execute(() -> {
+            try {
+                mRuleDao.insertCompleteRule(completeRule);
+                data.postValue(Resource.success(""));
+            }catch(Exception e){
+                data.postValue(Resource.error(e.getMessage(), ""));
+            }
+        });
+
+        return data;
+    }
+
     public Integer getAmountOfRules(@NonNull String ruleId){
         return mRuleDao.getAmountOfRules(ruleId);
     }
@@ -134,6 +165,16 @@ public class RuleDataRepository {
         });
 
         return data;
+    }
+
+    public void deleteRule(Rule rule) {
+
+        // TODO: SOLVE DELETION WITH RX JAVA
+        try{
+            mRuleDao.delete(rule);
+        }catch(Exception ex){
+            Log.e("", "");
+        }
     }
 
     //endregion

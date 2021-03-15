@@ -3,9 +3,7 @@ package de.uniulm.loraparkapplication;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ShareActionProvider;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -13,14 +11,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,19 +26,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
 
 import de.uniulm.loraparkapplication.fragments.ActiveRulesFragment;
 import de.uniulm.loraparkapplication.fragments.AllRulesFragment;
 import de.uniulm.loraparkapplication.fragments.InactiveRulesFragment;
-import de.uniulm.loraparkapplication.models.DownloadRule;
+import de.uniulm.loraparkapplication.models.Action;
+import de.uniulm.loraparkapplication.models.CompleteRule;
+import de.uniulm.loraparkapplication.models.Geofence;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
+import de.uniulm.loraparkapplication.models.Sensor;
 import de.uniulm.loraparkapplication.viewmodels.RuleOverviewViewModel;
-import de.uniulm.loraparkapplication.viewmodels.SensorOverviewViewModel;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RuleOverviewActivity extends AppCompatActivity {
 
@@ -112,24 +106,6 @@ public class RuleOverviewActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
-            case R.id.action_add_rule:
-
-                Rule rule1 = new Rule();
-                rule1.setName("New Rule");
-                rule1.setDescription("Rule description");
-                rule1.setId(random());
-                rule1.setCondition("Condition");
-                rule1.setIsActive(true);
-
-                RuleOverviewActivity.this.mRuleOverviewViewModel.insertRule(rule1).observe(this,new Observer<Resource<String>>(){
-                    @Override
-                    public void onChanged(Resource<String> stringResource) {
-                        handleResourceFromBackground(stringResource);
-                    }
-                });
-
-                return true;
-
             case R.id.action_delete_all_rules:
                 RuleOverviewActivity.this.mRuleOverviewViewModel.deleteAllRules().observe(this,new Observer<Resource<String>>(){
                     @Override
@@ -137,7 +113,6 @@ public class RuleOverviewActivity extends AppCompatActivity {
                         handleResourceFromBackground(stringResource);
                     }
                 });
-
                 return true;
 
             case android.R.id.home:

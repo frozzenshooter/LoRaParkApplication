@@ -55,13 +55,6 @@ public class RuleHandler {
         return this.mRuleDataRepository.deleteAllRules();
     }
 
-    public LiveData<Resource<String>> insertRule(@NonNull Rule rule){
-
-        //TODO: delete later -> Rules won't be added manually and therefore this shouldn't be used
-        return this.mRuleDataRepository.insertRule(rule);
-    }
-
-
     //region Download new rules
 
     /**
@@ -71,11 +64,12 @@ public class RuleHandler {
      */
     public void downloadRules(List<String> ruleIds){
 
+        //TODO: ERROR HANDLING
         if(ruleIds != null && ruleIds.size() > 0){
             Observable<String> ruleIdObservable = Observable.fromArray(ruleIds.toArray(new String[0]));
             ruleIdObservable.subscribeOn(Schedulers.io())
                     .flatMap(this::downloadNewRule)
-                    .subscribe(this::insertRuleSave);
+                    .subscribe(this::insertCompleteRuleSave);
         }
     }
 
@@ -98,7 +92,6 @@ public class RuleHandler {
 
                 CompleteRule completeRule = ruleGson.fromJson(response.body().charStream(), CompleteRule.class);
 
-
                 //TODO: DELETE AFTER DEBUGGING
                 Log.e("RULE_DOWNLOAD", completeRule.toString());
 
@@ -116,20 +109,22 @@ public class RuleHandler {
      *
      * @param completeRule the rule to insert
      */
-    public LiveData<Resource<String>> insertRuleSave(@NonNull CompleteRule completeRule){
+    public LiveData<Resource<String>> insertCompleteRuleSave(@NonNull CompleteRule completeRule){
         Rule rule = completeRule.getRule();
         Integer count = this.mRuleDataRepository.getAmountOfRules(rule.getId());
 
         if(count > 0){
+            // Remove old rule with old triggers
             deactivateRule(rule);
+
+            // this will delete also all attached sensors, geofences and actions
+            this.mRuleDataRepository.deleteRule(rule);
         }
 
-        //TODO: SAVE INSERT THE COMPLETE RULE
-        return insertRule(rule);
+        return this.mRuleDataRepository.insertCompleteRule(completeRule);
     }
 
     //endregion
-
 
     /**
      * Deactivates a rule and removes active geofences
@@ -143,10 +138,39 @@ public class RuleHandler {
     }
 
     /**
+     * Returns all rules as complete rules
+     *
+     * @return list of complete rules
+     */
+    public LiveData<List<CompleteRule>> getCompleteRules(){
+        return this.mRuleDataRepository.getCompleteRules();
+    }
+
+    /**
+     * Returns a specific complete rule
+     *
+     * @param ruleId the id of the requested rule
+     * @return complete rule
+     */
+    public LiveData<CompleteRule> getCompleteRule(@NonNull String ruleId){
+        return this.mRuleDataRepository.getCompleteRule(ruleId);
+    }
+
+    /**
+     * Returns a list of complete rules filtered by theri state: if they are active
+     *
+     * @param isActive
+     * @return filtered complete rules
+     */
+    public LiveData<List<CompleteRule>> getCompleteRules(Boolean isActive){
+        return this.mRuleDataRepository.getCompleteRules(isActive);
+    }
+
+    /**
      * Deactivates all rules
      */
     public void deactivateAllRules(){
+
         // TODO: deactivate all rules
     }
-
 }
