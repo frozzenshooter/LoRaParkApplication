@@ -16,14 +16,14 @@ public class HttpClient {
 
     private final static String sensorDescriptionsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/sensor_descriptions/sensors.json";
     private final static String sensorDetailsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/sensor_descriptions/sensor_values.json";
-    private final static String downloadRuleURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/rule_download/rules/rules.json";
-    private final static String rule1URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/rule_download/rules/rule.json";
-    private final static String rule2URL = " https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/rule_download/rules/rule2.json";
-    private final static String rule3URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/rule_download/rules/rule3.json";
-    private final static String rule4URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/rule_download/rules/rule4.json";
-    private final static String rule5URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/rule_download/rules/rule5.json";
-    private final static String rule6URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/rule_download/rules/rule6.json";
-    private final static String rule7URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/rule_download/rules/rule7.json";
+    private final static String downloadRuleURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rules.json";
+    private final static String rule1URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rule.json";
+    private final static String rule2URL = " https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rule2.json";
+    private final static String rule3URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rule3.json";
+    private final static String rule4URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rule4.json";
+    private final static String rule5URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rule5.json";
+    private final static String rule6URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rule6.json";
+    private final static String rule7URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rule7.json";
 
 
 
