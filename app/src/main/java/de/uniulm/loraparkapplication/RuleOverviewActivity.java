@@ -168,6 +168,7 @@ public class RuleOverviewActivity extends AppCompatActivity {
         if(data != null && requestCode == DownloadRuleActivity.REQUEST_ID){
             ArrayList<String> rulesToDownload = data.getStringArrayListExtra(DownloadRuleActivity.SELECTED_RULES);
 
+            //TODO: delete toast later
             StringBuilder build = new StringBuilder();
             for(int i=0 ; i < rulesToDownload.size(); i++){
                 build.append(rulesToDownload.get(i));
@@ -177,12 +178,6 @@ public class RuleOverviewActivity extends AppCompatActivity {
             Toast.makeText(this, build.toString(), Toast.LENGTH_SHORT).show();
 
             if(rulesToDownload != null && rulesToDownload.size() > 0) {
-
-                rulesToDownload.clear();
-                rulesToDownload.add("rule1");
-                rulesToDownload.add("rule2");
-                rulesToDownload.add("rule3");
-                rulesToDownload.add("rule4");
 
                 this.mRuleOverviewViewModel.downloadRules(rulesToDownload)
                         .observeOn(AndroidSchedulers.mainThread())

@@ -35,10 +35,10 @@ public abstract class RuleDao {
     @Query("DELETE FROM rule_table")
     public abstract void deleteAllRules() throws Exception;
 
-    @Query("SELECT * FROM rule_table WHERE is_active = :isActive")
+    @Query("SELECT * FROM rule_table WHERE is_active = :isActive ORDER BY name ASC")
     public abstract LiveData<List<Rule>> findRules(Boolean isActive);
 
-    @Query("SELECT * FROM rule_table")
+    @Query("SELECT * FROM rule_table ORDER BY name ASC")
     public abstract LiveData<List<Rule>> findAllRules();
 
     @Query("SELECT * FROM rule_table WHERE id = :ruleId")
@@ -80,10 +80,10 @@ public abstract class RuleDao {
         }
     }
 
-    @Query("SELECT * FROM rule_table")
+    @Query("SELECT * FROM rule_table ORDER BY name ASC")
     public abstract LiveData<List<CompleteRule>> findCompleteRules();
 
-    @Query("SELECT * FROM rule_table WHERE is_active = :isActive")
+    @Query("SELECT * FROM rule_table WHERE is_active = :isActive ORDER BY name ASC")
     public abstract LiveData<List<CompleteRule>> findCompleteRules(Boolean isActive);
 
     @Query("SELECT * FROM rule_table WHERE id = :ruleId")

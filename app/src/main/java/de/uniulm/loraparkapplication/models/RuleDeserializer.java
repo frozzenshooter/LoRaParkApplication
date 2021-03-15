@@ -43,7 +43,7 @@ public class RuleDeserializer implements JsonDeserializer<CompleteRule> {
         JsonElement descriptionElement = jObject.get("description");
 
         String description = "";
-        if(idElement != null){
+        if(descriptionElement != null){
             description = descriptionElement.getAsString();
         }
 
