@@ -184,7 +184,7 @@ public class RuleOverviewActivity extends AppCompatActivity {
                 rulesToDownload.add("rule3");
 
                 this.mRuleOverviewViewModel.downloadRules(rulesToDownload)
-
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<String>() {
                             @Override
                             public void onSubscribe(@NonNull Disposable d) {
@@ -198,7 +198,7 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                String message = "Failure saving the data";
+                                String message = "Failure saving the data: "+e.getMessage();
                                 Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
                             }
 
