@@ -177,11 +177,12 @@ public class RuleOverviewActivity extends AppCompatActivity {
             Toast.makeText(this, build.toString(), Toast.LENGTH_SHORT).show();
 
             if(rulesToDownload != null && rulesToDownload.size() > 0) {
-                //TODO: use RuleOverviewViewModel.downloadRules to fetch and save all - NO EXCEPTION HANDLING YET
+
                 rulesToDownload.clear();
                 rulesToDownload.add("rule1");
                 rulesToDownload.add("rule2");
                 rulesToDownload.add("rule3");
+                rulesToDownload.add("rule4");
 
                 this.mRuleOverviewViewModel.downloadRules(rulesToDownload)
                         .observeOn(AndroidSchedulers.mainThread())
@@ -193,12 +194,13 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
                             @Override
                             public void onNext(@NonNull String s) {
-                                // nothing
+                               // String message = "Saved data: "+s;
+                                //Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                String message = "Failure saving the data: "+e.getMessage();
+                                String message = "Failure saving one of the rules";
                                 Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
                             }
 

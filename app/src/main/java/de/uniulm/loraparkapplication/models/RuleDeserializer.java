@@ -155,6 +155,8 @@ public class RuleDeserializer implements JsonDeserializer<CompleteRule> {
         rule.setDescription(description);
         rule.setCondition(condition);
         rule.setIsActive(false);
+        rule.setLastTriggered(Long.MIN_VALUE);
+        rule.setWasTriggered(false);
 
         //endregion
 

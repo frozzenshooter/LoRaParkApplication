@@ -3,6 +3,7 @@ package de.uniulm.loraparkapplication.models;
 import androidx.room.Embedded;
 import androidx.room.Relation;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,6 +109,19 @@ public class CompleteRule {
 
         builder.append("Rule (isActive): ");
         builder.append(rule.getIsActive()? "true": "false");
+        builder.append("\n");
+
+        builder.append("Rule (last triggered): ");
+        if(rule.getLastTriggered() > 0){
+            Timestamp triggered = new Timestamp(rule.getLastTriggered());
+            builder.append(triggered.toString());
+        }else{
+            builder.append("no timestamp set");
+        }
+        builder.append("\n");
+
+        builder.append("Rule (wasTriggered): ");
+        builder.append(rule.getWasTriggered()? "true": "false");
         builder.append("\n");
 
         for(Sensor sensor : this.getSensors()){

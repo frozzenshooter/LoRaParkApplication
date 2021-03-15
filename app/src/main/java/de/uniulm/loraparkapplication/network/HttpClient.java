@@ -49,13 +49,15 @@ public class HttpClient {
         return req;
     }
 
-    public static Request getRule(@NonNull String ruleId){
+    public static Request getRule(@NonNull String ruleId) {
         //TODO: CORRETC URL
 
-        if("rule2".equals(ruleId)){
+        if ("rule2".equals(ruleId)) {
             return new Request.Builder().url(HttpClient.rule2URL).build();
-        }else if("rule3".equals(ruleId)){
+        } else if ("rule3".equals(ruleId)) {
             return new Request.Builder().url(HttpClient.rule3URL).build();
+        } else if ("rule4".equals(ruleId)){
+            return new Request.Builder().url(HttpClient.rule3URL+"rule4.json").build();
         }else{
             return new Request.Builder().url(HttpClient.rule1URL).build();
         }

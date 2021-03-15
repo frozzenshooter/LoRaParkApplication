@@ -111,7 +111,7 @@ public class RuleDataRepository {
 
             try {
                 mRuleDao.insertCompleteRule(completeRule);
-                return Observable.just(completeRule.getRule().getId());
+                return Observable.just(completeRule.getRule().getName());
             } catch (Exception e) {
                 return Observable.error(e);
             }

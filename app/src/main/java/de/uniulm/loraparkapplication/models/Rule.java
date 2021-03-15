@@ -28,6 +28,16 @@ public class Rule {
     @ColumnInfo(name = "is_active")
     private Boolean isActive;
 
+    //region Additional fields for rule engine
+
+    @ColumnInfo(name = "last_triggered")
+    private Long lastTriggered;
+
+    @ColumnInfo(name = "was_triggered")
+    private Boolean wasTriggered;
+
+    //endregion
+
     //region Getters and setters
 
     @NotNull
@@ -74,6 +84,24 @@ public class Rule {
 
     public Boolean getIsActive(){
         return this.isActive;
+    }
+
+
+    public Long getLastTriggered() {
+        return lastTriggered;
+    }
+
+    public void setLastTriggered(Long lastTriggered) {
+        this.lastTriggered = lastTriggered;
+    }
+
+
+    public Boolean getWasTriggered() {
+        return wasTriggered;
+    }
+
+    public void setWasTriggered(Boolean wasTriggered) {
+        this.wasTriggered = wasTriggered;
     }
 
     //endregion
