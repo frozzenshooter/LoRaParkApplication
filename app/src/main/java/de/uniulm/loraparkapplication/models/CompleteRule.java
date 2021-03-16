@@ -140,6 +140,10 @@ public class CompleteRule {
             builder.append("Sensor (ruleId): ");
             builder.append(sensor.getRuleId());
             builder.append("\n");
+
+            builder.append("Sensor (ruleSensorId): ");
+            builder.append(sensor.getRuleSensorId());
+            builder.append("\n");
         }
 
         for(Geofence geofence: this.getGeofences()){

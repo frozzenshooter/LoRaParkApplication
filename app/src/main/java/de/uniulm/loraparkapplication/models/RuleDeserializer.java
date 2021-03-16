@@ -70,12 +70,14 @@ public class RuleDeserializer implements JsonDeserializer<CompleteRule> {
                     String domain = sensorObject.get("domain").getAsString();
                     String sensorId = sensorObject.get("id").getAsString();
                     String value = sensorObject.get("value").getAsString();
+                    String ruleSensorId = sensorObject.get("ruleSensorId").getAsString();
 
                     Sensor sensor = new Sensor();
                     sensor.setDomain(domain);
                     sensor.setSensorId(sensorId);
                     sensor.setValue(value);
                     sensor.setRuleId(ruleId);
+                    sensor.setRuleSensorId(ruleSensorId);
 
                     sensorList.add(sensor);
                 }

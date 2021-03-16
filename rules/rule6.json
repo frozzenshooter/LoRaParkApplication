@@ -4,6 +4,7 @@
   "description": "Rule6 long description description description description description",
   "sensors": [
 	  {
+      "ruleSensorId" : "co2sensor",
 		  "domain": "co2",
 		  "id": "elsysco2-048e67",
 		  "value": "co2"

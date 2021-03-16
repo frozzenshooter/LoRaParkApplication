@@ -3,6 +3,7 @@
   "name": "ExampleRule5",
   "sensors": [
 	  {
+      "ruleSensorId" : "co2sensor",
 		  "domain": "co2",
 		  "id": "elsysco2-048e67",
 		  "value": "co2"
@@ -11,7 +12,7 @@
   ],
   "geofences":[
 	  {
-		"id": "geofence1",
+		"id": "geofence5",
 		"location": {
 				"latitude": 48.396426,
 				"longitude": 9.990453

@@ -37,6 +37,9 @@ public class Sensor {
     @NonNull
     private String ruleId;
 
+    @ColumnInfo(name = "rule_sensor_id")
+    private String ruleSensorId;
+
     //region Getters and setters
 
     @NotNull
@@ -84,6 +87,14 @@ public class Sensor {
 
     public void setRuleId(@NotNull String ruleId) {
         this.ruleId = ruleId;
+    }
+
+    public String getRuleSensorId() {
+        return ruleSensorId;
+    }
+
+    public void setRuleSensorId(@NonNull String ruleSensorId) {
+        this.ruleSensorId = ruleSensorId;
     }
 
     //endregion
