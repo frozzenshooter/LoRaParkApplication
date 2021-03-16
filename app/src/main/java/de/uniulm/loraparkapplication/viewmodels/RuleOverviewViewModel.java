@@ -35,7 +35,7 @@ public class RuleOverviewViewModel extends AndroidViewModel {
 
     public RuleOverviewViewModel(@NonNull Application application) {
         super(application);
-        this.ruleHandler = new RuleHandler(application);
+        this.ruleHandler = RuleHandler.getInstance(application);
 
         this.mAllRules = this.ruleHandler.getAllRules();
         this.mActiveRules = this.ruleHandler.getActiveRules();
@@ -78,6 +78,8 @@ public class RuleOverviewViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         //needed to clear the subscribers that aren't needed anymore
+
+        //TODO: use ConnectableObservable to be able to reconnect again
         disposables.clear();
     }
 }

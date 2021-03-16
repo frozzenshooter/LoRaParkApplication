@@ -16,6 +16,7 @@ import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 
 public class RuleDataRepository {
 
@@ -63,6 +64,17 @@ public class RuleDataRepository {
      */
     public LiveData<List<CompleteRule>> getCompleteRules(){
         return mRuleDao.findCompleteRules();
+    }
+
+    public Single<CompleteRule> getSingleCompleteRule(@NonNull String ruleId){
+        return Single.defer(()->{
+            try{
+                CompleteRule rule = mRuleDao.getCompleteRule(ruleId);
+                return Single.just(rule);
+            }catch(Exception ex){
+                return Single.error(ex);
+            }
+        });
     }
 
     /**
@@ -147,9 +159,20 @@ public class RuleDataRepository {
         try{
             mRuleDao.delete(rule);
         }catch(Exception ex){
+            //TODO: Exception handling
             Log.e("", "");
         }
     }
+
+    public void updateRule(@NonNull Rule rule){
+        try{
+            mRuleDao.update(rule);
+        }catch(Exception ex){
+            //TODO: Exception handling
+            Log.e("", "");
+        }
+    }
+
 
     //endregion
 }

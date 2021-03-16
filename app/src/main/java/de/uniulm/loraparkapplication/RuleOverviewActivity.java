@@ -116,12 +116,14 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
                    @Override
                     public void onComplete() {
+                       //TODO: use localized text
                        String message = "Everything deleted";
                        Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
+                        //TODO: use localized text
                         String message = "Failure deleting the data";
                         Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_SHORT).show();
                     }
@@ -142,23 +144,6 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    /**
-     * Show a toast if there was an error (in a background task)
-     *
-     * @param resource
-     */
-    private void handleResourceFromBackground(Resource<String> resource){
-        if(resource.status == Resource.Status.ERROR){
-            String message = getResources().getString(R.string.error_rules_not_loaded);
-            if(!resource.message.isEmpty() && !Objects.equals(resource.message, "") && resource.message != null){
-                message = message + " (" + resource.message + ")";
-            }
-
-            Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
-        }
-        // in other cases do nothing
     }
 
     @Override
@@ -195,8 +180,10 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                String message = "Failure saving some of the rules";
-                                Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
+
+                                //TODO: remove exception message and replace with localized string
+                                String message = "Failure saving one of the rules: " + e.getMessage();
+                                Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_SHORT).show();
                             }
 
                             @Override

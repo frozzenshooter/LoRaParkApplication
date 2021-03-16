@@ -88,4 +88,7 @@ public abstract class RuleDao {
 
     @Query("SELECT * FROM rule_table WHERE id = :ruleId")
     public abstract LiveData<CompleteRule> findCompleteRule(String ruleId);
+
+    @Query("SELECT * FROM rule_table WHERE id = :ruleId")
+    public abstract CompleteRule getCompleteRule(String ruleId);
 }

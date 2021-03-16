@@ -120,8 +120,15 @@ public class SensorOverviewActivity extends AppCompatActivity {
                     perms.put(permissions[i], grantResults[i]);
 
                 // Check result of permission requests
-                Boolean locationPermissionGranted = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-                Boolean storagePermissionGranted = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                Boolean locationPermissionGranted = true;
+                if(perms.get(Manifest.permission.ACCESS_FINE_LOCATION) != null){
+                    locationPermissionGranted = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                }
+
+                Boolean storagePermissionGranted = true;
+                if(perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) != null){
+                    storagePermissionGranted = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                }
 
 
                 if (!locationPermissionGranted && !storagePermissionGranted) {
