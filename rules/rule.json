@@ -4,7 +4,7 @@
   "description": "Example rule1 for testing purposes.",
   "sensors": [
 	  {
-      "ruleSensorId" : "co2sensor",
+		  "ruleSensorId" : "co2sensor",
 		  "domain": "co2",
 		  "id": "elsysco2-048e67",
 		  "value": "co2"

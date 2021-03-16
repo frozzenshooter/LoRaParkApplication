@@ -195,7 +195,7 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                String message = "Failure saving one of the rules";
+                                String message = "Failure saving some of the rules";
                                 Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
                             }
 
