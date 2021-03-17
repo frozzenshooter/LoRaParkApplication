@@ -23,7 +23,8 @@
 
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
-            android:value="AIzaSyCX2vXww-T2_kjgHNCHijhRqz4edO6wZLw" />
+            android:value="@string/AwarenessAPIKey" />
+
         <receiver
             android:name=".broadcast.FenceReceiver"
             android:enabled="true"

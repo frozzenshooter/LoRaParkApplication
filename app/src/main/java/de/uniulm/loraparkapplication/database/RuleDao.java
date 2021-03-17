@@ -80,15 +80,19 @@ public abstract class RuleDao {
         }
     }
 
+    @Transaction
     @Query("SELECT * FROM rule_table ORDER BY name ASC")
     public abstract LiveData<List<CompleteRule>> findCompleteRules();
 
+    @Transaction
     @Query("SELECT * FROM rule_table WHERE is_active = :isActive ORDER BY name ASC")
     public abstract LiveData<List<CompleteRule>> findCompleteRules(Boolean isActive);
 
+    @Transaction
     @Query("SELECT * FROM rule_table WHERE id = :ruleId")
     public abstract LiveData<CompleteRule> findCompleteRule(String ruleId);
 
+    @Transaction
     @Query("SELECT * FROM rule_table WHERE id = :ruleId")
     public abstract CompleteRule getCompleteRule(String ruleId);
 }

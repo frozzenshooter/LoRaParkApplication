@@ -10,12 +10,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
@@ -166,7 +162,6 @@ public class RuleDetailActivity extends AppCompatActivity {
 
             String[] params = permissions.toArray(new String[0]);
             requestPermissions(params, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
-
 
         } else{
             if (this.rule != null && this.rule.getIsActive() != null && this.mRuleDetailViewModel != null) {
