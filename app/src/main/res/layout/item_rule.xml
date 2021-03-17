@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:textColor="@color/black"
+            android:textColor="?colorPrimaryVariant"
             android:layout_gravity="start|center"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
@@ -26,7 +26,7 @@
             android:paddingBottom="2dp"
             android:lines="1"
             android:scrollHorizontally="false"
-            android:ellipsize="end"/>
+            android:ellipsize="end" />
 
         <TextView
             android:id="@+id/text_view_rule_description"
@@ -54,6 +54,7 @@
         android:paddingStart="4dp"
         android:paddingEnd="14dp"
         android:clickable="false"
-        android:text="@string/label_is_active"/>
+        android:text="@string/label_is_active"
+        />
 
 </LinearLayout>

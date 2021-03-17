@@ -25,7 +25,7 @@
             android:paddingEnd="14dp"
             android:paddingBottom="2dp"
             android:scrollHorizontally="false"
-            android:textColor="@color/black"
+            android:textColor="?colorPrimaryVariant"
             android:textSize="18sp" />
 
         <TextView
@@ -52,7 +52,7 @@
         android:layout_weight="0.1"
         android:visibility="invisible"
         android:scaleType="centerInside"
-        android:src="@drawable/outline_done_black_18"/>
+        android:src="@drawable/outline_done_24"/>
 
 </LinearLayout>
 
