@@ -129,21 +129,21 @@ public class CompleteRule {
             builder.append(sensor.getSensorId());
             builder.append("\n");
 
-            builder.append("Sensor (domain): ");
+            /*builder.append("Sensor (domain): ");
             builder.append(sensor.getDomain());
             builder.append("\n");
 
             builder.append("Sensor (value): ");
             builder.append(sensor.getValue());
-            builder.append("\n");
+            builder.append("\n");*/
 
             builder.append("Sensor (ruleId): ");
             builder.append(sensor.getRuleId());
             builder.append("\n");
 
-            builder.append("Sensor (ruleSensorId): ");
+            /*builder.append("Sensor (ruleSensorId): ");
             builder.append(sensor.getRuleSensorId());
-            builder.append("\n");
+            builder.append("\n");*/
         }
 
         for(Geofence geofence: this.getGeofences()){

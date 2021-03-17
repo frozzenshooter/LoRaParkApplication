@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.util.List;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -16,6 +18,7 @@ public class HttpClient {
 
     private final static String sensorDescriptionsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/sensor_descriptions/sensors.json";
     private final static String sensorDetailsURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/sensor_descriptions/sensor_values.json";
+    private final static String sensorValuesURL = "https://gist.githubusercontent.com/oli-f/a80b8726d0031694fe073fbd4e6e5681/raw";
     private final static String downloadRuleURL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rules.json";
     private final static String rule1URL = "https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rule.json";
     private final static String rule2URL = " https://raw.githubusercontent.com/frozzenshooter/LoRaParkApplication/main/rules/rule2.json";
@@ -48,6 +51,13 @@ public class HttpClient {
         Log.i(HTTP_CLIENT_CLASSNAME,"Creation of request for sensorId: " + sensorId + "started.");
 
         Request req = new Request.Builder().url(HttpClient.sensorDetailsURL).build();
+        return req;
+    }
+
+    public static Request getSensorValuesRequest(@NonNull List<String> sensorIds){
+        Log.i(HTTP_CLIENT_CLASSNAME,"Creation of request for sensorIds: " + String.join(", ", sensorIds) + "started.");
+
+        Request req = new Request.Builder().url(HttpClient.sensorValuesURL).addHeader("Cache-Control", "no-cache").build();
         return req;
     }
 

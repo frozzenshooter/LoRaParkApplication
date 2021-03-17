@@ -243,9 +243,9 @@ public class RuleHandler {
     }
 
     /**
-     * Returns a list of complete rules filtered by theri state: if they are active
+     * Returns a list of complete rules filtered by their state: if they are active
      *
-     * @param isActive
+     * @param isActive if thr rules are active
      * @return filtered complete rules
      */
     public LiveData<List<CompleteRule>> getCompleteRules(Boolean isActive){
@@ -257,4 +257,16 @@ public class RuleHandler {
     }
 
     //endregion
+
+    // TODO FIIIIIX THIS MESS
+    public Completable updateRule(@NonNull Rule rule){
+        return Completable.defer(()->{
+            try{
+                this.mRuleDataRepository.updateRule(rule);
+                return Completable.complete();
+            }catch(Exception ex){
+                return Completable.error(ex);
+            }
+        }).subscribeOn(Schedulers.io());
+    }
 }

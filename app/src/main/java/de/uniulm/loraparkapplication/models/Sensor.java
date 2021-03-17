@@ -21,24 +21,24 @@ public class Sensor {
     @ColumnInfo(name = "id")
     private Integer id;
 
-    @ColumnInfo(name = "domain")
+    /*@ColumnInfo(name = "domain")
     @NonNull
-    private String domain;
+    private String domain;*/
 
     @ColumnInfo(name = "sensor_id")
     @NonNull
     private String sensorId;
 
-    @ColumnInfo(name = "value")
+    /*@ColumnInfo(name = "value")
     @NonNull
-    private String value;
+    private String value;*/
 
     @ColumnInfo(name = "rule_id")
     @NonNull
     private String ruleId;
 
-    @ColumnInfo(name = "rule_sensor_id")
-    private String ruleSensorId;
+    /*@ColumnInfo(name = "rule_sensor_id")
+    private String ruleSensorId;*/
 
     //region Getters and setters
 
@@ -52,14 +52,14 @@ public class Sensor {
     }
 
 
-    @NotNull
+    /*@NotNull
     public String getDomain() {
         return domain;
     }
 
     public void setDomain(@NotNull String domain) {
         this.domain = domain;
-    }
+    }*/
 
 
     @NotNull
@@ -71,14 +71,14 @@ public class Sensor {
         this.sensorId = sensorId;
     }
 
-    @NotNull
+    /*@NotNull
     public String getValue() {
         return value;
     }
 
     public void setValue(@NotNull String value) {
         this.value = value;
-    }
+    }*/
 
     @NotNull
     public String getRuleId() {
@@ -89,13 +89,13 @@ public class Sensor {
         this.ruleId = ruleId;
     }
 
-    public String getRuleSensorId() {
+    /*public String getRuleSensorId() {
         return ruleSensorId;
     }
 
     public void setRuleSensorId(@NonNull String ruleSensorId) {
         this.ruleSensorId = ruleSensorId;
-    }
+    }*/
 
     //endregion
 

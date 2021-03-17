@@ -43,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.this.startActivity(intent);
     }
 
+    public void triggerRules(View view) {
+        /*Intent intent = new Intent(MainActivity.this, BackgroundeJobService.class);
+        MainActivity.this.startService(intent);*/
+
+        BackgroundeJobService.scheduleJob(this, 1000, 5000, false);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
