@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -40,7 +41,7 @@ import de.uniulm.loraparkapplication.viewmodels.SensorOverviewViewModel;
 public class SensorOverviewActivity extends AppCompatActivity {
 
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
-
+    private static final String SENSOR_OVERVIEW_ACTIVITY_CLASSNAME = SensorOverviewActivity.class.getName();
     protected SensorOverviewViewModel mSensorOverviewViewModel;
     private MapView map;
 
@@ -68,15 +69,17 @@ public class SensorOverviewActivity extends AppCompatActivity {
         mSensorOverviewViewModel.getSensorDescriptions().observe(this, new Observer<Resource<List<SensorDescription>>>() {
             @Override
             public void onChanged(@Nullable Resource<List<SensorDescription>> sensorDescriptionsResource) {
-                if(sensorDescriptionsResource.status == Resource.Status.SUCCESS) {
-                    // all correct -> update the markers for the sensors
-                    updateMarkersOnMap(sensorDescriptionsResource.data);
-                }else if (sensorDescriptionsResource.status == Resource.Status.ERROR){
-                    // Failure to retrieve or parse the data
-                    String message = getResources().getString(R.string.error_sensor_descriptions_not_loaded) + " ("+ sensorDescriptionsResource.message +")";
-                    Toast.makeText(SensorOverviewActivity.this, message, Toast.LENGTH_LONG).show();
-                }else{
-                   // Data loading: future TODO: add loading animation
+                if(sensorDescriptionsResource != null){
+                    if(sensorDescriptionsResource.status == Resource.Status.SUCCESS && sensorDescriptionsResource.data != null) {
+                        // all correct -> update the markers for the sensors
+                        updateMarkersOnMap(sensorDescriptionsResource.data);
+                    }else if (sensorDescriptionsResource.status == Resource.Status.ERROR){
+                        // Failure to retrieve or parse the data
+                        String message = getResources().getString(R.string.error_sensor_descriptions_not_loaded) + " ("+ sensorDescriptionsResource.message +")";
+                        Toast.makeText(SensorOverviewActivity.this, message, Toast.LENGTH_LONG).show();
+                    }else{
+                        // Data loading: future TODO: add loading animation
+                    }
                 }
             }
         });
@@ -111,7 +114,7 @@ public class SensorOverviewActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
                 Map<String, Integer> perms = new HashMap<String, Integer>();
@@ -120,16 +123,24 @@ public class SensorOverviewActivity extends AppCompatActivity {
                     perms.put(permissions[i], grantResults[i]);
 
                 // Check result of permission requests
-                Boolean locationPermissionGranted = true;
-                if(perms.get(Manifest.permission.ACCESS_FINE_LOCATION) != null){
-                    locationPermissionGranted = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                boolean locationPermissionGranted = true;
+                if(perms.containsKey(Manifest.permission.ACCESS_FINE_LOCATION)){
+                    try{
+                        locationPermissionGranted = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                    }catch (Exception ex){
+                        Log.e(SENSOR_OVERVIEW_ACTIVITY_CLASSNAME, "Error accessing permissions");
+                    }
                 }
 
-                Boolean storagePermissionGranted = true;
-                if(perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) != null){
-                    storagePermissionGranted = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                boolean storagePermissionGranted = true;
+                if(perms.containsKey(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                {
+                    try{
+                        storagePermissionGranted = perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                    }catch (Exception ex){
+                        Log.e(SENSOR_OVERVIEW_ACTIVITY_CLASSNAME, "Error accessing permissions");
+                    }
                 }
-
 
                 if (!locationPermissionGranted && !storagePermissionGranted) {
                     Toast.makeText(this, this.getResources().getString(R.string.label_storage_access) + "\n" + this.getResources().getString(R.string.label_location_access), Toast.LENGTH_LONG).show();

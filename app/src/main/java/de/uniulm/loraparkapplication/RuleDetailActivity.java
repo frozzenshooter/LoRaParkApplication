@@ -4,63 +4,34 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
-import com.google.android.gms.awareness.Awareness;
-import com.google.android.gms.awareness.FenceClient;
-import com.google.android.gms.awareness.fence.AwarenessFence;
-import com.google.android.gms.awareness.fence.DetectedActivityFence;
-import com.google.android.gms.awareness.fence.FenceQueryRequest;
-import com.google.android.gms.awareness.fence.FenceQueryResponse;
-import com.google.android.gms.awareness.fence.FenceState;
-import com.google.android.gms.awareness.fence.FenceStateMap;
-import com.google.android.gms.awareness.fence.FenceUpdateRequest;
-import com.google.android.gms.awareness.fence.HeadphoneFence;
-import com.google.android.gms.awareness.fence.LocationFence;
-import com.google.android.gms.awareness.snapshot.DetectedActivityResponse;
-import com.google.android.gms.awareness.snapshot.HeadphoneStateResponse;
-import com.google.android.gms.awareness.state.HeadphoneState;
-import com.google.android.gms.location.ActivityRecognitionResult;
-import com.google.android.gms.location.DetectedActivity;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-
 import org.jetbrains.annotations.NotNull;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.uniulm.loraparkapplication.broadcast.FenceReceiver;
-import de.uniulm.loraparkapplication.models.Geofence;
-import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
-import de.uniulm.loraparkapplication.models.SensorDetail;
-import de.uniulm.loraparkapplication.repositories.GeofenceRepository;
 import de.uniulm.loraparkapplication.viewmodels.RuleDetailViewModel;
-import de.uniulm.loraparkapplication.viewmodels.SensorDetailViewModel;
 import de.uniulm.loraparkapplication.views.KeyValueView;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
 
-import static android.app.PendingIntent.FLAG_IMMUTABLE;
 
 public class RuleDetailActivity extends AppCompatActivity {
 
@@ -166,7 +137,6 @@ public class RuleDetailActivity extends AppCompatActivity {
         } else{
             if (this.rule != null && this.rule.getIsActive() != null && this.mRuleDetailViewModel != null) {
 
-                //TODO: SUBSCRIBER WITH ERROR HANDLING
                 if (!cb.isChecked()) {
                     // Not checked anymore -> deactivate the rules
 
@@ -219,6 +189,7 @@ public class RuleDetailActivity extends AppCompatActivity {
         }
     }
 
+
     private List<String> checkPermissions(){
         List<String> permissions = new ArrayList<String>();
 
@@ -226,14 +197,16 @@ public class RuleDetailActivity extends AppCompatActivity {
             permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+            }
         }
         return permissions;
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
                 Map<String, Integer> perms = new HashMap<String, Integer>();
@@ -242,18 +215,28 @@ public class RuleDetailActivity extends AppCompatActivity {
                     perms.put(permissions[i], grantResults[i]);
 
                 // Check result of permission requests
-                Boolean locationPermissionGranted = true;
-                if(perms.get(Manifest.permission.ACCESS_FINE_LOCATION) != null){
-                    locationPermissionGranted = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-                }
-
-                Boolean backgroundLocationPermissionGranted = true;
-
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                    if(perms.get(Manifest.permission.ACCESS_BACKGROUND_LOCATION) != null){
-                        backgroundLocationPermissionGranted = perms.get(Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                boolean locationPermissionGranted = true;
+                if(perms.containsKey(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    try {
+                        locationPermissionGranted = perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                    } catch (Exception ex) {
+                        Log.e(RULE_DETAIL_ACTIVITY_CLASSNAME, "Error accessing permissions");
                     }
                 }
+
+
+
+                boolean backgroundLocationPermissionGranted = true;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    if(perms.containsKey(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                        try {
+                            backgroundLocationPermissionGranted = perms.get(Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                        } catch (Exception ex) {
+                            Log.e(RULE_DETAIL_ACTIVITY_CLASSNAME, "Error accessing permissions");
+                        }
+                    }
+                }
+
 
 
                 if (!locationPermissionGranted || !backgroundLocationPermissionGranted) {
