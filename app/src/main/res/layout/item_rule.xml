@@ -54,7 +54,6 @@
         android:paddingStart="4dp"
         android:paddingEnd="14dp"
         android:clickable="false"
-        android:text="@string/label_is_active"
-        />
+        android:text="@string/label_is_active"/>
 
 </LinearLayout>
