@@ -60,7 +60,7 @@ public class GeofenceRepository {
 
             Intent intent= new Intent(this.application, FenceReceiver.class);
             intent.putExtra(GEOFENCE_ID, geofence.getGeofenceId());
-            PendingIntent mPendingIntent = PendingIntent.getBroadcast(this.application, 7, intent, FLAG_IMMUTABLE);
+            PendingIntent mPendingIntent = PendingIntent.getBroadcast(this.application, 0, intent, 0);
 
             AwarenessFence fence = LocationFence.in(geofence.getLatitude(), geofence.getLongitude(), geofence.getRadius(), 0L);
 
