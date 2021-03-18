@@ -41,6 +41,7 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RuleOverviewActivity extends AppCompatActivity {
 
@@ -165,6 +166,7 @@ public class RuleOverviewActivity extends AppCompatActivity {
             if(rulesToDownload != null && rulesToDownload.size() > 0) {
 
                 this.mRuleOverviewViewModel.downloadRules(rulesToDownload)
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<String>() {
                             @Override

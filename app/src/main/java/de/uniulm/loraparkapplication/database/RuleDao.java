@@ -47,6 +47,8 @@ public abstract class RuleDao {
     @Query("SELECT COUNT(id) FROM rule_table WHERE id = :ruleId")
     public abstract Integer getAmountOfRules(String ruleId);
 
+    @Query("SELECT * FROM rule_table ORDER BY name ASC")
+    public abstract List<Rule> findAllRulesSync();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(Sensor sensor) throws Exception;

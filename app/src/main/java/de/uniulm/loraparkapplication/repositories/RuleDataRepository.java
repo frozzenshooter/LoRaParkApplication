@@ -1,6 +1,7 @@
 package de.uniulm.loraparkapplication.repositories;
 
 import android.app.Application;
+import android.database.SQLException;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -17,8 +18,11 @@ import de.uniulm.loraparkapplication.models.Rule;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RuleDataRepository {
+
+    //region Singleton creation
 
     private final RuleDao mRuleDao;
 
@@ -36,7 +40,9 @@ public class RuleDataRepository {
         this.mRuleDao = db.ruleDao();
     }
 
-    //region Rule queries
+    //endregion
+
+    //region Rule queries LiveData
 
     /**
      * Returns all local rules (in the db)
@@ -58,23 +64,22 @@ public class RuleDataRepository {
     }
 
     /**
+     *  Returns a single rule
+     *
+     * @param ruleId the id of the requested rule
+     * @return the rule with the requested ruleId
+     */
+    public LiveData<Rule> getRule(String ruleId) {
+        return mRuleDao.findRule(ruleId);
+    }
+
+    /**
      * Returns all local complete rules (with sensors,geofences and actions)
      *
      * @return list with all completeRules
      */
     public LiveData<List<CompleteRule>> getCompleteRules(){
         return mRuleDao.findCompleteRules();
-    }
-
-    public Single<CompleteRule> getSingleCompleteRule(@NonNull String ruleId){
-        return Single.defer(()->{
-            try{
-                CompleteRule rule = mRuleDao.getCompleteRule(ruleId);
-                return Single.just(rule);
-            }catch(Exception ex){
-                return Single.error(ex);
-            }
-        });
     }
 
     /**
@@ -96,20 +101,9 @@ public class RuleDataRepository {
         return mRuleDao.findCompleteRules(isActive);
     }
 
-    /**
-     *  Returns a single rule
-     *
-     * @param ruleId the id of the requested rule
-     * @return the rule with the requested ruleId
-     */
-    public LiveData<Rule> getRule(String ruleId) {
-        return mRuleDao.findRule(ruleId);
-    }
-
-
     //endregion
 
-    //region Rule creation and deletion
+    //region Rule creation
 
     /**
      * Insert a complete rule (overrides an existing one)
@@ -117,26 +111,75 @@ public class RuleDataRepository {
      * @param completeRule the rule to insert
      * @return
      */
-    public Observable<String> insertCompleteRule(@NonNull CompleteRule completeRule){
+    public Completable insertCompleteRule(@NonNull CompleteRule completeRule){
 
-        return Observable.defer(() -> {
+        return Completable.defer(() -> {
 
             try {
                 mRuleDao.insertCompleteRule(completeRule);
-                return Observable.just(completeRule.getRule().getName());
+                return Completable.complete();
             } catch (Exception e) {
-                return Observable.error(e);
+                return Completable.error(e);
             }
         });
     }
 
-    public Integer getAmountOfRules(@NonNull String ruleId){
-        return mRuleDao.getAmountOfRules(ruleId);
+    //endregion
+
+    //region Rule access (RxJava)
+
+    /**
+     * Get a single complete rule
+     *
+     * @param ruleId the id of the requested rule
+     * @return the rule
+     */
+    public Single<CompleteRule> getSingleCompleteRule(@NonNull String ruleId){
+        return Single.defer(()->{
+            try{
+                CompleteRule rule = mRuleDao.getCompleteRule(ruleId);
+                return Single.just(rule);
+            }catch(Exception ex){
+                return Single.error(ex);
+            }
+        });
+    }
+
+    /**
+     * Checks if a rule exists
+     * @param ruleId the id to check
+     *
+     * @return true if the rule exists - otherwise false
+     */
+    public Single<Boolean> existsRule(@NonNull String ruleId){
+
+        return Single.defer(()->{
+            try {
+                Integer count = mRuleDao.getAmountOfRules(ruleId);
+                if (count > 0) {
+                    return Single.just(true);
+                } else {
+                    return Single.just(false);
+                }
+            }catch(Exception ex){
+                return Single.error(ex);
+            }
+        });
+    }
+
+    public Boolean existsRuleSync(@NonNull String ruleId){
+        Integer count = mRuleDao.getAmountOfRules(ruleId);
+        if (count > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
      * Deletes all rules
      *
+     * @return completable
      */
     public Completable deleteAllRules() {
 
@@ -151,28 +194,38 @@ public class RuleDataRepository {
     }
 
     /**
-     * Delete the specific rule
+     * Delete this specific rule
      *
      * @param rule
      */
-    public void deleteRule(Rule rule) {
-        try{
-            mRuleDao.delete(rule);
-        }catch(Exception ex){
-            //TODO: Exception handling
-            Log.e("", "");
-        }
+    public Completable deleteRule(Rule rule) {
+
+        return Completable.defer(() -> {
+            try{
+                mRuleDao.delete(rule);
+                return Completable.complete();
+            }catch(Exception ex){
+                return Completable.error(ex);
+            }
+        });
     }
 
-    public void updateRule(@NonNull Rule rule){
-        try{
-            mRuleDao.update(rule);
-        }catch(Exception ex){
-            //TODO: Exception handling
-            Log.e("", "");
-        }
+    public Completable updateRule(@NonNull Rule rule){
+
+        return Completable.defer(() -> {
+            try{
+                mRuleDao.update(rule);
+                return Completable.complete();
+            }catch(Exception ex){
+                return Completable.error(ex);
+            }
+        }).subscribeOn(Schedulers.io());
     }
 
+    public Completable updateRule(@NonNull CompleteRule completeRule){
+
+        return updateRule(completeRule.getRule());
+    }
 
     //endregion
 }

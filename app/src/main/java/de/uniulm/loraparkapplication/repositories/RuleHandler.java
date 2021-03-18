@@ -1,13 +1,9 @@
 package de.uniulm.loraparkapplication.repositories;
 
 import android.app.Application;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,17 +11,12 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.util.List;
 
-import de.uniulm.loraparkapplication.R;
-import de.uniulm.loraparkapplication.SensorOverviewActivity;
 import de.uniulm.loraparkapplication.models.CompleteRule;
-import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.models.RuleDeserializer;
-import de.uniulm.loraparkapplication.models.SensorDescription;
 import de.uniulm.loraparkapplication.network.HttpClient;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.Response;
@@ -94,8 +85,8 @@ public class RuleHandler {
     public Observable<String> downloadRules(List<String> ruleIds){
         return Observable.fromIterable(ruleIds)
                 .subscribeOn(Schedulers.io())
-                .concatMap(this::downloadNewRule)
-                .concatMap(this::insertCompleteRuleSave);
+                .concatMap(this::downloadNewRule, 1, Schedulers.io())
+                .concatMap((completeRule) -> this.insertCompleteRuleSave(completeRule).andThen(Observable.just(completeRule.getRule().getName())), 1, Schedulers.io());
     }
 
     /**
@@ -131,23 +122,35 @@ public class RuleHandler {
 
     /**
      * Insert a complete rule, but checking if it already exists.
-     * If it already exists it will deactivate the current rule and replace the current rule with the new rule
+     * If it already exists it will deactivate the current rule, delete it and replace(insert in db) the current rule with the new rule
      *
      * @param completeRule the rule to insert
      */
-    public Observable<String> insertCompleteRuleSave(@NonNull CompleteRule completeRule){
+    public Completable insertCompleteRuleSave(@NonNull CompleteRule completeRule){
         Rule rule = completeRule.getRule();
-        Integer count = this.mRuleDataRepository.getAmountOfRules(rule.getId());
+       /* return this.mRuleDataRepository.existsRule(rule.getId())
+                    .subscribeOn(Schedulers.io())
+                    .flatMapCompletable(exists ->{
+                        if(exists){
+                            // if the rule exists -> deactivate it and delete it
+                            return this.deactivateRule(rule.getId())
+                                    .andThen(this.mRuleDataRepository.deleteRule(rule));
+                        }
+                        return Completable.complete();
+                    })
+                    .andThen(this.mRuleDataRepository.insertCompleteRule(completeRule));*/
 
-        if(count > 0){
+        Boolean exists = this.mRuleDataRepository.existsRuleSync(rule.getId());
+        if(exists){
             // Remove old rule with old triggers
             deactivateRule(rule.getId());
 
             // this will delete also all attached sensors, geofences and actions
-           this.mRuleDataRepository.deleteRule(rule);
+            this.mRuleDataRepository.deleteRule(rule);
         }
 
         return this.mRuleDataRepository.insertCompleteRule(completeRule);
+
     }
 
     //endregion
@@ -163,23 +166,34 @@ public class RuleHandler {
         return this.mRuleDataRepository
                 .getSingleCompleteRule(ruleId)
                 .subscribeOn(Schedulers.io())
-                .flatMap((completeRule) -> {
-
-                    if(!completeRule.getRule().getIsActive()){
-                        return Single.error(new Exception("Rule is already inactive"));
-                    }else{
-                        return Single.just(completeRule);
-                    }
-                })
-                .flatMap((completeRule) -> {
-                    Rule rule = completeRule.getRule();
-                    rule.setIsActive(false);
-                    this.mRuleDataRepository.updateRule(rule);
+                .concatMap(completeRule -> {
+                    completeRule.getRule().setIsActive(false);
                     return Single.just(completeRule);
-                }).flatMapObservable((completeRule) -> {
+                })
+                .concatMap((completeRule) -> {
+                    return this.mRuleDataRepository.updateRule(completeRule).andThen(Single.just(completeRule));
+                })
+                .flatMapObservable((completeRule) -> {
+                    return Observable.fromIterable(completeRule.getGeofences());
+                })
+                .concatMapCompletable(this.mGeofenceRepository::deleteGeofence);
+
+
+                /* OLD
+                .concatMap((completeRule) -> {
+                    Rule rule = completeRule.getRule();
+                    if(rule.getIsActive()){
+                        rule.setIsActive(false);
+                        this.mRuleDataRepository.updateRule(rule);
+                    }
+                    return Single.just(completeRule);
+                })
+                .flatMapObservable((completeRule) -> {
                     return Observable.fromIterable(completeRule.getGeofences());
                 })
                 .flatMapCompletable(this.mGeofenceRepository::deleteGeofence);
+
+                 */
     }
 
     /**
@@ -187,8 +201,16 @@ public class RuleHandler {
      */
     public Completable deactivateAllRules(){
 
-        // TODO: deactivate all rules
-        return  Completable.complete();
+        /*List<Rule> rules = this.mRuleDataRepository.findAllRulesSync();
+        Completable c = Observable.fromIterable(rules)
+                .subscribeOn(Schedulers.io())
+                .flatMapCompletable(rule -> {
+                    return this.deactivateRule(rule.getId());
+                });
+
+        c.subscribe();*/
+
+        return Completable.complete();
     }
 
     //endregion
@@ -199,24 +221,35 @@ public class RuleHandler {
         return this.mRuleDataRepository
                 .getSingleCompleteRule(ruleId)
                 .subscribeOn(Schedulers.io())
+                /*Test*/
+                .concatMap(completeRule -> {
+                    completeRule.getRule().setIsActive(true);
+                    return Single.just(completeRule);
+                })
+                .concatMap((completeRule) -> {
+                   return this.mRuleDataRepository.updateRule(completeRule).andThen(Single.just(completeRule));
+                })
+                .flatMapObservable((completeRule) -> {
+                    return Observable.fromIterable(completeRule.getGeofences());
+                })
+                .concatMapCompletable(this.mGeofenceRepository::createGeofence);
+
+                /*OLD
                 .flatMap((completeRule) -> {
 
-                    if(completeRule.getRule().getIsActive()){
-                        return Single.error(new Exception("Rule is already active"));
-                    }else{
-                        return Single.just(completeRule);
-                    }
-                })
-                .flatMap((completeRule) -> {
                     Rule rule = completeRule.getRule();
-                    rule.setIsActive(true);
-                    this.mRuleDataRepository.updateRule(rule);
+                    if(!rule.getIsActive()){
+                        rule.setIsActive(true);
+                        //TODO: this is just a workaround
+                        this.mRuleDataRepository.updateRule(rule).subscribe();
+                    }
                     return Single.just(completeRule);
                 })
                 .flatMapObservable((completeRule) -> {
                     return Observable.fromIterable(completeRule.getGeofences());
                 })
                 .flatMapCompletable(this.mGeofenceRepository::createGeofence);
+                */
     }
 
     //endregion
