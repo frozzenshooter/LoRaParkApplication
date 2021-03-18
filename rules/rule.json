@@ -2,15 +2,7 @@
   "id": "rule1",
   "name": "ExampleRule1",
   "description": "Example rule1 for testing purposes.",
-  "sensors": [
-	  {
-		  "ruleSensorId" : "co2sensor",
-		  "domain": "co2",
-		  "id": "elsysco2-048e67",
-		  "value": "co2"
-	  }
-
-  ],
+  "sensors": ["elsysco2-048e67"],
   "geofences":[
 	  {
 		"id": "geofence1",
@@ -26,7 +18,7 @@
       {
         "<=": [
           {
-            "sensor": "co2sensor"
+            "sensor": ["co2", "elsysco2-048e67", "co2"]
           },
           500
         ]

@@ -2,15 +2,7 @@
   "id": "rule6",
   "name": "ExampleRule6",
   "description": "Rule6 long description description description description description",
-  "sensors": [
-	  {
-      "ruleSensorId" : "co2sensor",
-		  "domain": "co2",
-		  "id": "elsysco2-048e67",
-		  "value": "co2"
-	  }
-
-  ],
+  "sensors": ["elsysco2-048e67"],
   "geofences":[
 	  {
 		"id": "geofence6",
@@ -26,7 +18,7 @@
       {
         "<=": [
           {
-            "sensor": "co2sensor"
+            "sensor": ["co2", "elsysco2-048e67", "co2"]
           },
           500
         ]

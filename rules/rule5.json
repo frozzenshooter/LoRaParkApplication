@@ -1,15 +1,7 @@
 {
   "id": "rule5",
   "name": "ExampleRule5",
-  "sensors": [
-	  {
-      "ruleSensorId" : "co2sensor",
-		  "domain": "co2",
-		  "id": "elsysco2-048e67",
-		  "value": "co2"
-	  }
-
-  ],
+  "sensors": ["elsysco2-048e67"],
   "geofences":[
 	  {
 		"id": "geofence5",
@@ -25,7 +17,7 @@
       {
         "<=": [
           {
-            "sensor": "co2sensor"
+            "sensor": ["co2", "elsysco2-048e67", "co2"]
           },
           500
         ]
