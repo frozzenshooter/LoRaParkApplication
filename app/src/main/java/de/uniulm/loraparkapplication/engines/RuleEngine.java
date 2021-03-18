@@ -16,6 +16,7 @@ import androidx.lifecycle.Observer;
 import com.google.gson.Gson;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -91,8 +92,10 @@ public class RuleEngine {
     }
 
     public MutableLiveData<Resource<Map<String, Map<String, Map<String, Object>>>>> pullSensorValues() {
+        List<String> sensorIds = new ArrayList<>();
         // TODO sensorIds
-        MutableLiveData<Resource<Map<String, Map<String, Map<String, Object>>>>> liveData = SensorValuesRepository.getInstance().getSensorValues(Arrays.asList("davis-013d4d"));
+
+        MutableLiveData<Resource<Map<String, Map<String, Map<String, Object>>>>> liveData = SensorValuesRepository.getInstance().getSensorValues(sensorIds);
 
         liveData.observeForever(new Observer<Resource<Map<String, Map<String, Map<String, Object>>>>>() {
             @Override
