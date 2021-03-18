@@ -30,7 +30,9 @@ import de.uniulm.loraparkapplication.viewmodels.RuleDetailViewModel;
 import de.uniulm.loraparkapplication.views.KeyValueView;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 public class RuleDetailActivity extends AppCompatActivity {
@@ -159,6 +161,7 @@ public class RuleDetailActivity extends AppCompatActivity {
                     this.mRuleDetailViewModel.addDisposable(d);
 
                     this.mRuleDetailViewModel.deactivateRule(rule.getId())
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(d);
                 } else {
@@ -182,6 +185,7 @@ public class RuleDetailActivity extends AppCompatActivity {
                     this.mRuleDetailViewModel.addDisposable(d);
 
                     this.mRuleDetailViewModel.activateRule(rule.getId())
+                            .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(d);
                 }

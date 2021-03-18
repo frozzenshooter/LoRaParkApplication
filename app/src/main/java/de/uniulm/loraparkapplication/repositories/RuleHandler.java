@@ -69,7 +69,6 @@ public class RuleHandler {
 
         return Completable
                 .defer(this::deactivateAllRules)
-                .subscribeOn(Schedulers.io())
                 .concatWith(this.mRuleDataRepository.deleteAllRules());
     }
 
@@ -84,9 +83,8 @@ public class RuleHandler {
      */
     public Observable<String> downloadRules(List<String> ruleIds){
         return Observable.fromIterable(ruleIds)
-                .subscribeOn(Schedulers.io())
-                .concatMap(this::downloadNewRule, 1, Schedulers.io())
-                .concatMap((completeRule) -> this.insertCompleteRuleSave(completeRule).andThen(Observable.just(completeRule.getRule().getName())), 1, Schedulers.io());
+                .concatMap(this::downloadNewRule)
+                .concatMap((completeRule) -> this.insertCompleteRuleSave(completeRule).andThen(Observable.just(completeRule.getRule().getName())));
     }
 
     /**
@@ -165,7 +163,6 @@ public class RuleHandler {
     public Completable deactivateRule(@NonNull String ruleId){
         return this.mRuleDataRepository
                 .getSingleCompleteRule(ruleId)
-                .subscribeOn(Schedulers.io())
                 .concatMap(completeRule -> {
                     completeRule.getRule().setIsActive(false);
                     return Single.just(completeRule);
@@ -220,7 +217,6 @@ public class RuleHandler {
     public Completable activateRule(String ruleId){
         return this.mRuleDataRepository
                 .getSingleCompleteRule(ruleId)
-                .subscribeOn(Schedulers.io())
                 /*Test*/
                 .concatMap(completeRule -> {
                     completeRule.getRule().setIsActive(true);

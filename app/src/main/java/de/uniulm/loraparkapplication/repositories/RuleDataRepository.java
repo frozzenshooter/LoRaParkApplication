@@ -219,7 +219,7 @@ public class RuleDataRepository {
             }catch(Exception ex){
                 return Completable.error(ex);
             }
-        }).subscribeOn(Schedulers.io());
+        });
     }
 
     public Completable updateRule(@NonNull CompleteRule completeRule){
