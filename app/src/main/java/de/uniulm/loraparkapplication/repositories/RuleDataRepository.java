@@ -87,15 +87,23 @@ public class RuleDataRepository {
     }
 
     /**
+     * Returns the complete rule with the requested id
      *
-     * @param ruleId
-     * @return
+     * @param ruleId the id of the rule
+     * @return a completeRule
      * @throws Exception
      */
     public CompleteRule getCompleteRule(@NonNull String ruleId) throws Exception{
         return mRuleDao.findCompleteRule(ruleId);
     }
 
+    /**
+     *
+     * @return
+     */
+    public List<CompleteRule> getCompleteRules() throws Exception{
+        return mRuleDao.findCompleteRules();
+    }
     //endregion
 
     //region Rule creation/update/deletion

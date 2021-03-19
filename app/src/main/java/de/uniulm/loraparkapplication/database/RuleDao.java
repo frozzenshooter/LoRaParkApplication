@@ -83,4 +83,8 @@ public abstract class RuleDao {
     @Transaction
     @Query("SELECT * FROM rule_table WHERE id = :ruleId")
     public abstract CompleteRule findCompleteRule(String ruleId) throws Exception;
+
+    @Transaction
+    @Query("SELECT * FROM rule_table ORDER BY name ASC")
+    public abstract List<CompleteRule> findCompleteRules();
 }

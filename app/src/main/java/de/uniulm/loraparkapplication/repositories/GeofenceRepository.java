@@ -48,14 +48,18 @@ public class GeofenceRepository {
         this.application = application;
     }
 
-    public Completable createGeofence(@NonNull Geofence geofence) {
-
-        return Completable.create(emitter ->{
+    /**
+     * Creates a geofence (the result (success/failure) will be logged)
+     *
+     * @param geofence the geofence to add
+     * @throws Exception
+     */
+    public void createGeofence(@NonNull Geofence geofence) throws Exception{
 
             if (ActivityCompat.checkSelfPermission(this.application, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(this.application, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED )
+                    && ActivityCompat.checkSelfPermission(this.application, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED )
             {
-                emitter.onError(new Exception("Not all location permissions set"));
+                throw new Exception("Not all location permissions set");
             }
 
             Intent intent= new Intent(this.application, FenceReceiver.class);
@@ -73,44 +77,39 @@ public class GeofenceRepository {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            emitter.onComplete();
+                            Log.i("GEOFENCE_REPOSITORY", "Geofence successful added: " + geofence.getGeofenceId());
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            emitter.onError(e);
+                            Log.e("GEOFENCE_REPOSITORY", "Geofence couldn't be added: " + geofence.getGeofenceId()+" - reason: "+e.getMessage());
                         }
 
-                });
-        });
-    }
-
-    public Completable deleteGeofence(@NonNull Geofence geofence){
-
-        return Completable.create((emitter) ->{
-            Awareness.getFenceClient(application).updateFences(new FenceUpdateRequest.Builder()
-                    .removeFence(geofence.getGeofenceId())
-                    .build())
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            emitter.onComplete();;
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            emitter.onError(e);
-                        }
                     });
-        });
     }
 
-    public Single<Boolean> existsGeofence(){
-        return Single.defer(()->{
-           return Single.just(true);
-        });
-    }
+    /**
+     * Deletes a geofence (the result (success/failure) will be logged)
+     *
+     * @param geofence the geofence to delete
+     */
+    public void deleteGeofence(@NonNull Geofence geofence){
 
+        Awareness.getFenceClient(application).updateFences(new FenceUpdateRequest.Builder()
+                .removeFence(geofence.getGeofenceId())
+                .build())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i("GEOFENCE_REPOSITORY", "Geofence successful added: " + geofence.getGeofenceId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("GEOFENCE_REPOSITORY", "Geofence couldn't be deleted: " + geofence.getGeofenceId()+" - reason: "+e.getMessage());
+                    }
+                });
+    }
 }

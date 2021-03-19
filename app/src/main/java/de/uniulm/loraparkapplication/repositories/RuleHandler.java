@@ -17,6 +17,7 @@ import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.models.RuleDeserializer;
 import de.uniulm.loraparkapplication.network.HttpClient;
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.core.Scheduler;
@@ -113,7 +114,18 @@ public class RuleHandler {
 
         return Completable
                 .defer(() ->{
-                    // TODO: this::deactivateAllRules (or at least delete all geofences);
+                    // Make sure no geofence is left
+                    try {
+                        List<CompleteRule> completeRules = this.mRuleDataRepository.getCompleteRules();
+                        for (CompleteRule completeRule : completeRules) {
+                            for (Geofence geofence : completeRule.getGeofences()) {
+                                this.mGeofenceRepository.deleteGeofence(geofence);
+                            }
+                        }
+                    }catch(Exception ex){
+                        return Completable.error(ex);
+                    }
+
                     return Completable.complete();
                 })
                 .concatWith(Completable.defer(() ->{
@@ -134,7 +146,8 @@ public class RuleHandler {
      */
     private void deleteRule(CompleteRule completeRule) throws Exception{
         for(Geofence geofence : completeRule.getGeofences()){
-            //TODO: delete geofences
+            //TODO: additional error handling (for now only logging)
+            this.mGeofenceRepository.deleteGeofence(geofence);
         }
 
         this.mRuleDataRepository.deleteRule(completeRule.getRule());
@@ -245,9 +258,8 @@ public class RuleHandler {
                 if (completeRule != null && completeRule.getRule().getIsActive()) {
                     // delete existing geofences for this rule
                     for (Geofence geofence : completeRule.getGeofences()) {
-                        //TODO: geofence delete has to be sync
-                        // this.mGeofenceRepository.deleteGeofence(geofence);
-                        // PROBLEM: error handling has to be async
+                        //TODO: additional error handling (for now only logging)
+                        this.mGeofenceRepository.deleteGeofence(geofence);
                     }
                     Rule rule = completeRule.getRule();
                     rule.setIsActive(false);
@@ -271,14 +283,15 @@ public class RuleHandler {
     public Completable activateRule(String ruleId){
 
         return Completable.defer(() -> {
+
             try {
 
                 CompleteRule completeRule = this.mRuleDataRepository.getCompleteRule(ruleId);
                 if (completeRule != null && !completeRule.getRule().getIsActive()) {
 
                     for (Geofence geofence : completeRule.getGeofences()) {
-                        //TODO: geofence creation has to be sync
-                        // this.mGeofenceRepository.createGeofence(geofence);
+                            //TODO: additional error handling (for now only logging)
+                            this.mGeofenceRepository.createGeofence(geofence);
                     }
                     Rule rule = completeRule.getRule();
                     rule.setIsActive(true);
