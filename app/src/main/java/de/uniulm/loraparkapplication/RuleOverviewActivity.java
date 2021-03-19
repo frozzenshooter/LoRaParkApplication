@@ -38,9 +38,12 @@ import de.uniulm.loraparkapplication.models.Sensor;
 import de.uniulm.loraparkapplication.viewmodels.RuleOverviewViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.observers.DisposableCompletableObserver;
+import io.reactivex.rxjava3.observers.DisposableObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RuleOverviewActivity extends AppCompatActivity {
@@ -133,8 +136,9 @@ public class RuleOverviewActivity extends AppCompatActivity {
                 this.mRuleOverviewViewModel.addDisposable(d);
 
                 RuleOverviewActivity.this.mRuleOverviewViewModel.deleteAllRules()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(d);
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(d);
 
                 return true;
 
@@ -168,14 +172,14 @@ public class RuleOverviewActivity extends AppCompatActivity {
                 this.mRuleOverviewViewModel.downloadRules(rulesToDownload)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<String>() {
+                        .subscribe(new Observer<CompleteRule>() {
                             @Override
                             public void onSubscribe(@NonNull Disposable d) {
                                 mRuleOverviewViewModel.addDisposable(d);
                             }
 
                             @Override
-                            public void onNext(@NonNull String s) {
+                            public void onNext(@NonNull CompleteRule s) {
                                // String message = "Saved data: "+s;
                                 //Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
                             }

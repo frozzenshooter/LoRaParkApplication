@@ -61,7 +61,7 @@ public class RuleOverviewViewModel extends AndroidViewModel {
         return this.ruleHandler.deleteAllRules();
     }
 
-    public Observable<String> downloadRules(List<String> ruleIds){
+    public Observable<CompleteRule> downloadRules(List<String> ruleIds){
         return this.ruleHandler.downloadRules(ruleIds);
     }
 

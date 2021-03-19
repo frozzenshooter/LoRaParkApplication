@@ -177,7 +177,7 @@ public class RuleDetailActivity extends AppCompatActivity {
                         @Override
                         public void onError(@NonNull Throwable e) {
                             //TODO: use localized text
-                            String message = "Failure by activation: try again by deactivating and activating";
+                            String message = "Failure by activation: try again by deactivating and activating: " +e.getMessage();
                             Toast.makeText(RuleDetailActivity.this, message, Toast.LENGTH_SHORT).show();
                         }
                     };

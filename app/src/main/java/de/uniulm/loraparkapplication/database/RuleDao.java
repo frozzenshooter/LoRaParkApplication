@@ -44,12 +44,6 @@ public abstract class RuleDao {
     @Query("SELECT * FROM rule_table WHERE id = :ruleId")
     public abstract LiveData<Rule> findRule(String ruleId);
 
-    @Query("SELECT COUNT(id) FROM rule_table WHERE id = :ruleId")
-    public abstract Integer getAmountOfRules(String ruleId);
-
-    @Query("SELECT * FROM rule_table ORDER BY name ASC")
-    public abstract List<Rule> findAllRulesSync();
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(Sensor sensor) throws Exception;
 
@@ -78,13 +72,9 @@ public abstract class RuleDao {
             }
 
         }catch(Exception ex){
-            Log.e("SQL_EXCPETION", "Not able to insert complete rule: "+ ex.getMessage());
+            Log.e("SQL_EXCEPTION", "Not able to insert complete rule: "+ ex.getMessage());
         }
     }
-
-    @Transaction
-    @Query("SELECT * FROM rule_table ORDER BY name ASC")
-    public abstract LiveData<List<CompleteRule>> findCompleteRules();
 
     @Transaction
     @Query("SELECT * FROM rule_table WHERE is_active = :isActive ORDER BY name ASC")
@@ -92,9 +82,5 @@ public abstract class RuleDao {
 
     @Transaction
     @Query("SELECT * FROM rule_table WHERE id = :ruleId")
-    public abstract LiveData<CompleteRule> findCompleteRule(String ruleId);
-
-    @Transaction
-    @Query("SELECT * FROM rule_table WHERE id = :ruleId")
-    public abstract CompleteRule getCompleteRule(String ruleId);
+    public abstract CompleteRule findCompleteRule(String ruleId) throws Exception;
 }

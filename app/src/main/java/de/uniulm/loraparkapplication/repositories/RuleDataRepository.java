@@ -42,7 +42,7 @@ public class RuleDataRepository {
 
     //endregion
 
-    //region Rule queries LiveData
+    //region Rule access
 
     /**
      * Returns all local rules (in the db)
@@ -73,24 +73,9 @@ public class RuleDataRepository {
         return mRuleDao.findRule(ruleId);
     }
 
-    /**
-     * Returns all local complete rules (with sensors,geofences and actions)
-     *
-     * @return list with all completeRules
-     */
-    public LiveData<List<CompleteRule>> getCompleteRules(){
-        return mRuleDao.findCompleteRules();
-    }
+    //endregion
 
-    /**
-     * Returns a specific complete rule (with sensors,geofences and actions)
-     *
-     * @param ruleId the id of the requested rule
-     * @return the complete rule
-     */
-    public LiveData<CompleteRule> getCompleteRule(@NonNull String ruleId){
-        return mRuleDao.findCompleteRule(ruleId);
-    }
+    //region CompleteRule access
 
     /**
      * Returns all local complete rules (with sensors,geofences and actions) filtered by state: if they are currently active
@@ -101,79 +86,27 @@ public class RuleDataRepository {
         return mRuleDao.findCompleteRules(isActive);
     }
 
-    //endregion
-
-    //region Rule creation
-
     /**
-     * Insert a complete rule (overrides an existing one)
      *
-     * @param completeRule the rule to insert
+     * @param ruleId
      * @return
+     * @throws Exception
      */
-    public Completable insertCompleteRule(@NonNull CompleteRule completeRule){
-
-        return Completable.defer(() -> {
-
-            try {
-                mRuleDao.insertCompleteRule(completeRule);
-                return Completable.complete();
-            } catch (Exception e) {
-                return Completable.error(e);
-            }
-        });
+    public CompleteRule getCompleteRule(@NonNull String ruleId) throws Exception{
+        return mRuleDao.findCompleteRule(ruleId);
     }
 
     //endregion
 
-    //region Rule access (RxJava)
+    //region Rule creation/update/deletion
 
     /**
-     * Get a single complete rule
+     * Inserts the completeRule in the database - will replace an existing one
      *
-     * @param ruleId the id of the requested rule
-     * @return the rule
+     * @param completeRule the completeRule to insert
      */
-    public Single<CompleteRule> getSingleCompleteRule(@NonNull String ruleId){
-        return Single.defer(()->{
-            try{
-                CompleteRule rule = mRuleDao.getCompleteRule(ruleId);
-                return Single.just(rule);
-            }catch(Exception ex){
-                return Single.error(ex);
-            }
-        });
-    }
-
-    /**
-     * Checks if a rule exists
-     * @param ruleId the id to check
-     *
-     * @return true if the rule exists - otherwise false
-     */
-    public Single<Boolean> existsRule(@NonNull String ruleId){
-
-        return Single.defer(()->{
-            try {
-                Integer count = mRuleDao.getAmountOfRules(ruleId);
-                if (count > 0) {
-                    return Single.just(true);
-                } else {
-                    return Single.just(false);
-                }
-            }catch(Exception ex){
-                return Single.error(ex);
-            }
-        });
-    }
-
-    public Boolean existsRuleSync(@NonNull String ruleId){
-        Integer count = mRuleDao.getAmountOfRules(ruleId);
-        if (count > 0) {
-            return true;
-        } else {
-            return false;
-        }
+    public void insertCompleteRule(@NonNull CompleteRule completeRule){
+           mRuleDao.insertCompleteRule(completeRule);
     }
 
     /**
@@ -181,50 +114,27 @@ public class RuleDataRepository {
      *
      * @return completable
      */
-    public Completable deleteAllRules() {
-
-        return Completable.defer(() ->{
-            try {
-                mRuleDao.deleteAllRules();
-                return Completable.complete();
-            }catch(Exception e){
-                return Completable.error(e);
-            }
-        });
+    public void deleteAllRules() throws Exception{
+        mRuleDao.deleteAllRules();
     }
 
     /**
      * Delete this specific rule
      *
-     * @param rule
+     * @param rule the rule to delete
      */
-    public Completable deleteRule(Rule rule) {
-
-        return Completable.defer(() -> {
-            try{
-                mRuleDao.delete(rule);
-                return Completable.complete();
-            }catch(Exception ex){
-                return Completable.error(ex);
-            }
-        });
+    public void deleteRule(Rule rule) throws Exception {
+        mRuleDao.delete(rule);
     }
 
-    public Completable updateRule(@NonNull Rule rule){
-
-        return Completable.defer(() -> {
-            try{
-                mRuleDao.update(rule);
-                return Completable.complete();
-            }catch(Exception ex){
-                return Completable.error(ex);
-            }
-        });
-    }
-
-    public Completable updateRule(@NonNull CompleteRule completeRule){
-
-        return updateRule(completeRule.getRule());
+    /**
+     * Updates the specific rule
+     *
+     * @param rule the rule to update
+     * @throws Exception
+     */
+    public void updateRule(@NonNull Rule rule) throws Exception{
+        mRuleDao.update(rule);
     }
 
     //endregion

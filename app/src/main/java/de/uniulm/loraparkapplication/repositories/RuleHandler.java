@@ -12,11 +12,14 @@ import java.io.IOException;
 import java.util.List;
 
 import de.uniulm.loraparkapplication.models.CompleteRule;
+import de.uniulm.loraparkapplication.models.Geofence;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.models.RuleDeserializer;
 import de.uniulm.loraparkapplication.network.HttpClient;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.Response;
@@ -49,27 +52,92 @@ public class RuleHandler {
 
     //region Rule access
 
+    /**
+     * Returns a list with all rules saved in the db
+     *
+     * @return LiveData
+     */
     public LiveData<List<Rule>> getAllRules(){
         return this.mAllRules;
     }
 
+    /**
+     * Returns a list with all active rules
+     *
+     * @return LiveData
+     */
     public LiveData<List<Rule>> getActiveRules(){
         return this.mActiveRules;
     }
 
+    /**
+     * Returns a list with all inactivate rules
+     *
+     * @return LiveData
+     */
     public LiveData<List<Rule>> getInactiveRules(){
         return this.mInactiveRules;
+    }
+
+    /**
+     * Returns the rule with the requested ud
+     *
+     * @param ruleId the id of the rule
+     * @return LiveData
+     */
+    public LiveData<Rule> getRule(String ruleId) {
+        return this.mRuleDataRepository.getRule(ruleId);
+    }
+
+    /**
+     * Returns a list of complete rules filtered by their state: if they are active
+     *
+     * @param isActive if thr rules are active
+     * @return filtered complete rules
+     */
+    public LiveData<List<CompleteRule>> getCompleteRules(Boolean isActive){
+        //TODO: can this be changed to initialising it in the constructor and only hand over the reference?
+        return this.mRuleDataRepository.getCompleteRules(isActive);
     }
 
     //endregion
 
     //region Rule deletion
 
+    /**
+     * Delete all existing rules
+     *
+     * @return Completable
+     */
     public Completable deleteAllRules(){
 
         return Completable
-                .defer(this::deactivateAllRules)
-                .concatWith(this.mRuleDataRepository.deleteAllRules());
+                .defer(() ->{
+                    // TODO: this::deactivateAllRules (or at least delete all geofences);
+                    return Completable.complete();
+                })
+                .concatWith(Completable.defer(() ->{
+                                try {
+                                    this.mRuleDataRepository.deleteAllRules();
+                                    return Completable.complete();
+                                }catch(Exception e){
+                                    return Completable.error(e);
+                                }
+                            }));
+    }
+
+    /**
+     * Deletes the rule and additional removes the attached geofences
+     *
+     * @param completeRule the rule to delete
+     * @throws Exception
+     */
+    private void deleteRule(CompleteRule completeRule) throws Exception{
+        for(Geofence geofence : completeRule.getGeofences()){
+            //TODO: delete geofences
+        }
+
+        this.mRuleDataRepository.deleteRule(completeRule.getRule());
     }
 
     //endregion
@@ -81,10 +149,9 @@ public class RuleHandler {
      *
      * @param ruleIds the ids of the rules to download and insert into the db
      */
-    public Observable<String> downloadRules(List<String> ruleIds){
+    public Observable<CompleteRule> downloadRules(List<String> ruleIds){
         return Observable.fromIterable(ruleIds)
-                .concatMap(this::downloadNewRule)
-                .concatMap((completeRule) -> this.insertCompleteRuleSave(completeRule).andThen(Observable.just(completeRule.getRule().getName())));
+                .concatMap(this::downloadAndSaveRule);
     }
 
     /**
@@ -92,9 +159,10 @@ public class RuleHandler {
      * @param ruleId the id of the rule to download
      * @return observable which will return the parsed rule
      */
-    public Observable<CompleteRule> downloadNewRule(@NonNull String ruleId){
+    public Observable<CompleteRule> downloadAndSaveRule(@NonNull String ruleId){
         return Observable.defer(() -> {
 
+            CompleteRule completeRule;
             try {
                 Response response = HttpClient.getInstance().newCall(HttpClient.getRule(ruleId)).execute();
 
@@ -104,19 +172,35 @@ public class RuleHandler {
 
                 Gson ruleGson = gsonBuilder.create();
 
-                CompleteRule completeRule = ruleGson.fromJson(response.body().charStream(), CompleteRule.class);
+                completeRule = ruleGson.fromJson(response.body().charStream(), CompleteRule.class);
 
-                return Observable.just(completeRule);
-            } catch (IOException e) {
-                return Observable.error(e);
+
+            } catch (IOException ex) {
+                return Observable.error(ex);
             }
 
+            if(completeRule!= null){
+
+                try{
+                    CompleteRule oldCompleteRule = this.mRuleDataRepository.getCompleteRule(ruleId);
+
+                    if(oldCompleteRule != null){
+                        // Deactivate and delete old rule to be sure there is no geofence left
+                        deleteRule(oldCompleteRule);
+                    }
+
+                    this.mRuleDataRepository.insertCompleteRule(completeRule);
+                }catch(Exception ex){
+                    return Observable.error(ex);
+                }
+            }else{
+                return Observable.error(new Exception("Not posible to download and insert the rule!"));
+            }
+
+            return Observable.just(completeRule);
         });
     }
 
-    //endregion
-
-    //region Rule insertion
 
     /**
      * Insert a complete rule, but checking if it already exists.
@@ -125,170 +209,94 @@ public class RuleHandler {
      * @param completeRule the rule to insert
      */
     public Completable insertCompleteRuleSave(@NonNull CompleteRule completeRule){
-        Rule rule = completeRule.getRule();
-       /* return this.mRuleDataRepository.existsRule(rule.getId())
-                    .subscribeOn(Schedulers.io())
-                    .flatMapCompletable(exists ->{
-                        if(exists){
-                            // if the rule exists -> deactivate it and delete it
-                            return this.deactivateRule(rule.getId())
-                                    .andThen(this.mRuleDataRepository.deleteRule(rule));
-                        }
-                        return Completable.complete();
-                    })
-                    .andThen(this.mRuleDataRepository.insertCompleteRule(completeRule));*/
 
-        Boolean exists = this.mRuleDataRepository.existsRuleSync(rule.getId());
-        if(exists){
-            // Remove old rule with old triggers
-            deactivateRule(rule.getId());
+        return Completable.defer(() ->{
+            try{
+                CompleteRule oldCompleteRule = this.mRuleDataRepository.getCompleteRule(completeRule.getRule().getId());
 
-            // this will delete also all attached sensors, geofences and actions
-            this.mRuleDataRepository.deleteRule(rule);
-        }
+                if(oldCompleteRule != null){
+                    deleteRule(oldCompleteRule);
+                }
+                this.mRuleDataRepository.insertCompleteRule(completeRule);
 
-        return this.mRuleDataRepository.insertCompleteRule(completeRule);
+            }catch(Exception ex){
+                return Completable.error(ex);
+            }
+            return Completable.complete();
+        });
 
     }
 
     //endregion
 
-    //region Rule deactivation
+    //region Rule de/activation
 
     /**
-     * Deactivates a rule and removes active geofences
+     * Deactivates a rule and removes the attached geofences (if not already inactive)
      *
      * @param ruleId the id of the rule to deactivate
      */
     public Completable deactivateRule(@NonNull String ruleId){
-        return this.mRuleDataRepository
-                .getSingleCompleteRule(ruleId)
-                .concatMap(completeRule -> {
-                    completeRule.getRule().setIsActive(false);
-                    return Single.just(completeRule);
-                })
-                .concatMap((completeRule) -> {
-                    return this.mRuleDataRepository.updateRule(completeRule).andThen(Single.just(completeRule));
-                })
-                .flatMapObservable((completeRule) -> {
-                    return Observable.fromIterable(completeRule.getGeofences());
-                })
-                .concatMapCompletable(this.mGeofenceRepository::deleteGeofence);
 
+        return Completable.defer(() -> {
+            try {
 
-                /* OLD
-                .concatMap((completeRule) -> {
-                    Rule rule = completeRule.getRule();
-                    if(rule.getIsActive()){
-                        rule.setIsActive(false);
-                        this.mRuleDataRepository.updateRule(rule);
+                CompleteRule completeRule = this.mRuleDataRepository.getCompleteRule(ruleId);
+                if (completeRule != null && completeRule.getRule().getIsActive()) {
+                    // delete existing geofences for this rule
+                    for (Geofence geofence : completeRule.getGeofences()) {
+                        //TODO: geofence delete has to be sync
+                        // this.mGeofenceRepository.deleteGeofence(geofence);
+                        // PROBLEM: error handling has to be async
                     }
-                    return Single.just(completeRule);
-                })
-                .flatMapObservable((completeRule) -> {
-                    return Observable.fromIterable(completeRule.getGeofences());
-                })
-                .flatMapCompletable(this.mGeofenceRepository::deleteGeofence);
+                    Rule rule = completeRule.getRule();
+                    rule.setIsActive(false);
 
-                 */
+                    this.mRuleDataRepository.updateRule(rule);
+                }
+            }catch(Exception ex){
+                return Completable.error(ex);
+            }
+
+            return Completable.complete();
+        });
     }
 
     /**
-     * Deactivates all rules
+     * Activates the rule if its not already active. This will also create the geofences required for this rule
+     *
+     * @param ruleId id of the rule to activate
+     * @return Completable
      */
-    public Completable deactivateAllRules(){
-
-        /*List<Rule> rules = this.mRuleDataRepository.findAllRulesSync();
-        Completable c = Observable.fromIterable(rules)
-                .subscribeOn(Schedulers.io())
-                .flatMapCompletable(rule -> {
-                    return this.deactivateRule(rule.getId());
-                });
-
-        c.subscribe();*/
-
-        return Completable.complete();
-    }
-
-    //endregion
-
-    //region Rule activation
-
     public Completable activateRule(String ruleId){
-        return this.mRuleDataRepository
-                .getSingleCompleteRule(ruleId)
-                /*Test*/
-                .concatMap(completeRule -> {
-                    completeRule.getRule().setIsActive(true);
-                    return Single.just(completeRule);
-                })
-                .concatMap((completeRule) -> {
-                   return this.mRuleDataRepository.updateRule(completeRule).andThen(Single.just(completeRule));
-                })
-                .flatMapObservable((completeRule) -> {
-                    return Observable.fromIterable(completeRule.getGeofences());
-                })
-                .concatMapCompletable(this.mGeofenceRepository::createGeofence);
 
-                /*OLD
-                .flatMap((completeRule) -> {
+        return Completable.defer(() -> {
+            try {
 
-                    Rule rule = completeRule.getRule();
-                    if(!rule.getIsActive()){
-                        rule.setIsActive(true);
-                        //TODO: this is just a workaround
-                        this.mRuleDataRepository.updateRule(rule).subscribe();
+                CompleteRule completeRule = this.mRuleDataRepository.getCompleteRule(ruleId);
+                if (completeRule != null && !completeRule.getRule().getIsActive()) {
+
+                    for (Geofence geofence : completeRule.getGeofences()) {
+                        //TODO: geofence creation has to be sync
+                        // this.mGeofenceRepository.createGeofence(geofence);
                     }
-                    return Single.just(completeRule);
-                })
-                .flatMapObservable((completeRule) -> {
-                    return Observable.fromIterable(completeRule.getGeofences());
-                })
-                .flatMapCompletable(this.mGeofenceRepository::createGeofence);
-                */
-    }
+                    Rule rule = completeRule.getRule();
+                    rule.setIsActive(true);
 
-    //endregion
+                    this.mRuleDataRepository.updateRule(rule);
+                }
+            }catch(Exception ex){
+                return Completable.error(ex);
+            }
 
-    // region Complete rule access
-
-    /**
-     * Returns all rules as complete rules
-     *
-     * @return list of complete rules
-     */
-    public LiveData<List<CompleteRule>> getCompleteRules(){
-        return this.mRuleDataRepository.getCompleteRules();
-    }
-
-    /**
-     * Returns a specific complete rule
-     *
-     * @param ruleId the id of the requested rule
-     * @return complete rule
-     */
-    public LiveData<CompleteRule> getCompleteRule(@NonNull String ruleId){
-        return this.mRuleDataRepository.getCompleteRule(ruleId);
-    }
-
-    /**
-     * Returns a list of complete rules filtered by their state: if they are active
-     *
-     * @param isActive if thr rules are active
-     * @return filtered complete rules
-     */
-    public LiveData<List<CompleteRule>> getCompleteRules(Boolean isActive){
-        return this.mRuleDataRepository.getCompleteRules(isActive);
-    }
-
-    public LiveData<Rule> getRule(String ruleId) {
-        return this.mRuleDataRepository.getRule(ruleId);
+            return Completable.complete();
+        });
     }
 
     //endregion
 
     // TODO FIIIIIX THIS MESS
-    public Completable updateRule(@NonNull Rule rule){
+    public Completable updateRule(@NonNull Rule rule) {
         return Completable.defer(()->{
             try{
                 this.mRuleDataRepository.updateRule(rule);
@@ -296,6 +304,6 @@ public class RuleHandler {
             }catch(Exception ex){
                 return Completable.error(ex);
             }
-        }).subscribeOn(Schedulers.io());
+        });
     }
 }
