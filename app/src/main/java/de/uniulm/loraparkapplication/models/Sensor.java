@@ -33,7 +33,7 @@ public class Sensor {
     @NonNull
     private String value;*/
 
-    @ColumnInfo(name = "rule_id")
+    @ColumnInfo(name = "rule_id", index = true)
     @NonNull
     private String ruleId;
 
