@@ -77,7 +77,8 @@
         </activity>
         <activity android:name=".FenceTestActivity"
             android:label="FenceTest"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden"/>
     </application>
 
 </manifest>
