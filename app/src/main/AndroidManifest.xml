@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.uniulm.loraparkapplication"
     android:installLocation="internalOnly">
-
     <!-- Permissions for the OSM Map in the sensor overview -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -11,9 +10,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- TODO: Check if this is correct -->
-
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
     <application
         android:allowBackup="true"
@@ -32,20 +30,23 @@
             android:label="Background Rules service"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <receiver android:name=".broadcast.BackgroundJobServiceStartReceiver" android:enabled="true" android:exported="true">
+        <receiver
+            android:name=".broadcast.BackgroundJobServiceStartReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
-                <!--For HTC devices-->
-                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <!-- For HTC devices -->
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".broadcast.FenceReceiver"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
 
         <activity
             android:name=".RuleDetailActivity"
@@ -74,6 +75,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".FenceTestActivity"
+            android:label="FenceTest"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

@@ -50,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
         BackgroundeJobService.scheduleJob(this, 1000, 5000, false);
     }
 
+    public void openFenceTest(View view) {
+        Intent intent = new Intent(MainActivity.this, FenceTestActivity.class);
+        MainActivity.this.startActivity(intent);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){

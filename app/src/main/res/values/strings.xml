@@ -29,5 +29,7 @@
     <string name="label_key">Key</string>
     <string name="label_value">Value</string>
     <string name="label_unit">Unit</string>
+    <string name="button_open_fence_test">Open fence test</string>
+    <string name="label_button_delete_all">Delete all</string>
 
 </resources>

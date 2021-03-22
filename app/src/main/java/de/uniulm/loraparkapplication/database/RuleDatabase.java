@@ -11,13 +11,15 @@ import java.util.concurrent.Executors;
 
 import de.uniulm.loraparkapplication.models.Action;
 import de.uniulm.loraparkapplication.models.Geofence;
+import de.uniulm.loraparkapplication.models.GeofenceTracker;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.models.Sensor;
 
-@Database(entities = {Rule.class, Sensor.class, Action.class, Geofence.class}, version = 1, exportSchema = false)
+@Database(entities = {Rule.class, Sensor.class, Action.class, Geofence.class, GeofenceTracker.class}, version = 1, exportSchema = false)
 public abstract class RuleDatabase extends RoomDatabase {
 
     public abstract RuleDao ruleDao();
+    public abstract GeofenceDao geofenceDao();
 
     private static volatile RuleDatabase instance;
     private static final int NUMBER_OF_THREADS = 4;
