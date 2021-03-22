@@ -30,6 +30,9 @@
     <string name="label_value">Value</string>
     <string name="label_unit">Unit</string>
     <string name="button_open_fence_test">Open fence test</string>
-    <string name="label_button_delete_all">Delete all</string>
+    <string name="label_button_delete_all">Delete tracked fences</string>
+    <string name="label_button_add_geofence">Add Geofence</string>
+    <string name="label_button_delete_geofence">Delete geofence (with id)</string>
+    <string name="label_button_query_geofence">Query geofence</string>
 
 </resources>

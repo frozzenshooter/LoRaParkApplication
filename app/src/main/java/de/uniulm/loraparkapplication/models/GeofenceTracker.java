@@ -30,6 +30,12 @@ public class GeofenceTracker {
     @ColumnInfo(name ="was_triggered_manually")
     private Boolean wasTriggerdeManually;
 
+    @ColumnInfo(name ="inserted")
+    private Boolean inserted;
+
+    @ColumnInfo(name ="deleted")
+    private Boolean deleted;
+
     public Integer getId() {
         return id;
     }
@@ -84,5 +90,21 @@ public class GeofenceTracker {
 
     public void setWasTriggerdeManually(Boolean wasTriggerdeManually) {
         this.wasTriggerdeManually = wasTriggerdeManually;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public Boolean getInserted() {
+        return inserted;
+    }
+
+    public void setInserted(Boolean inserted) {
+        this.inserted = inserted;
     }
 }

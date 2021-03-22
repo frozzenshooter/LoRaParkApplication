@@ -107,23 +107,23 @@ public class GeofenceRepository {
     /**
      * Deletes a geofence (the result (success/failure) will be logged)
      *
-     * @param geofence the geofence to delete
+     * @param geofenceId the geofenceId of the geofence to delete
      */
-    public void deleteGeofence(@NonNull Geofence geofence){
+    public void deleteGeofence(@NonNull String geofenceId){
 
         Awareness.getFenceClient(application).updateFences(new FenceUpdateRequest.Builder()
-                .removeFence(geofence.getGeofenceId())
+                .removeFence(geofenceId)
                 .build())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.i("GEOFENCE_REPOSITORY", "Geofence successful deleted: " + geofence.getGeofenceId());
+                        Log.i("GEOFENCE_REPOSITORY", "Geofence successful deleted: " + geofenceId);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e("GEOFENCE_REPOSITORY", "Geofence couldn't be deleted: " + geofence.getGeofenceId()+" - reason: "+e.getMessage());
+                        Log.e("GEOFENCE_REPOSITORY", "Geofence couldn't be deleted: " + geofenceId+" - reason: "+e.getMessage());
                     }
                 });
     }

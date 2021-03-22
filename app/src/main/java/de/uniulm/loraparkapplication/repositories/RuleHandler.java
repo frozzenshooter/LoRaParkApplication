@@ -119,7 +119,7 @@ public class RuleHandler {
                         List<CompleteRule> completeRules = this.mRuleDataRepository.getCompleteRules();
                         for (CompleteRule completeRule : completeRules) {
                             for (Geofence geofence : completeRule.getGeofences()) {
-                                this.mGeofenceRepository.deleteGeofence(geofence);
+                                this.mGeofenceRepository.deleteGeofence(geofence.getGeofenceId());
                             }
                         }
                     }catch(Exception ex){
@@ -147,7 +147,7 @@ public class RuleHandler {
     private void deleteRule(CompleteRule completeRule) throws Exception{
         for(Geofence geofence : completeRule.getGeofences()){
             //TODO: additional error handling (for now only logging)
-            this.mGeofenceRepository.deleteGeofence(geofence);
+            this.mGeofenceRepository.deleteGeofence(geofence.getGeofenceId());
         }
 
         this.mRuleDataRepository.deleteRule(completeRule.getRule());
@@ -259,7 +259,7 @@ public class RuleHandler {
                     // delete existing geofences for this rule
                     for (Geofence geofence : completeRule.getGeofences()) {
                         //TODO: additional error handling (for now only logging)
-                        this.mGeofenceRepository.deleteGeofence(geofence);
+                        this.mGeofenceRepository.deleteGeofence(geofence.getGeofenceId());
                     }
                     Rule rule = completeRule.getRule();
                     rule.setIsActive(false);

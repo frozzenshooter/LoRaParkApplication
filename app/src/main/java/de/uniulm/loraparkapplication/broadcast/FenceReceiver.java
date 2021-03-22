@@ -28,6 +28,8 @@ public class FenceReceiver extends BroadcastReceiver {
         geofenceTracker.setPreviousFenceState(fenceState.getPreviousState());
         geofenceTracker.setLastUpdated(fenceState.getLastFenceUpdateTimeMillis());
         geofenceTracker.setInsertionTime(System.currentTimeMillis());
+        geofenceTracker.setDeleted(false);
+        geofenceTracker.setInserted(false);
 
         FenceTestRepository fenceTestRepository = FenceTestRepository.getInstance((Application) context.getApplicationContext());
 
