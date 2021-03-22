@@ -3,6 +3,7 @@ package de.uniulm.loraparkapplication.repositories;
 import android.Manifest;
 import android.app.Application;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Parcel;
@@ -35,6 +36,8 @@ public class GeofenceRepository {
     private static GeofenceRepository instance;
     private final Application application;
 
+    private static PendingIntent sPendingIntentInstance;
+
     public final static String GEOFENCE_ID = "geofenceId";
 
     public static GeofenceRepository getInstance(@NonNull Application application) {
@@ -46,6 +49,20 @@ public class GeofenceRepository {
 
     private GeofenceRepository(@NonNull Application application) {
         this.application = application;
+    }
+
+
+    private PendingIntent getPendingIntent(){
+
+        if(sPendingIntentInstance == null){
+            Intent intent= new Intent(this.application, FenceReceiver.class);
+            // intent.putExtra(GEOFENCE_ID, geofence.getGeofenceId());
+
+            sPendingIntentInstance = PendingIntent.getBroadcast(this.application, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            //PendingIntent mPendingIntent = PendingIntent.getBroadcast(this.application, geofence.getId(), intent, 0);
+        }
+
+        return sPendingIntentInstance;
     }
 
     /**
@@ -62,9 +79,8 @@ public class GeofenceRepository {
                 throw new Exception("Not all location permissions set");
             }
 
-            Intent intent= new Intent(this.application, FenceReceiver.class);
-            intent.putExtra(GEOFENCE_ID, geofence.getGeofenceId());
-            PendingIntent mPendingIntent = PendingIntent.getBroadcast(this.application, 0, intent, 0);
+            PendingIntent mPendingIntent = getPendingIntent();
+
 
             AwarenessFence fence = LocationFence.in(geofence.getLatitude(), geofence.getLongitude(), geofence.getRadius(), 0L);
 
@@ -73,7 +89,6 @@ public class GeofenceRepository {
                     .build();
 
             Awareness.getFenceClient(application).updateFences(fenceUpdateRequest)
-
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -102,7 +117,7 @@ public class GeofenceRepository {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.i("GEOFENCE_REPOSITORY", "Geofence successful added: " + geofence.getGeofenceId());
+                        Log.i("GEOFENCE_REPOSITORY", "Geofence successful deleted: " + geofence.getGeofenceId());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
