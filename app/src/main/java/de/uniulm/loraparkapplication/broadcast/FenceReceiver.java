@@ -1,19 +1,39 @@
 package de.uniulm.loraparkapplication.broadcast;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.gms.awareness.fence.FenceState;
+import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.awareness.fence.FenceState;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+
+import de.uniulm.loraparkapplication.FenceTestActivity;
 import de.uniulm.loraparkapplication.models.GeofenceTracker;
 import de.uniulm.loraparkapplication.repositories.FenceTestRepository;
 import de.uniulm.loraparkapplication.repositories.GeofenceRepository;
 
 public class FenceReceiver extends BroadcastReceiver {
+
+
+    private class ThreadPerTaskExecutor implements Executor {
+        public void execute(Runnable r) {
+            new Thread(r).start();
+        }
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -33,7 +53,31 @@ public class FenceReceiver extends BroadcastReceiver {
 
         FenceTestRepository fenceTestRepository = FenceTestRepository.getInstance((Application) context.getApplicationContext());
 
-        fenceTestRepository.insertGeofenceTracker(geofenceTracker);
+        FusedLocationProviderClient locationProviderClient = LocationServices.getFusedLocationProviderClient((Application) context.getApplicationContext());
+
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            fenceTestRepository.insertGeofenceTracker(geofenceTracker);
+            return;
+        }else{
+
+            locationProviderClient.getLastLocation()
+                    .addOnSuccessListener(new ThreadPerTaskExecutor(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+
+                            if (location != null) {
+                                // Logic to handle location object
+                                geofenceTracker.setLatitude(location.getLatitude());
+                                geofenceTracker.setLongitude(location.getLongitude());
+                            }
+
+                            fenceTestRepository.insertGeofenceTracker(geofenceTracker);
+                        }
+                    });
+        }
 
         //String geofenceId = intent.getStringExtra(GeofenceRepository.GEOFENCE_ID);
 

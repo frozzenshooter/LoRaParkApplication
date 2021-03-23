@@ -27,6 +27,12 @@ public class GeofenceTracker {
     @ColumnInfo(name = "insertion_time")
     private Long insertionTime;
 
+    @ColumnInfo(name = "latitude")
+    private Double latitude;
+
+    @ColumnInfo(name = "longitude")
+    private Double longitude;
+
     @ColumnInfo(name ="was_triggered_manually")
     private Boolean wasTriggerdeManually;
 
@@ -106,5 +112,22 @@ public class GeofenceTracker {
 
     public void setInserted(Boolean inserted) {
         this.inserted = inserted;
+    }
+
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 }

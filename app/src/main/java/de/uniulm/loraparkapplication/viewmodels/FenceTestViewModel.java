@@ -52,6 +52,8 @@ public class FenceTestViewModel extends AndroidViewModel {
         geofenceTracker.setDeleted(false);
         geofenceTracker.setWasTriggerdeManually(false);
         geofenceTracker.setGeofenceId(geofence.getGeofenceId());
+        geofenceTracker.setLatitude(0.0);
+        geofenceTracker.setLongitude(0.0);
 
         this.insertGeofenceTracker(geofenceTracker);
 
@@ -69,6 +71,8 @@ public class FenceTestViewModel extends AndroidViewModel {
         geofenceTracker.setDeleted(true);
         geofenceTracker.setWasTriggerdeManually(false);
         geofenceTracker.setGeofenceId(geofenceId);
+        geofenceTracker.setLatitude(0.0);
+        geofenceTracker.setLongitude(0.0);
 
         this.insertGeofenceTracker(geofenceTracker);
 

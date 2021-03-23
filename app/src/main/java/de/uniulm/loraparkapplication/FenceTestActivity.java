@@ -5,9 +5,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.room.ColumnInfo;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -21,6 +26,8 @@ import com.google.android.gms.awareness.fence.FenceQueryRequest;
 import com.google.android.gms.awareness.fence.FenceQueryResponse;
 import com.google.android.gms.awareness.fence.FenceState;
 import com.google.android.gms.awareness.fence.FenceStateMap;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -48,6 +55,7 @@ public class FenceTestActivity extends AppCompatActivity {
     private EditText latitudeEditView;
     private EditText longitudeEditView;
     private EditText radiusEditView;
+    private FusedLocationProviderClient locationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +77,15 @@ public class FenceTestActivity extends AppCompatActivity {
 
         this.overviewTextView = findViewById(R.id.text_view_geofence_tracker_overview);
 
+        this.locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
         this.mFenceTestViewModel = new ViewModelProvider(this).get(FenceTestViewModel.class);
         this.mFenceTestViewModel.getGeofenceTrackers().observe(this, new Observer<List<GeofenceTracker>>() {
 
             @Override
             public void onChanged(@Nullable List<GeofenceTracker> geofenceTrackers) {
 
-                if(geofenceTrackers != null) {
+                if (geofenceTrackers != null) {
                     StringBuilder builder = new StringBuilder();
                     builder.append("Geofence trackers: \n");
                     builder.append("--------------------------------------------------------");
@@ -88,11 +98,11 @@ public class FenceTestActivity extends AppCompatActivity {
 
                         builder.append("Id: " + geofenceTracker.getGeofenceId() + ";\n");
 
-                        if(geofenceTracker.getDeleted()){
+                        if (geofenceTracker.getDeleted()) {
                             builder.append("Deleted! \n");
-                        }else if(geofenceTracker.getInserted()){
+                        } else if (geofenceTracker.getInserted()) {
                             builder.append("Inserted! \n");
-                        }else{
+                        } else {
 
                             String currentState = getFenceStateAsString(geofenceTracker.getFenceState());
                             builder.append("CurrentState: " + currentState + ";\n");
@@ -105,6 +115,9 @@ public class FenceTestActivity extends AppCompatActivity {
 
                             String wasTriggeredManuallyStr = geofenceTracker.getWasTriggerdeManually() ? "true" : "false";
                             builder.append("Manual triggered: " + wasTriggeredManuallyStr + ";\n");
+
+                            builder.append("Latitude: " + geofenceTracker.getLatitude() + ";\n");
+                            builder.append("Longitude: " + geofenceTracker.getLongitude() + ";\n");
                         }
 
                         builder.append("--------------------------------------------------------");
@@ -117,7 +130,7 @@ public class FenceTestActivity extends AppCompatActivity {
         });
     }
 
-    private String getFenceStateAsString(Integer fenceState){
+    private String getFenceStateAsString(Integer fenceState) {
         String fenceStateStr;
         switch (fenceState) {
             case FenceState.TRUE:
@@ -136,8 +149,8 @@ public class FenceTestActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
@@ -151,7 +164,7 @@ public class FenceTestActivity extends AppCompatActivity {
         this.mFenceTestViewModel.deleteAllGeofenceTrackers();
     }
 
-    private String randomString(){
+    private String randomString() {
         int leftLimit = 97; // letter 'a'
         int rightLimit = 122; // letter 'z'
 
@@ -167,6 +180,7 @@ public class FenceTestActivity extends AppCompatActivity {
         return buffer.toString();
     }
 
+
     public void addGeofence(View view) {
 
         String geofenceId = this.geofenceIdEditView.getText().toString();
@@ -174,23 +188,23 @@ public class FenceTestActivity extends AppCompatActivity {
         String longitudeStr = this.longitudeEditView.getText().toString();
         String radiusStr = this.radiusEditView.getText().toString();
 
-        if("".equals(geofenceId)){
+
+        if ("".equals(geofenceId)) {
             geofenceId = randomString();
         }
 
-        if("".equals(radiusStr)){
+        if ("".equals(radiusStr)) {
             radiusStr = "100";
         }
 
-        if("".equals(latStr) || "".equals(longitudeStr))
-        {
+        if ("".equals(latStr) || "".equals(longitudeStr)) {
             latStr = "48.679921";
             longitudeStr = "9.931987";
         }
 
-        try{
-            double  lat = Double.parseDouble(latStr);
-            double  longitude = Double.parseDouble(longitudeStr);
+        try {
+            double lat = Double.parseDouble(latStr);
+            double longitude = Double.parseDouble(longitudeStr);
             int radius = Integer.parseInt(radiusStr);
 
             Geofence geofence = new Geofence();
@@ -200,8 +214,8 @@ public class FenceTestActivity extends AppCompatActivity {
             geofence.setLatitude(lat);
 
             this.mFenceTestViewModel.addGeofence(geofence);
-        }catch (Exception ex){
-            String message = "Problem adding the fence: "+ ex.getMessage();
+        } catch (Exception ex) {
+            String message = "Problem adding the fence: " + ex.getMessage();
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
 
@@ -210,9 +224,9 @@ public class FenceTestActivity extends AppCompatActivity {
     public void deleteGeofence(View view) {
         String geofenceId = this.geofenceIdEditView.getText().toString();
 
-        if(!"".equals(geofenceId)){
+        if (!"".equals(geofenceId)) {
             this.mFenceTestViewModel.deleteGeofence(geofenceId);
-        }else{
+        } else {
             String message = "GeofenceId is empty";
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
@@ -243,7 +257,30 @@ public class FenceTestActivity extends AppCompatActivity {
                             geofenceTracker.setWasTriggerdeManually(true);
                             geofenceTracker.setGeofenceId(fenceKey);
 
-                            FenceTestActivity.this.mFenceTestViewModel.insertGeofenceTracker(geofenceTracker);
+
+                            if (ActivityCompat.checkSelfPermission(FenceTestActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                                    && ActivityCompat.checkSelfPermission(FenceTestActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                // dont add location
+                                geofenceTracker.setLatitude(0.0);
+                                geofenceTracker.setLongitude(0.0);
+                                FenceTestActivity.this.mFenceTestViewModel.insertGeofenceTracker(geofenceTracker);
+                            } else {
+
+                                // Get current location to insert into tracker
+                                FenceTestActivity.this.locationProviderClient.getLastLocation()
+                                        .addOnSuccessListener(FenceTestActivity.this, new OnSuccessListener<Location>() {
+                                            @Override
+                                            public void onSuccess(Location location) {
+
+                                                if (location != null) {
+                                                    // Logic to handle location object
+                                                    geofenceTracker.setLatitude(location.getLatitude());
+                                                    geofenceTracker.setLongitude(location.getLongitude());
+                                                }
+                                                FenceTestActivity.this.mFenceTestViewModel.insertGeofenceTracker(geofenceTracker);
+                                            }
+                                        });
+                            }
                         }
                     }
                 })
