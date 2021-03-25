@@ -8,37 +8,37 @@ import android.util.Log;
 
 import com.google.android.gms.awareness.fence.FenceState;
 
+import de.uniulm.loraparkapplication.BackgroundeJobService;
 import de.uniulm.loraparkapplication.repositories.GeofenceRepository;
 
 public class FenceReceiver extends BroadcastReceiver {
 
+    private final static String TAG = FenceReceiver.class.getSimpleName();
+
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        String geofenceId = intent.getStringExtra(GeofenceRepository.GEOFENCE_ID);
+        FenceState fenceState = FenceState.extract(intent);
 
-        if(geofenceId != null){
-            FenceState fenceState = FenceState.extract(intent);
+        String fenceKey = fenceState.getFenceKey();
 
-            if (TextUtils.equals(fenceState.getFenceKey(), geofenceId)) {
-                String fenceStateStr;
-                switch (fenceState.getCurrentState()) {
-                    case FenceState.TRUE:
-                        fenceStateStr = "true";
-                        break;
-                    case FenceState.FALSE:
-                        fenceStateStr = "false";
-                        break;
-                    case FenceState.UNKNOWN:
-                        fenceStateStr = "unknown";
-                        break;
-                    default:
-                        fenceStateStr = "unknown value";
-                }
-                Log.e("FENCE_RECEIVER","Fence state: " + fenceStateStr);
-            }
-        }else{
-            Log.e("FENCE_RECEIVER","BROADCAST called, but not string");
+        String fenceStateStr;
+        switch (fenceState.getCurrentState()) {
+            case FenceState.TRUE:
+                fenceStateStr = "true";
+                break;
+            case FenceState.FALSE:
+                fenceStateStr = "false";
+                break;
+            case FenceState.UNKNOWN:
+                fenceStateStr = "unknown";
+                break;
+            default:
+                fenceStateStr = "unknown value";
         }
+        Log.i(TAG,"Fence state from fence '"+fenceKey+"': " + fenceStateStr);
+
+        //TODO: schedule the Job to evaluate rules
+        //BackgroundeJobService.scheduleJob(context);
     }
 }
