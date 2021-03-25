@@ -13,6 +13,9 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.google.android.gms.awareness.fence.FenceQueryResponse;
+import com.google.android.gms.awareness.fence.FenceStateMap;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 
 import java.lang.reflect.Array;
@@ -21,6 +24,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.uniulm.loraparkapplication.R;
 import de.uniulm.loraparkapplication.SensorDetailActivity;
@@ -28,9 +33,12 @@ import de.uniulm.loraparkapplication.database.RuleDao;
 import de.uniulm.loraparkapplication.database.RuleDatabase;
 import de.uniulm.loraparkapplication.models.Action;
 import de.uniulm.loraparkapplication.models.CompleteRule;
+import de.uniulm.loraparkapplication.models.Geofence;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
+import de.uniulm.loraparkapplication.models.Sensor;
 import de.uniulm.loraparkapplication.models.SensorDetail;
+import de.uniulm.loraparkapplication.repositories.GeofenceRepository;
 import de.uniulm.loraparkapplication.repositories.RuleHandler;
 import de.uniulm.loraparkapplication.repositories.SensorValuesRepository;
 import io.github.jamsesso.jsonlogic.JsonLogic;
@@ -54,6 +62,8 @@ public class RuleEngine {
 
         // LoRa Actions
         this.addOperation(NotificationAction.INSTANCE);
+        this.addOperation(NavigateAction.INSTANCE);
+        this.addOperation(TTSAction.INSTANCE);
 
         // database initialization
         mApplication = application;
@@ -72,29 +82,73 @@ public class RuleEngine {
     }
 
     public void trigger() {
-        /*MediatorLiveData liveDataMerger = new MediatorLiveData<>();
-        liveDataMerger.addSource(pullSensorValues(), value -> evaluateRules());*/
+        LiveData<List<CompleteRule>> liveDataRules = ruleHandler.getCompleteRules(true);
 
-        MutableLiveData<Resource<Map<String, Map<String, Map<String, Object>>>>> liveData = pullSensorValues();
-        liveData.observeForever(new Observer<Resource<Map<String, Map<String, Map<String, Object>>>>>() {
+        liveDataRules.observeForever(new Observer<List<CompleteRule>>() {
             @Override
-            public void onChanged(Resource<Map<String, Map<String, Map<String, Object>>>> resource) {
-                if(resource.status == Resource.Status.ERROR) {
-                    Log.i(RULE_ENGINE_CLASSNAME, "error loading sensor values");
-                    liveData.removeObserver(this);
-                } else if (resource.status == Resource.Status.SUCCESS) {
-                    evaluateRules();
+            public void onChanged(List<CompleteRule> completeRules) {
+                List<String> sensorIds = completeRules.stream()
+                        .map(CompleteRule::getSensors)
+                        .flatMap(List::stream)
+                        .map(Sensor::getSensorId)
+                        .distinct()
+                        .collect(Collectors.toList());
 
-                    liveData.removeObserver(this);
-                }
+                List<String> fenceIds = completeRules.stream()
+                        .map(CompleteRule::getGeofences)
+                        .flatMap(List::stream)
+                        .map(Geofence::getGeofenceId)
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                MutableLiveData<Resource<Map<String, Map<String, Map<String, Object>>>>> liveDataSensors = pullSensorValues(sensorIds);
+                liveDataSensors.observeForever(new Observer<Resource<Map<String, Map<String, Map<String, Object>>>>>() {
+                    @Override
+                    public void onChanged(Resource<Map<String, Map<String, Map<String, Object>>>> resourceSensor) {
+                        if (resourceSensor.status == Resource.Status.ERROR) {
+                            Log.i(RULE_ENGINE_CLASSNAME, "error loading sensor values");
+                            liveDataSensors.removeObserver(this);
+                        } else if (resourceSensor.status == Resource.Status.SUCCESS) {
+                            MutableLiveData<Resource<FenceStateMap>> liveDataFences = pullFenceValues(fenceIds);
+                            liveDataFences.observeForever(new Observer<Resource<FenceStateMap>>() {
+                                @Override
+                                public void onChanged(Resource<FenceStateMap> resourceFence) {
+                                    if (resourceSensor.status == Resource.Status.ERROR) {
+                                        Log.i(RULE_ENGINE_CLASSNAME, "error loading fence values");
+                                        liveDataFences.removeObserver(this);
+                                    } else if (resourceSensor.status == Resource.Status.SUCCESS) {
+                                        evaluateRules(completeRules);
+
+                                        liveDataFences.removeObserver(this);
+                                    }
+                                }
+                            });
+                            liveDataSensors.removeObserver(this);
+                        }
+                    }
+                });
+
+                liveDataRules.removeObserver(this);
             }
         });
     }
 
-    public MutableLiveData<Resource<Map<String, Map<String, Map<String, Object>>>>> pullSensorValues() {
-        List<String> sensorIds = new ArrayList<>();
-        // TODO sensorIds
+    public MutableLiveData<Resource<FenceStateMap>> pullFenceValues(List<String> fenceIds) {
+        GeofenceRepository geofenceRepository = GeofenceRepository.getInstance(mApplication);
+        Task<FenceQueryResponse> task = geofenceRepository.queryGeofences(fenceIds);
 
+        MutableLiveData<Resource<FenceStateMap>> liveData = new MutableLiveData<>();
+        task.addOnFailureListener(error -> liveData.postValue(Resource.error(error.getMessage(), null)));
+        task.addOnSuccessListener(result -> {
+            FenceStateMap fenceStateMap = result.getFenceStateMap();
+            GeofenceExpression.INSTANCE.setFenceList(fenceStateMap);
+            liveData.postValue(Resource.success(fenceStateMap));
+        });
+
+        return liveData;
+    }
+
+    public MutableLiveData<Resource<Map<String, Map<String, Map<String, Object>>>>> pullSensorValues(List<String> sensorIds) {
         MutableLiveData<Resource<Map<String, Map<String, Map<String, Object>>>>> liveData = SensorValuesRepository.getInstance().getSensorValues(sensorIds);
 
         liveData.observeForever(new Observer<Resource<Map<String, Map<String, Map<String, Object>>>>>() {
@@ -113,7 +167,7 @@ public class RuleEngine {
         return liveData;
     }
 
-    public LiveData<List<CompleteRule>> evaluateRules() {
+    public void evaluateRules(List<CompleteRule> completeRules) {
         LiveData<List<CompleteRule>> liveData = ruleHandler.getCompleteRules(true);
 
         liveData.observeForever(new Observer<List<CompleteRule>>() {
@@ -126,8 +180,6 @@ public class RuleEngine {
                 liveData.removeObserver(this);
             }
         });
-
-        return liveData;
     }
 
     public Boolean evaluateRule(@NonNull CompleteRule completeRule) {
@@ -151,7 +203,7 @@ public class RuleEngine {
 
             try {
                 rule.setWasTriggered(condition);
-                ruleHandler.updateRule(rule).subscribe();
+                //ruleHandler.updateRule(rule).subscribe();
             } catch (Exception ex) {
                 Log.e(RULE_ENGINE_CLASSNAME, "could not set triggered");
             }
@@ -183,7 +235,21 @@ public class RuleEngine {
         }
     }
 
+    public void triggerAction(String action, Map<String, Object> data) {
+        RuleAction ruleAction = ruleActions.get(action);
+
+        if (ruleAction == null) {
+            Log.i(RULE_ENGINE_CLASSNAME, "unknown action type \"" + action + "\"");
+        } else {
+            this.triggerAction(ruleAction, data);
+        }
+    }
+
     public void triggerAction(@NonNull RuleAction action, Map<String, Object> data) {
-        action.trigger(mApplication, data);
+        try {
+            action.trigger(mApplication, data);
+        } catch (Exception ex) {
+            Log.w(RULE_ENGINE_CLASSNAME, "Error executing action", ex);
+        }
     }
 }

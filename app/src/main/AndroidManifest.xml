@@ -15,6 +15,12 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -32,6 +38,8 @@
             android:label="Background Rules service"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
+        <service android:name=".engines.TTSAction$TextToSpeechHelperService"/>
+
         <receiver android:name=".broadcast.BackgroundJobServiceStartReceiver" android:enabled="true" android:exported="true">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -41,6 +49,11 @@
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".engines.NotificationAction$NotificationBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true" />
 
         <receiver
             android:name=".broadcast.FenceReceiver"

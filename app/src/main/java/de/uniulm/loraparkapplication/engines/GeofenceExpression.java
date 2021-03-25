@@ -1,15 +1,21 @@
 package de.uniulm.loraparkapplication.engines;
 
+import com.google.android.gms.awareness.fence.FenceState;
+import com.google.android.gms.awareness.fence.FenceStateMap;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.github.jamsesso.jsonlogic.evaluator.JsonLogicEvaluationException;
 import io.github.jamsesso.jsonlogic.evaluator.expressions.PreEvaluatedArgumentsExpression;
 
 public class GeofenceExpression implements PreEvaluatedArgumentsExpression {
     public static final GeofenceExpression INSTANCE = new GeofenceExpression();
+    private FenceStateMap fenceStateMap;
 
     private GeofenceExpression() {
-        // Use INSTANCE instead.
+        // use INSTANCE instead
     }
 
     @Override
@@ -19,16 +25,25 @@ public class GeofenceExpression implements PreEvaluatedArgumentsExpression {
 
     @Override
     public Object evaluate(List arguments, Object data) throws JsonLogicEvaluationException {
-        if (arguments.size() != 3 || !(arguments.get(0) instanceof Double && arguments.get(1) instanceof Double && arguments.get(2) instanceof Double)) {
-            throw new JsonLogicEvaluationException("geofence operator 3 double arguments");
+        if (arguments.size() != 1 || !(arguments.get(0) instanceof String)) {
+            throw new JsonLogicEvaluationException("geofence operator 1 string argument");
         }
 
-        // TODO geofence
-        // lat arguments.get(0)
-        // lon arguments.get(1)
-        // radius arguments.get(2)
+        if(fenceStateMap == null) {
+            return null;
+        }
 
+        String geofenceID = (String) arguments.get(0);
+        FenceState fenceState = fenceStateMap.getFenceState(geofenceID);
 
-        return false;
+        if(fenceState == null) {
+            return null;
+        }
+
+        return fenceState.getCurrentState() == FenceState.TRUE;
+    }
+
+    public void setFenceList(FenceStateMap fenceStateMap) {
+        this.fenceStateMap = fenceStateMap;
     }
 }

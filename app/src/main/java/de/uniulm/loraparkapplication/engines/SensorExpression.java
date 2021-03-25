@@ -25,14 +25,9 @@ public class SensorExpression implements PreEvaluatedArgumentsExpression {
 
     @Override
     public Object evaluate(List arguments, Object data) throws JsonLogicEvaluationException {
-        if (arguments != null & arguments.size() != 3 || !(arguments.get(0) instanceof String && arguments.get(1) instanceof String && arguments.get(2) instanceof String)) {
+        if (arguments.size() != 3 || !(arguments.get(0) instanceof String && arguments.get(1) instanceof String && arguments.get(2) instanceof String)) {
             throw new JsonLogicEvaluationException("sensor operator expects 3 arguments");
         }
-
-        // TODO sensor
-        // domain arguments.get(0)
-        // id arguments.get(1)
-        // value arguments.get(2)
 
         Map<String, Map<String, Object>> domain = sensorValues.get(arguments.get(1));
         if(domain == null) {
@@ -44,7 +39,6 @@ public class SensorExpression implements PreEvaluatedArgumentsExpression {
         }
 
         Object value = values.get(arguments.get(2));
-        Log.i(key(), value.toString()); // TODO remove this - just for debugging
         return value;
     }
 
