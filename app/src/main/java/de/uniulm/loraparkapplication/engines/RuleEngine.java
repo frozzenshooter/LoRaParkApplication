@@ -1,15 +1,10 @@
 package de.uniulm.loraparkapplication.engines;
 
 import android.app.Application;
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
@@ -18,31 +13,23 @@ import com.google.android.gms.awareness.fence.FenceStateMap;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.uniulm.loraparkapplication.R;
-import de.uniulm.loraparkapplication.SensorDetailActivity;
-import de.uniulm.loraparkapplication.database.RuleDao;
-import de.uniulm.loraparkapplication.database.RuleDatabase;
 import de.uniulm.loraparkapplication.models.Action;
 import de.uniulm.loraparkapplication.models.CompleteRule;
 import de.uniulm.loraparkapplication.models.Geofence;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.Rule;
 import de.uniulm.loraparkapplication.models.Sensor;
-import de.uniulm.loraparkapplication.models.SensorDetail;
 import de.uniulm.loraparkapplication.repositories.GeofenceRepository;
 import de.uniulm.loraparkapplication.repositories.RuleHandler;
 import de.uniulm.loraparkapplication.repositories.SensorValuesRepository;
 import io.github.jamsesso.jsonlogic.JsonLogic;
 import io.github.jamsesso.jsonlogic.JsonLogicException;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RuleEngine {
     private static final String RULE_ENGINE_CLASSNAME = RuleEngine.class.getName();
@@ -203,7 +190,7 @@ public class RuleEngine {
 
             try {
                 rule.setWasTriggered(condition);
-                //ruleHandler.updateRule(rule).subscribe();
+                ruleHandler.updateRule(rule).subscribeOn(Schedulers.io()).subscribe();
             } catch (Exception ex) {
                 Log.e(RULE_ENGINE_CLASSNAME, "could not set triggered");
             }

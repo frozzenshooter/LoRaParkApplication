@@ -308,7 +308,6 @@ public class RuleHandler {
 
     //endregion
 
-    // TODO FIIIIIX THIS MESS
     public Completable updateRule(@NonNull Rule rule) {
         return Completable.defer(()->{
             try{
