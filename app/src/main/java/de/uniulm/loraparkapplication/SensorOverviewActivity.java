@@ -73,7 +73,7 @@ public class SensorOverviewActivity extends AppCompatActivity {
         // Request needed permissions
         checkPermissions();
 
-        this.markerColor = fetchAccentColor();
+        this.markerColor = fetchColor();
 
         this.map = (MapView) findViewById(R.id.map);
         setupMapView();
@@ -275,10 +275,10 @@ public class SensorOverviewActivity extends AppCompatActivity {
      *
      * @return color as int
      */
-    private int fetchAccentColor() {
+    private int fetchColor() {
         TypedValue typedValue = new TypedValue();
 
-        TypedArray a = this.obtainStyledAttributes(typedValue.data, new int[] { R.attr.colorAccent });
+        TypedArray a = this.obtainStyledAttributes(typedValue.data, new int[] { R.attr.colorOnBackground });
         int color = a.getColor(0, 0);
 
         a.recycle();

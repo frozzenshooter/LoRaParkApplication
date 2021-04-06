@@ -10,13 +10,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/rule_download_toolbar"
+
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ToolbarTheme"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content"
+            android:theme="@style/ToolbarTheme" >
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/rule_download_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:theme="@style/ToolbarTheme"
+                app:layout_constraintTop_toTopOf="parent" />
+        </com.google.android.material.appbar.AppBarLayout>
 
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -29,7 +36,6 @@
                 android:layout_height="match_parent"
                 android:scrollbars="vertical" />
 
-
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_download_rules"
                 android:layout_width="wrap_content"
@@ -39,7 +45,8 @@
                 android:contentDescription="@string/label_download_rules"
                 android:layout_margin="16dp"
                 android:onClick="downloadRules"
-                app:tint="?attr/colorOnPrimary"/>
+                app:backgroundTint="?attr/colorSecondary"
+                app:tint="?attr/colorOnSecondary"/>
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </LinearLayout>

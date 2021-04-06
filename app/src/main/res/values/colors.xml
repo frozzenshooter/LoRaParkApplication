@@ -3,4 +3,17 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#2196F3</color>
+
+    <!-- Color schemes can be generated at: https://material.io/resources/color/#!/?view.left=0&view.right=0 -->
+    <color name="primaryColor">#ffffff</color>
+    <color name="primaryLightColor">#ffffff</color>
+    <color name="primaryDarkColor">#cccccc</color>
+    <color name="secondaryColor">#03a9f4</color>
+    <color name="secondaryLightColor">#67daff</color>
+    <color name="secondaryDarkColor">#007ac1</color>
+    <color name="primaryTextColor">#03a9f4</color>
+    <color name="secondaryTextColor">#000000</color>
+
+    <color name="accentColor">#FFA630</color>
+    <color name="colorOnBackground">#000000</color>
 </resources>

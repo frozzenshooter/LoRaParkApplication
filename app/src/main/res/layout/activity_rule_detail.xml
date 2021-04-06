@@ -7,19 +7,26 @@
     android:layout_height="match_parent"
     tools:context=".RuleDetailActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/rule_detail_toolbar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/rule_detail_appbar"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ToolbarTheme"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content"
+        android:theme="@style/ToolbarTheme" >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/rule_detail_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ToolbarTheme" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rule_detail_toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/rule_detail_appbar">
 
         <LinearLayout
             android:id="@+id/details_view"

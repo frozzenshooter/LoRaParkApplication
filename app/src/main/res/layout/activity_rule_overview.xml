@@ -40,7 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
             android:src="@drawable/ic_add_36"
-            app:tint="?attr/colorOnPrimary"
+            app:backgroundTint="?attr/colorSecondary"
+            app:tint="?attr/colorOnSecondary"
             android:contentDescription="@string/label_add_rule"
             android:layout_margin="16dp" />
 

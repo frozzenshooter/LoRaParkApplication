@@ -7,13 +7,19 @@
     android:orientation="vertical"
     tools:context=".SensorDetailActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/sensor_detail_toolbar"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ToolbarTheme"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content"
+        android:theme="@style/ToolbarTheme" >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/sensor_detail_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ToolbarTheme"
+            app:layout_constraintTop_toTopOf="parent" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"

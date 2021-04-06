@@ -26,7 +26,7 @@
             android:paddingEnd="14dp"
             android:paddingBottom="2dp"
             android:scrollHorizontally="false"
-            android:textColor="?colorPrimaryVariant"
+            android:textColor="?colorOnBackground"
             android:textSize="18sp" />
 
         <TextView
