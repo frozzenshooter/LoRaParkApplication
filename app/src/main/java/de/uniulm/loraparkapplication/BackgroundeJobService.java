@@ -22,7 +22,7 @@ public class BackgroundeJobService extends JobService {
         ruleEngine.trigger();
 
         if(params.getExtras().getBoolean("auto_refresh", false)) {
-            BackgroundeJobService.scheduleJob(getApplicationContext());
+            BackgroundeJobService.scheduleJobAutoRefresh(getApplicationContext());
         }
 
         return true;
@@ -33,10 +33,14 @@ public class BackgroundeJobService extends JobService {
         return true;
     }
 
-    public static void scheduleJob(Context context) {
+    public static void scheduleJobSingle(Context context) {
+        // TODO adjust min/max Latency
+        scheduleJob(context, 0, 5000, false);
+    }
+
+    public static void scheduleJobAutoRefresh(Context context) {
         // TODO adjust min/max Latency
         scheduleJob(context, 60000, 300000, true);
-
     }
 
     public static void scheduleJob(Context context, int minLatencyMillis, int maxDelayMillis, boolean auto_refresh) {

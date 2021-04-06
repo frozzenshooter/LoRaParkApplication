@@ -318,4 +318,29 @@ public class RuleHandler {
             }
         });
     }
+
+    /**
+     * Loads geofences for all active rules.
+     *
+     * @return Completable
+     */
+    public Completable loadGeofences() {
+        return Completable.defer(() -> {
+
+            try {
+                List<CompleteRule> completeRules = this.mRuleDataRepository.getCompleteRules();
+                for (CompleteRule completeRule : completeRules) {
+                    if(completeRule.getRule().getIsActive()) {
+                        for (Geofence geofence : completeRule.getGeofences()) {
+                            this.mGeofenceRepository.createGeofence(geofence);
+                        }
+                    }
+                }
+            } catch(Exception ex) {
+                return Completable.error(ex);
+            }
+
+            return Completable.complete();
+        });
+    }
 }

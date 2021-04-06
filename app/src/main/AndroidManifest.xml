@@ -27,7 +27,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.LoRaPark">
+        android:theme="@style/Theme.LoRaPark"
+        android:usesCleartextTraffic="true">
 
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
@@ -40,7 +41,7 @@
 
         <service android:name=".engines.TTSAction$TextToSpeechHelperService"/>
 
-        <receiver android:name=".broadcast.BackgroundJobServiceStartReceiver" android:enabled="true" android:exported="true">
+        <receiver android:name=".broadcast.BootReceiver" android:enabled="true" android:exported="true">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

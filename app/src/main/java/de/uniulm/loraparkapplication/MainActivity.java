@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         /*Intent intent = new Intent(MainActivity.this, BackgroundeJobService.class);
         MainActivity.this.startService(intent);*/
 
-        BackgroundeJobService.scheduleJob(this, 1000, 5000, false);
+        BackgroundeJobService.scheduleJobSingle(this);
     }
 
     @Override

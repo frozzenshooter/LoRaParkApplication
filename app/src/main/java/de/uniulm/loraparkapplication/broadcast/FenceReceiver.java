@@ -9,6 +9,7 @@ import android.util.Log;
 import com.google.android.gms.awareness.fence.FenceState;
 
 import de.uniulm.loraparkapplication.BackgroundeJobService;
+import de.uniulm.loraparkapplication.engines.RuleEngine;
 import de.uniulm.loraparkapplication.repositories.GeofenceRepository;
 
 public class FenceReceiver extends BroadcastReceiver {
@@ -38,7 +39,6 @@ public class FenceReceiver extends BroadcastReceiver {
         }
         Log.i(TAG,"Fence state from fence '"+fenceKey+"': " + fenceStateStr);
 
-        //TODO: schedule the Job to evaluate rules
-        //BackgroundeJobService.scheduleJob(context);
+        BackgroundeJobService.scheduleJobSingle(context);
     }
 }
