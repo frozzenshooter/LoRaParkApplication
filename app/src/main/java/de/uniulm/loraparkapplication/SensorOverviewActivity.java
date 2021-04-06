@@ -3,17 +3,25 @@ package de.uniulm.loraparkapplication;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -49,6 +57,8 @@ public class SensorOverviewActivity extends AppCompatActivity {
     protected SensorOverviewViewModel mSensorOverviewViewModel;
     private MapView map;
 
+    private int markerColor;
+
     //region Overrides
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +73,8 @@ public class SensorOverviewActivity extends AppCompatActivity {
 
         // Request needed permissions
         checkPermissions();
+
+        this.markerColor = fetchAccentColor();
 
         this.map = (MapView) findViewById(R.id.map);
         setupMapView();
@@ -249,6 +261,22 @@ public class SensorOverviewActivity extends AppCompatActivity {
     }
 
     /**
+     * Loads the current accent color
+     *
+     * @return color as int
+     */
+    private int fetchAccentColor() {
+        TypedValue typedValue = new TypedValue();
+
+        TypedArray a = this.obtainStyledAttributes(typedValue.data, new int[] { R.attr.colorAccent });
+        int color = a.getColor(0, 0);
+
+        a.recycle();
+
+        return color;
+    }
+
+    /**
      * Creates a marker for a single sensor
      *
      * @param sensorDescription the description of the sensor
@@ -258,34 +286,43 @@ public class SensorOverviewActivity extends AppCompatActivity {
         GeoPoint geoPoint = new GeoPoint(loc.getLatitude(), loc.getLongitude());
 
         OverlayItem overlayItem = new OverlayItem(sensorDescription.getName(), sensorDescription.getDescription(), geoPoint);
-        Drawable markerDrawable = ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_room_black_36);
-        overlayItem.setMarker(markerDrawable);
 
-        ArrayList<OverlayItem> overlayItemArrayList = new ArrayList<>();
-        overlayItemArrayList.add(overlayItem);
+        // Setting the tint directly won't work - only with the compat wrapper
+        Drawable unwrappedMarkerDrawable = AppCompatResources.getDrawable(this, R.drawable.outline_room_36);
 
-        ItemizedOverlay<OverlayItem> locationOverlay = new ItemizedIconOverlay<>(overlayItemArrayList, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-            @Override
-            public boolean onItemSingleTapUp(int i, OverlayItem overlayItem) {
+        if(unwrappedMarkerDrawable != null){
 
-                Intent intent = new Intent(SensorOverviewActivity.this, SensorDetailActivity.class);
+                Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedMarkerDrawable);
+                DrawableCompat.setTint(wrappedDrawable, this.markerColor);
 
-                intent.putExtra(SensorDetailActivity.ID_EXTRA, sensorDescription.getId());
-                intent.putExtra(SensorDetailActivity.NAME_EXTRA, sensorDescription.getName());
-                intent.putExtra(SensorDetailActivity.DESCRIPTION_EXTRA, sensorDescription.getDescription());
+                overlayItem.setMarker(wrappedDrawable);
 
-                SensorOverviewActivity.this.startActivity(intent);
+                ArrayList<OverlayItem> overlayItemArrayList = new ArrayList<>();
+                overlayItemArrayList.add(overlayItem);
 
-                return true; // Handled this event.
-            }
+                ItemizedOverlay<OverlayItem> locationOverlay = new ItemizedIconOverlay<>(overlayItemArrayList, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                    @Override
+                    public boolean onItemSingleTapUp(int i, OverlayItem overlayItem) {
 
-            @Override
-            public boolean onItemLongPress(int i, OverlayItem overlayItem) {
-                return false;
-            }
-        }, getApplicationContext());
+                        Intent intent = new Intent(SensorOverviewActivity.this, SensorDetailActivity.class);
 
-        this.map.getOverlays().add(locationOverlay);
+                        intent.putExtra(SensorDetailActivity.ID_EXTRA, sensorDescription.getId());
+                        intent.putExtra(SensorDetailActivity.NAME_EXTRA, sensorDescription.getName());
+                        intent.putExtra(SensorDetailActivity.DESCRIPTION_EXTRA, sensorDescription.getDescription());
+
+                        SensorOverviewActivity.this.startActivity(intent);
+
+                        return true; // Handled this event.
+                    }
+
+                    @Override
+                    public boolean onItemLongPress(int i, OverlayItem overlayItem) {
+                        return false;
+                    }
+                }, getApplicationContext());
+
+                this.map.getOverlays().add(locationOverlay);
+        }
     }
 
     //endregion
