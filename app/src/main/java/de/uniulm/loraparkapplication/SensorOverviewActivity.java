@@ -50,6 +50,7 @@ import de.uniulm.loraparkapplication.viewmodels.SensorOverviewViewModel;
 import static android.content.res.Configuration.UI_MODE_NIGHT_MASK;
 import static android.content.res.Configuration.UI_MODE_NIGHT_NO;
 import static android.content.res.Configuration.UI_MODE_NIGHT_UNDEFINED;
+import static android.content.res.Configuration.UI_MODE_NIGHT_YES;
 
 public class SensorOverviewActivity extends AppCompatActivity {
 
@@ -228,7 +229,7 @@ public class SensorOverviewActivity extends AppCompatActivity {
         int nightModeFlags =  this.getResources().getConfiguration().uiMode & UI_MODE_NIGHT_MASK;
 
         switch (nightModeFlags){
-            case UI_MODE_NIGHT_MASK:
+            case UI_MODE_NIGHT_YES:
                 this.map.getOverlayManager().getTilesOverlay().setColorFilter(TilesOverlay.INVERT_COLORS);
                 break;
             case UI_MODE_NIGHT_NO:
