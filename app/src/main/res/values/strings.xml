@@ -30,5 +30,8 @@
     <string name="label_value">Value</string>
     <string name="label_unit">Unit</string>
     <string name="label_show_rule_overview">"Show rules"</string>
+    <string name="message_all_rules_deleted" type="id">All rules deleted</string>
+    <string name="message_deletion_failed">Deletion failed</string>
+    <string name="message_failure_saving_rule">"Failure saving one of the rules: "</string>
 
 </resources>

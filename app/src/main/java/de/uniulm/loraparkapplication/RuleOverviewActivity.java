@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -103,15 +104,14 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
                    @Override
                     public void onComplete() {
-                       //TODO: use localized text
-                       String message = "Everything deleted";
+
+                       String message = getResources().getString(R.string.message_all_rules_deleted);
                        Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-                        //TODO: use localized text
-                        String message = "Failure deleting the data";
+                        String message = getResources().getString(R.string.message_deletion_failed);
                         Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_SHORT).show();
                     }
                 };
@@ -141,15 +141,6 @@ public class RuleOverviewActivity extends AppCompatActivity {
         if(data != null && requestCode == DownloadRuleActivity.REQUEST_ID){
             ArrayList<String> rulesToDownload = data.getStringArrayListExtra(DownloadRuleActivity.SELECTED_RULES);
 
-            //TODO: delete toast later
-            StringBuilder build = new StringBuilder();
-            for(int i=0 ; i < rulesToDownload.size(); i++){
-                build.append(rulesToDownload.get(i));
-                build.append("; ");
-            }
-
-            Toast.makeText(this, build.toString(), Toast.LENGTH_SHORT).show();
-
             if(rulesToDownload != null && rulesToDownload.size() > 0) {
 
                 this.mRuleOverviewViewModel.downloadRules(rulesToDownload)
@@ -163,15 +154,13 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
                             @Override
                             public void onNext(@NonNull CompleteRule s) {
-                               // String message = "Saved data: "+s;
-                                //Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_LONG).show();
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
 
-                                //TODO: remove exception message and replace with localized string
-                                String message = "Failure saving one of the rules: " + e.getMessage();
+                                String msg = getResources().getString(R.string.message_failure_saving_rule);
+                                String message = msg + e.getMessage();
                                 Toast.makeText(RuleOverviewActivity.this, message, Toast.LENGTH_SHORT).show();
                             }
 
