@@ -1,13 +1,5 @@
 package de.uniulm.loraparkapplication;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,6 +9,13 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import org.jetbrains.annotations.NotNull;
 import org.osmdroid.config.Configuration;
@@ -27,6 +26,7 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.TilesOverlay;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +37,10 @@ import de.uniulm.loraparkapplication.models.Location;
 import de.uniulm.loraparkapplication.models.Resource;
 import de.uniulm.loraparkapplication.models.SensorDescription;
 import de.uniulm.loraparkapplication.viewmodels.SensorOverviewViewModel;
+
+import static android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+import static android.content.res.Configuration.UI_MODE_NIGHT_NO;
+import static android.content.res.Configuration.UI_MODE_NIGHT_UNDEFINED;
 
 public class SensorOverviewActivity extends AppCompatActivity {
 
@@ -196,6 +200,20 @@ public class SensorOverviewActivity extends AppCompatActivity {
         this.map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);
         this.map.setMultiTouchControls(true);
         this.map.setClickable(true);
+
+
+        // Nightmode: simply invert the color -alternative swap to other tiles provider
+        int nightModeFlags =  this.getResources().getConfiguration().uiMode & UI_MODE_NIGHT_MASK;
+
+        switch (nightModeFlags){
+            case UI_MODE_NIGHT_MASK:
+                this.map.getOverlayManager().getTilesOverlay().setColorFilter(TilesOverlay.INVERT_COLORS);
+                break;
+            case UI_MODE_NIGHT_NO:
+            case UI_MODE_NIGHT_UNDEFINED:
+            default:
+                break;
+        }
 
         // Default map zoom level:
         int MAP_DEFAULT_ZOOM = 19;
