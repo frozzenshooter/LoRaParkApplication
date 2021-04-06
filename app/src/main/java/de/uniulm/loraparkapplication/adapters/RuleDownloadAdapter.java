@@ -96,7 +96,6 @@ public class RuleDownloadAdapter extends  RecyclerView.Adapter<RuleDownloadAdapt
         notifyDataSetChanged();
     }
 
-
     public List<String> getSelectedRuleIds(){
         List<String> selectedRulesForExport = new ArrayList<>();
 
