@@ -75,19 +75,17 @@
             android:parentActivityName=".SensorOverviewActivity" />
         <activity
             android:name=".SensorOverviewActivity"
-            android:label="@string/label_sensor_overview"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".RuleOverviewActivity"
-            android:label="@string/label_rule_overview"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".MainActivity">
+            android:label="@string/label_sensor_overview">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".RuleOverviewActivity"
+            android:label="@string/label_rule_overview"
+            android:parentActivityName=".SensorOverviewActivity" />
     </application>
 
 </manifest>

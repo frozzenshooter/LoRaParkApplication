@@ -54,23 +54,6 @@ public class RuleOverviewActivity extends AppCompatActivity {
 
     private RuleOverviewViewModel mRuleOverviewViewModel;
 
-    /**
-     * Create a random string - use for testing to create random ids for rules
-     *
-     * @return random string
-     */
-    public static String random() {
-        Random generator = new Random();
-        StringBuilder randomStringBuilder = new StringBuilder();
-        int randomLength = generator.nextInt(15);
-        char tempChar;
-        for (int i = 0; i < randomLength; i++){
-            tempChar = (char) (generator.nextInt(96) + 32);
-            randomStringBuilder.append(tempChar);
-        }
-        return randomStringBuilder.toString();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

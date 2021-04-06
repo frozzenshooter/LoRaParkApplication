@@ -12,6 +12,7 @@ import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -68,8 +69,6 @@ public class SensorOverviewActivity extends AppCompatActivity {
         //Set the toolbar as the activity's app bar - to be able to show up button
         Toolbar toolbar = (Toolbar) findViewById(R.id.sensor_overview_toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Request needed permissions
         checkPermissions();
@@ -120,6 +119,11 @@ public class SensorOverviewActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
+            case R.id.action_show_rules:
+                Intent intent = new Intent(SensorOverviewActivity.this, RuleOverviewActivity.class);
+                SensorOverviewActivity.this.startActivity(intent);
+
+                return true;
             case android.R.id.home:
                 finish();
                 return true;
@@ -127,6 +131,12 @@ public class SensorOverviewActivity extends AppCompatActivity {
 
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_sensor_overview, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
